@@ -16,8 +16,8 @@ struct HomeView: View {
                     HStack(spacing: 12) {
                         ActionTile(title: "Receive", icon: "arrow.down") { showReceive = true }
                         ActionTile(title: "Send", icon: "arrow.up") { showSend = true }
-                            .disabled(!wallet.synced || wallet.balance.amount == 0)
-                            .opacity(!wallet.synced || wallet.balance.amount == 0 ? 0.45 : 1)
+                            .disabled(!canSend)
+                            .opacity(canSend ? 1 : 0.45)
                     }
                     DevicesCard()
                     ActivityCard()
@@ -31,6 +31,11 @@ struct HomeView: View {
             .sheet(isPresented: $showSend) { SendView() }
             .sheet(isPresented: $showSettings) { SettingsView() }
         }
+    }
+
+    /// Sending needs the Flipper (it signs), a synced wallet and something to spend.
+    private var canSend: Bool {
+        wallet.flipperReady && wallet.synced && wallet.balance.amount > 0
     }
 
     private var header: some View {
@@ -218,11 +223,7 @@ struct BalanceCard: View {
                     .contentTransition(.numericText())
                 ZecLogo().frame(width: 34, height: 34)
             }
-            if !wallet.showsAmounts {
-                Label("Connect your Flipper Zero to see your balance", systemImage: "eye.slash")
-                    .font(.footnote).foregroundStyle(Theme.muted)
-            }
-            if wallet.pending.amount > 0 {
+            if wallet.showsAmounts && wallet.pending.amount > 0 {
                 ConfirmingPill()
             }
         }
