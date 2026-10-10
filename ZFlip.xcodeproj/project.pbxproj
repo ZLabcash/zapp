@@ -11,11 +11,13 @@
 		3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5A8E5DBD32B7EC08817276 /* Bridge.swift */; };
 		4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99EC8939B570D6BFFDC2F442 /* HomeView.swift */; };
 		4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C545E4E2810FF36757DA2B81 /* WalletModel.swift */; };
+		71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */; };
 		7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB6C35499251397CE3CDF1 /* FlipperLink.swift */; };
 		8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C753E21F2C6F1AA26042ADA7 /* Theme.swift */; };
 		A1D6EDB220AA4C6F6738C198 /* ZFlipBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; };
 		B6A4D3974539859A7E367415 /* ZFlipBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BA9A3CE61E487D0106785182 /* ZFlipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */; };
+		BAC2FDAD8F5A51A5DE5A268C /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178AA570216EF523337E0F8D /* Contacts.swift */; };
 		BBE98040645C31BD6C0BEE6D /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */; };
 		BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036DFA711F270E81CCB08CF9 /* PairView.swift */; };
 		C5C851610452AE4D8B9C9D09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B0FA9F71B5C174437916D6E /* Assets.xcassets */; };
@@ -38,8 +40,10 @@
 
 /* Begin PBXFileReference section */
 		036DFA711F270E81CCB08CF9 /* PairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairView.swift; sourceTree = "<group>"; };
+		178AA570216EF523337E0F8D /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		1B0FA9F71B5C174437916D6E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
+		5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
 		5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFlipApp.swift; sourceTree = "<group>"; };
 		63DB6C35499251397CE3CDF1 /* FlipperLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperLink.swift; sourceTree = "<group>"; };
 		7832494FBCBCB7D24626728F /* FlipperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperProtocol.swift; sourceTree = "<group>"; };
@@ -88,6 +92,7 @@
 		3DAD4DB894476E22FF1E93AE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */,
 				99EC8939B570D6BFFDC2F442 /* HomeView.swift */,
 				036DFA711F270E81CCB08CF9 /* PairView.swift */,
 				2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */,
@@ -108,6 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				9E5A8E5DBD32B7EC08817276 /* Bridge.swift */,
+				178AA570216EF523337E0F8D /* Contacts.swift */,
 				C545E4E2810FF36757DA2B81 /* WalletModel.swift */,
 			);
 			path = Wallet;
@@ -216,6 +222,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */,
+				BAC2FDAD8F5A51A5DE5A268C /* Contacts.swift in Sources */,
+				71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */,
 				7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */,
 				CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */,
 				4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */,

@@ -4,6 +4,7 @@ import SwiftUI
 struct ZFlipApp: App {
     @StateObject private var link: FlipperLink
     @StateObject private var wallet: WalletModel
+    @StateObject private var contacts = ContactBook()
     /// 0 = follow the system, 1 = light, 2 = dark.
     @AppStorage("appearance") private var appearance = 0
 
@@ -24,6 +25,7 @@ struct ZFlipApp: App {
             }
             .environmentObject(link)
             .environmentObject(wallet)
+            .environmentObject(contacts)
             .preferredColorScheme(appearance == 1 ? .light : appearance == 2 ? .dark : nil)
             .tint(Theme.zcash)
             .background(Theme.background.ignoresSafeArea())

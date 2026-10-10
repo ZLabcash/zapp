@@ -42,11 +42,125 @@ struct HomeView: View {
                     .background(.orange.opacity(0.25)).clipShape(Capsule())
             }
             Spacer()
+            SyncPill()
             Button { showSettings = true } label: {
                 Image(systemName: "gearshape.fill").font(.title3).foregroundStyle(Theme.muted)
             }
         }
         .padding(.top, 8)
+    }
+}
+
+/// The sync state, small, by the settings button: a green dot when up to date, a
+/// filling ring while syncing, orange when the server can't be reached. Tap for
+/// the block height and the server.
+struct SyncPill: View {
+    @EnvironmentObject var wallet: WalletModel
+    @State private var details = false
+
+    var body: some View {
+        Button { details = true } label: {
+            HStack(spacing: 6) {
+                if wallet.syncError != nil {
+                    Circle().fill(.orange).frame(width: 8, height: 8)
+                    Text("Offline")
+                } else if wallet.synced {
+                    Circle().fill(Theme.scan).frame(width: 8, height: 8)
+                    Text("Synced")
+                } else {
+                    Ring(progress: Double(wallet.syncProgress), lineWidth: 2.5).frame(width: 12, height: 12)
+                    Text("Syncing \(Int(wallet.syncProgress * 100))%").monospacedDigit()
+                }
+            }
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(Theme.muted)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Theme.card)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .popover(isPresented: $details) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(wallet.synced ? "Up to date" : wallet.syncError == nil ? "Syncing" : "Can't reach the network")
+                    .font(.headline)
+                if let error = wallet.syncError {
+                    Text(error).font(.footnote).foregroundStyle(.orange)
+                }
+                if wallet.tipHeight > 0 {
+                    LabeledContent("Latest block", value: wallet.tipHeight.formatted())
+                }
+                if !wallet.synced && wallet.scannedHeight > 0 {
+                    LabeledContent("Scanned up to", value: wallet.scannedHeight.formatted())
+                }
+                LabeledContent("Server", value: "zec.rocks")
+            }
+            .font(.subheadline)
+            .padding(18)
+            .frame(minWidth: 260)
+            .presentationCompactAdaptation(.popover)
+        }
+    }
+}
+
+/// A progress ring in the Zcash yellow.
+struct Ring: View {
+    let progress: Double
+    var lineWidth: CGFloat = 4
+
+    var body: some View {
+        ZStack {
+            Circle().stroke(Color.primary.opacity(0.12), lineWidth: lineWidth)
+            Circle()
+                .trim(from: 0, to: max(0.02, min(1, progress)))
+                .stroke(Theme.zcash, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut, value: progress)
+        }
+    }
+}
+
+/// Incoming ZEC on its way to spendable: a ring filling with confirmations, the
+/// amount, and roughly how long until it can be spent (a block every 75 seconds).
+struct IncomingRow: View {
+    @EnvironmentObject var wallet: WalletModel
+    static let needed = 10
+
+    var body: some View {
+        let confirmations = currentConfirmations
+        HStack(spacing: 14) {
+            ZStack {
+                Ring(progress: Double(confirmations ?? 0) / Double(Self.needed), lineWidth: 4)
+                Text(confirmations.map { "\($0)/\(Self.needed)" } ?? "…")
+                    .font(.system(size: 11, weight: .bold, design: .rounded)).monospacedDigit()
+            }
+            .frame(width: 44, height: 44)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("+\(wallet.pending.zecString) incoming")
+                    .font(.subheadline.weight(.semibold))
+                Text(detail(confirmations)).font(.caption).foregroundStyle(Theme.muted)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .background(Theme.zcash.opacity(0.12))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    /// The least-confirmed received transaction still under the threshold.
+    private var currentConfirmations: Int? {
+        let incoming = wallet.transactions.filter { !$0.isSentTransaction && $0.isExpiredUmined != true }
+        let waiting = incoming.compactMap { tx -> Int? in
+            guard let n = wallet.confirmations(tx) else { return 0 }
+            return n < Self.needed ? n : nil
+        }
+        return waiting.min()
+    }
+
+    private func detail(_ n: Int?) -> String {
+        guard let n, n > 0 else { return "Waiting for its first block · about 13 min to spendable" }
+        let minutes = max(1, ((Self.needed - n) * 75 + 59) / 60)
+        return "Spendable in about \(minutes) min · \(n) of \(Self.needed) confirmations"
     }
 }
 
@@ -67,24 +181,7 @@ struct BalanceCard: View {
                 ZecLogo().frame(width: 34, height: 34)
             }
             if wallet.pending.amount > 0 {
-                Text("+ \(wallet.pending.zecString) confirming · spendable after 10 confirmations (about 12 min)")
-                    .font(.footnote).foregroundStyle(Theme.zcash)
-            }
-            if let error = wallet.syncError {
-                Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange)
-            } else if wallet.synced {
-                Label("Up to date · block \(wallet.tipHeight.formatted())", systemImage: "checkmark.circle.fill")
-                    .font(.footnote).foregroundStyle(Theme.scan)
-            } else {
-                VStack(alignment: .leading, spacing: 6) {
-                    ProgressView(value: wallet.syncProgress).tint(Theme.zcash)
-                    Text("Syncing with the Zcash network · \(Int(wallet.syncProgress * 100))%")
-                        .font(.footnote).foregroundStyle(Theme.muted)
-                    if wallet.tipHeight > 0 {
-                        Text("Chain at block \(wallet.tipHeight.formatted())")
-                            .font(.caption2).foregroundStyle(Theme.muted)
-                    }
-                }
+                IncomingRow()
             }
         }
         .padding(22)

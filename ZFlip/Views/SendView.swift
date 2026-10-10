@@ -4,12 +4,16 @@ import ZcashLightClientKit
 struct SendView: View {
     @EnvironmentObject var wallet: WalletModel
     @EnvironmentObject var link: FlipperLink
+    @EnvironmentObject var book: ContactBook
     @Environment(\.dismiss) private var dismiss
 
     @State private var address = ""
     @State private var amount = ""
     @State private var memo = ""
     @State private var fee: Zatoshi?
+    @State private var picking = false
+    @State private var savingName = ""
+    @State private var askingName = false
 
     private var zatoshi: Int64? {
         let normalized = amount.replacingOccurrences(of: ",", with: ".")
@@ -27,9 +31,32 @@ struct SendView: View {
         return zatoshi + feeOrMinimum <= wallet.balance.amount
     }
 
+    /// What is wrong with the amount, or worth knowing, in one sentence.
+    private var amountNote: (text: String, blocking: Bool)? {
+        let spendable = wallet.balance.amount
+        if !amount.isEmpty && zatoshi == nil {
+            return ("Enter an amount above zero, like 0.01.", true)
+        }
+        guard let zatoshi else { return nil }
+        if spendable <= feeOrMinimum {
+            return ("Your spendable balance (\(wallet.balance.zecString)) doesn't cover the network fee of \(Zatoshi(feeOrMinimum).zecString).", true)
+        }
+        if zatoshi > spendable {
+            return ("That's more than your spendable balance of \(wallet.balance.zecString).", true)
+        }
+        if zatoshi + feeOrMinimum > spendable {
+            let max = Zatoshi(spendable - feeOrMinimum)
+            return ("That leaves nothing for the network fee (\(Zatoshi(feeOrMinimum).zecString)). You can send up to \(max.zecString): tap Max.", true)
+        }
+        if zatoshi < feeOrMinimum {
+            return ("Very small amount: the network fee (\(Zatoshi(feeOrMinimum).zecString)) is more than what you send.", false)
+        }
+        return nil
+    }
+
     private var valid: Bool {
         guard zatoshi != nil else { return false }
-        return wallet.validate(address: address) && covered
+        return wallet.validate(address: address) && covered && amountNote?.blocking != true
     }
 
     var body: some View {
@@ -42,6 +69,17 @@ struct SendView: View {
             }
             .background(Theme.background.ignoresSafeArea())
             .navigationTitle("Send ZEC")
+            .sheet(isPresented: $picking) {
+                NavigationStack { ContactsView(pick: { address = $0.address }) }
+            }
+            .alert("Save to address book", isPresented: $askingName) {
+                TextField("Name", text: $savingName)
+                Button("Save") {
+                    let name = savingName.trimmingCharacters(in: .whitespaces)
+                    if !name.isEmpty { book.save(Contact(name: name, address: address)) }
+                }
+                Button("Cancel", role: .cancel) {}
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -57,9 +95,35 @@ struct SendView: View {
     private var form: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 14) {
-                field("To", text: $address, prompt: "u1… shielded address")
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("To").font(.caption).foregroundStyle(Theme.muted)
+                        if let contact = book.named(address) {
+                            Text("· \(contact.name)").font(.caption.weight(.semibold)).foregroundStyle(Theme.zcash)
+                        }
+                    }
+                    HStack(spacing: 8) {
+                        TextField("u1… shielded address", text: $address)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        Button { picking = true } label: {
+                            Image(systemName: "person.crop.circle").font(.title3)
+                        }
+                        .accessibilityLabel("Address book")
+                    }
+                    .padding(14)
+                    .background(Theme.card)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
                 if !address.isEmpty && !wallet.validate(address: address) {
                     Text("Not a valid Zcash address for this network.").font(.footnote).foregroundStyle(.orange)
+                } else if wallet.validate(address: address) && book.named(address) == nil {
+                    Button {
+                        savingName = ""
+                        askingName = true
+                    } label: {
+                        Label("Save to address book", systemImage: "person.badge.plus").font(.footnote.weight(.semibold))
+                    }
                 }
                 field("Amount (ZEC)", text: $amount, prompt: "0.1", keyboard: .decimalPad)
                 HStack {
@@ -77,11 +141,9 @@ struct SendView: View {
                     Text("\(wallet.pending.zecString) still confirming: spendable after 10 confirmations.")
                         .font(.footnote).foregroundStyle(Theme.muted)
                 }
-                if !covered {
-                    Text(wallet.balance.amount <= feeOrMinimum
-                         ? "Your spendable balance doesn't cover the network fee (at least \(WalletModel.minimumFee.zecString))."
-                         : "The amount plus the network fee (\(Zatoshi(feeOrMinimum).zecString)) is more than you can spend.")
-                        .font(.footnote).foregroundStyle(.orange)
+                if let note = amountNote {
+                    Label(note.text, systemImage: note.blocking ? "exclamationmark.triangle.fill" : "info.circle")
+                        .font(.footnote).foregroundStyle(note.blocking ? .orange : Theme.muted)
                 }
                 field("Memo (optional)", text: $memo, prompt: "Private message")
                 if let fee {
@@ -194,6 +256,13 @@ struct SettingsView: View {
                         Text("Dark").tag(2)
                     }
                     .pickerStyle(.segmented)
+                }
+                Section {
+                    NavigationLink {
+                        ContactsView()
+                    } label: {
+                        Label("Address book", systemImage: "person.2")
+                    }
                 }
                 Section("Flipper") {
                     LabeledContent("Name", value: wallet.pairing?.flipperName ?? "-")
