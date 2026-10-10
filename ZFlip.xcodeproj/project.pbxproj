@@ -1,0 +1,451 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0ECBB93EE2C6578AE20D1C34 /* ZcashLightClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5AC814CBCD201CBB7AA058A9 /* ZcashLightClientKit */; };
+		3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5A8E5DBD32B7EC08817276 /* Bridge.swift */; };
+		4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99EC8939B570D6BFFDC2F442 /* HomeView.swift */; };
+		4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C545E4E2810FF36757DA2B81 /* WalletModel.swift */; };
+		7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB6C35499251397CE3CDF1 /* FlipperLink.swift */; };
+		8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C753E21F2C6F1AA26042ADA7 /* Theme.swift */; };
+		A1D6EDB220AA4C6F6738C198 /* ZFlipBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; };
+		B6A4D3974539859A7E367415 /* ZFlipBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BA9A3CE61E487D0106785182 /* ZFlipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */; };
+		BBE98040645C31BD6C0BEE6D /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */; };
+		BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036DFA711F270E81CCB08CF9 /* PairView.swift */; };
+		C5C851610452AE4D8B9C9D09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B0FA9F71B5C174437916D6E /* Assets.xcassets */; };
+		CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832494FBCBCB7D24626728F /* FlipperProtocol.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		17EC1A464145656F1FF7D668 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B6A4D3974539859A7E367415 /* ZFlipBridge.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		036DFA711F270E81CCB08CF9 /* PairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairView.swift; sourceTree = "<group>"; };
+		1B0FA9F71B5C174437916D6E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
+		5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFlipApp.swift; sourceTree = "<group>"; };
+		63DB6C35499251397CE3CDF1 /* FlipperLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperLink.swift; sourceTree = "<group>"; };
+		7832494FBCBCB7D24626728F /* FlipperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperProtocol.swift; sourceTree = "<group>"; };
+		7F9431D6101C4121770C2EE2 /* ZFlip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZFlip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		99EC8939B570D6BFFDC2F442 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		9E5A8E5DBD32B7EC08817276 /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
+		C545E4E2810FF36757DA2B81 /* WalletModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletModel.swift; sourceTree = "<group>"; };
+		C753E21F2C6F1AA26042ADA7 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZFlipBridge.xcframework; path = Frameworks/ZFlipBridge.xcframework; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E8CE34C187439B2F80515F17 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0ECBB93EE2C6578AE20D1C34 /* ZcashLightClientKit in Frameworks */,
+				A1D6EDB220AA4C6F6738C198 /* ZFlipBridge.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		169253C660624F9A879E4A7F /* ZFlip */ = {
+			isa = PBXGroup;
+			children = (
+				1B0FA9F71B5C174437916D6E /* Assets.xcassets */,
+				DCE4154F94C2729A65354C79 /* App */,
+				DDBFF121D0ECB47B052E97A1 /* Flipper */,
+				3DAD4DB894476E22FF1E93AE /* Views */,
+				C6080D0D85C1B16FE2F7429C /* Wallet */,
+			);
+			path = ZFlip;
+			sourceTree = "<group>";
+		};
+		2F85206BBED1E6E6FD891666 = {
+			isa = PBXGroup;
+			children = (
+				169253C660624F9A879E4A7F /* ZFlip */,
+				B928D2799FB6543B2A5C9633 /* Frameworks */,
+				D57E034B20CF6F4B157D2488 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3DAD4DB894476E22FF1E93AE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				99EC8939B570D6BFFDC2F442 /* HomeView.swift */,
+				036DFA711F270E81CCB08CF9 /* PairView.swift */,
+				2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */,
+				C753E21F2C6F1AA26042ADA7 /* Theme.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B928D2799FB6543B2A5C9633 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C6080D0D85C1B16FE2F7429C /* Wallet */ = {
+			isa = PBXGroup;
+			children = (
+				9E5A8E5DBD32B7EC08817276 /* Bridge.swift */,
+				C545E4E2810FF36757DA2B81 /* WalletModel.swift */,
+			);
+			path = Wallet;
+			sourceTree = "<group>";
+		};
+		D57E034B20CF6F4B157D2488 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7F9431D6101C4121770C2EE2 /* ZFlip.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DCE4154F94C2729A65354C79 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DDBFF121D0ECB47B052E97A1 /* Flipper */ = {
+			isa = PBXGroup;
+			children = (
+				63DB6C35499251397CE3CDF1 /* FlipperLink.swift */,
+				7832494FBCBCB7D24626728F /* FlipperProtocol.swift */,
+			);
+			path = Flipper;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4D972D3AFD850C29CFC133CD /* ZFlip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28ADBE4238F1D4186C4E7FF2 /* Build configuration list for PBXNativeTarget "ZFlip" */;
+			buildPhases = (
+				7D9B5BA2530AD5F6B1A4B221 /* Sources */,
+				E5614FB98C8BC7942F0D3665 /* Resources */,
+				E8CE34C187439B2F80515F17 /* Frameworks */,
+				17EC1A464145656F1FF7D668 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ZFlip;
+			packageProductDependencies = (
+				5AC814CBCD201CBB7AA058A9 /* ZcashLightClientKit */,
+			);
+			productName = ZFlip;
+			productReference = 7F9431D6101C4121770C2EE2 /* ZFlip.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8E5839BF07E61CD438E2C3A5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					4D972D3AFD850C29CFC133CD = {
+						DevelopmentTeam = FPK7W8HFK9;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 489E7183A8B232BBDE30B967 /* Build configuration list for PBXProject "ZFlip" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2F85206BBED1E6E6FD891666;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C5CE1A6547E323599144CD46 /* XCRemoteSwiftPackageReference "zcash-swift-wallet-sdk" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4D972D3AFD850C29CFC133CD /* ZFlip */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E5614FB98C8BC7942F0D3665 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C5C851610452AE4D8B9C9D09 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7D9B5BA2530AD5F6B1A4B221 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */,
+				7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */,
+				CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */,
+				4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */,
+				BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */,
+				BBE98040645C31BD6C0BEE6D /* SendView.swift in Sources */,
+				8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */,
+				4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */,
+				BA9A3CE61E487D0106785182 /* ZFlipApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0E1D3EC4B2D7243F389F66AF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Frameworks\"",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = ZFlip;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZFlip talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = cash.zscan.zflip;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		79072C5D54D9B242A8D483C0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = FPK7W8HFK9;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7A4305047ADC26FDB4F354B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Frameworks\"",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = ZFlip;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZFlip talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = cash.zscan.zflip;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		EE18546C41E2CA8140114125 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = FPK7W8HFK9;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		28ADBE4238F1D4186C4E7FF2 /* Build configuration list for PBXNativeTarget "ZFlip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A4305047ADC26FDB4F354B1 /* Debug */,
+				0E1D3EC4B2D7243F389F66AF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		489E7183A8B232BBDE30B967 /* Build configuration list for PBXProject "ZFlip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				79072C5D54D9B242A8D483C0 /* Debug */,
+				EE18546C41E2CA8140114125 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C5CE1A6547E323599144CD46 /* XCRemoteSwiftPackageReference "zcash-swift-wallet-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/zcash/zcash-swift-wallet-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 3.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5AC814CBCD201CBB7AA058A9 /* ZcashLightClientKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C5CE1A6547E323599144CD46 /* XCRemoteSwiftPackageReference "zcash-swift-wallet-sdk" */;
+			productName = ZcashLightClientKit;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 8E5839BF07E61CD438E2C3A5 /* Project object */;
+}

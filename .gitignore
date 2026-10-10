@@ -1,0 +1,4 @@
+build/
+Frameworks/
+xcuserdata/
+.DS_Store
