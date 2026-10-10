@@ -35,7 +35,7 @@ struct HomeView: View {
     private var header: some View {
         HStack(spacing: 10) {
             Shield().frame(width: 34, height: 34)
-            Text("ZFlip").font(.system(size: 28, weight: .heavy, design: .rounded))
+            Text("ZApp").font(.system(size: 28, weight: .heavy, design: .rounded))
             if wallet.pairing?.network == 1 {
                 Text("TESTNET").font(.caption2.bold()).padding(.horizontal, 6).padding(.vertical, 3)
                     .background(.orange.opacity(0.25)).clipShape(Capsule())

@@ -27,7 +27,7 @@ struct PairView: View {
                 if step == .intro { Shield() } else { ForgingShield() }
             }
             .frame(height: 110)
-            Text("ZFlip").font(.system(size: 42, weight: .heavy, design: .rounded))
+            Text("ZApp").font(.system(size: 42, weight: .heavy, design: .rounded))
             Text(headline)
                 .font(.title3.weight(.semibold))
                 .multilineTextAlignment(.center)

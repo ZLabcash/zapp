@@ -241,7 +241,7 @@
 					"\"Frameworks\"",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = ZFlip;
+				INFOPLIST_KEY_CFBundleDisplayName = ZApp;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZFlip talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -332,7 +332,7 @@
 					"\"Frameworks\"",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = ZFlip;
+				INFOPLIST_KEY_CFBundleDisplayName = ZApp;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZFlip talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
