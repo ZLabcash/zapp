@@ -43,7 +43,13 @@ final class WalletModel: ObservableObject {
 
     @Published private(set) var pairing: Pairing?
     @Published private(set) var balance = Zatoshi.zero
+    /// Received from others, not yet spendable (10 confirmations).
     @Published private(set) var pending = Zatoshi.zero
+    /// Change coming back from this wallet's own payments: already ours, spendable after a few
+    /// confirmations. Counted in the balance shown, never as "incoming".
+    @Published private(set) var change = Zatoshi.zero
+    /// What the wallet owns now: spendable plus its own change on the way back.
+    var owned: Zatoshi { balance + change }
     @Published private(set) var syncProgress: Float = 0
     @Published private(set) var synced = false
     @Published private(set) var syncError: String?
@@ -54,7 +60,9 @@ final class WalletModel: ObservableObject {
     struct ActivityItem: Identifiable, Equatable {
         let id: Data
         let sent: Bool
+        /// For a payment: what the recipients got (the fee apart). Otherwise what came in.
         let zatoshi: Int64
+        var fee: Int64? = nil
         let minedHeight: Int?
         let expired: Bool
         let blockTime: TimeInterval?
@@ -206,6 +214,7 @@ final class WalletModel: ObservableObject {
         address = nil
         balance = .zero
         pending = .zero
+        change = .zero
         activity = []
         tipHeight = 0
         scannedHeight = 0
@@ -236,10 +245,11 @@ final class WalletModel: ObservableObject {
         let after = scene.hasPrefix("after")
         balance = Zatoshi(after ? 14_990_000 : 20_000_000)
         pending = .zero
+        change = .zero
         let url = Self.explorerURL(txid: Demo.txid)
         let received = ActivityItem(id: Data([1]), sent: false, zatoshi: 20_000_000, minedHeight: 3_512_960, expired: false,
                                     blockTime: 1_791_640_800, url: url)
-        let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_010_000, minedHeight: 3_513_400, expired: false,
+        let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_000_000, fee: 10_000, minedHeight: 3_513_400, expired: false,
                                 blockTime: nil, url: url)
         activity = after ? [sent, received] : [received]
         switch scene {
@@ -417,8 +427,8 @@ final class WalletModel: ObservableObject {
         refreshTransactions(force: false)
         if let id = accountUUID, let b = state.accountsBalances[id] {
             balance = b.ironwoodBalance.spendableValue + b.orchardBalance.spendableValue
-            let total = b.ironwoodBalance.total() + b.orchardBalance.total()
-            pending = total - balance
+            change = b.ironwoodBalance.changePendingConfirmation + b.orchardBalance.changePendingConfirmation
+            pending = b.ironwoodBalance.valuePendingSpendability + b.orchardBalance.valuePendingSpendability
         }
         switch state.syncStatus {
         case .syncing(let progress, _):
@@ -445,8 +455,10 @@ final class WalletModel: ObservableObject {
             self.activity = all
                 .sorted { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }
                 .map {
-                    ActivityItem(id: $0.rawID, sent: $0.isSentTransaction, zatoshi: abs($0.value.amount), minedHeight: $0.minedHeight,
-                                 expired: $0.isExpiredUmined == true, blockTime: $0.blockTime, url: Self.zscanURL($0))
+                    let fee = $0.isSentTransaction ? $0.fee?.amount : nil
+                    return ActivityItem(id: $0.rawID, sent: $0.isSentTransaction, zatoshi: abs($0.value.amount) - (fee ?? 0),
+                                        fee: fee, minedHeight: $0.minedHeight, expired: $0.isExpiredUmined == true,
+                                        blockTime: $0.blockTime, url: Self.zscanURL($0))
                 }
         }
     }

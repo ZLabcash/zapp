@@ -160,6 +160,10 @@ struct SendView: View {
                     Text("\(wallet.pending.zecString) still confirming: spendable after 10 confirmations.")
                         .font(.footnote).foregroundStyle(Theme.muted)
                 }
+                if wallet.change.amount > 0 {
+                    Text("\(wallet.change.zecString) back from your last payment: spendable in a few minutes.")
+                        .font(.footnote).foregroundStyle(Theme.muted)
+                }
                 if let note = amountNote {
                     Label(note.text, systemImage: note.blocking ? "exclamationmark.triangle.fill" : "info.circle")
                         .font(.footnote).foregroundStyle(note.blocking ? .orange : Theme.muted)

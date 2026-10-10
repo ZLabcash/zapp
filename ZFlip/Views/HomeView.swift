@@ -228,7 +228,7 @@ struct BalanceCard: View {
                 .foregroundStyle(Theme.muted)
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .center, spacing: 10) {
-                    Text(wallet.showsAmounts ? wallet.balance.zecAmount : "••••••")
+                    Text(wallet.showsAmounts ? wallet.owned.zecAmount : "••••••")
                         .font(.system(size: 40, weight: .bold, design: .rounded))
                         .minimumScaleFactor(0.5)
                         .lineLimit(1)
@@ -236,7 +236,7 @@ struct BalanceCard: View {
                     ZecLogo().frame(width: 34, height: 34)
                 }
                 if wallet.showsAmounts && showFiat {
-                    Text(prices.format(zatoshi: wallet.balance.amount, in: currency).map { "≈ \($0)" } ?? "Price unavailable")
+                    Text(prices.format(zatoshi: wallet.owned.amount, in: currency).map { "≈ \($0)" } ?? "Price unavailable")
                         .font(.title3.weight(.semibold)).monospacedDigit()
                         .foregroundStyle(Theme.muted)
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -246,6 +246,11 @@ struct BalanceCard: View {
             .onTapGesture {
                 guard wallet.showsAmounts else { return }
                 withAnimation(.snappy) { showFiat.toggle() }
+            }
+            if wallet.showsAmounts && wallet.change.amount > 0 {
+                // Our own change: part of the balance above, just not spendable for a few blocks.
+                Label("\(wallet.change.zecString) back from your last payment · spendable in a few minutes", systemImage: "arrow.uturn.backward.circle")
+                    .font(.footnote).foregroundStyle(Theme.muted)
             }
             if wallet.showsAmounts && wallet.pending.amount > 0 {
                 ConfirmingPill()
@@ -587,8 +592,9 @@ struct ActivityCard: View {
         if tx.expired { return "Expired" }
         guard let n = wallet.confirmations(tx) else { return "Pending · in the mempool" }
         let when = tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? ""
-        if n < 10 { return "Confirming · \(n) of 10" }
-        return when.isEmpty ? "Confirmed" : when
+        let fee = tx.fee.map { " · fee \(Zatoshi($0).zecString)" } ?? ""
+        if n < 10 { return "Confirming · \(n) of 10" + fee }
+        return (when.isEmpty ? "Confirmed" : when) + fee
     }
 }
 
