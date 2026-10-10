@@ -15,6 +15,43 @@ struct SendView: View {
     @State private var scanning = false
     @State private var savingName = ""
     @State private var askingName = false
+    /// Recipients after the first one (a multisend: one transaction, one signature).
+    @State private var extras: [Extra] = []
+    @State private var pickingExtra: UUID?
+
+    struct Extra: Identifiable, Equatable {
+        let id = UUID()
+        var address = ""
+        var amount = ""
+    }
+
+    private static func zats(_ text: String) -> Int64? {
+        guard let value = Decimal(string: text.replacingOccurrences(of: ",", with: ".")), value > 0 else { return nil }
+        let z = NSDecimalNumber(decimal: value * 100_000_000).int64Value
+        return z > 0 ? z : nil
+    }
+
+    /// Every recipient, if each has a valid address and amount.
+    private var payments: [WalletModel.Payment]? {
+        guard let first = zatoshi, wallet.validate(address: address) else { return nil }
+        var all = [WalletModel.Payment(address: address, zatoshi: first)]
+        for e in extras {
+            guard let z = Self.zats(e.amount), wallet.validate(address: e.address) else { return nil }
+            all.append(WalletModel.Payment(address: e.address, zatoshi: z))
+        }
+        return all
+    }
+
+    /// What all recipients get together (nil while an amount is missing or invalid).
+    private var total: Int64? {
+        guard let first = zatoshi else { return nil }
+        var sum = first
+        for e in extras {
+            guard let z = Self.zats(e.amount) else { return nil }
+            sum += z
+        }
+        return sum
+    }
 
     private var zatoshi: Int64? {
         let normalized = amount.replacingOccurrences(of: ",", with: ".")
@@ -28,17 +65,17 @@ struct SendView: View {
 
     /// The amount plus its fee fits in what is spendable now.
     private var covered: Bool {
-        guard let zatoshi else { return true }
-        return zatoshi + feeOrMinimum <= wallet.balance.amount
+        guard let total else { return true }
+        return total + feeOrMinimum <= wallet.balance.amount
     }
 
     /// What is wrong with the amount, or worth knowing, in one sentence.
     private var amountNote: (text: String, blocking: Bool)? {
         let spendable = wallet.balance.amount
-        if !amount.isEmpty && zatoshi == nil {
+        if (!amount.isEmpty && zatoshi == nil) || extras.contains(where: { !$0.amount.isEmpty && Self.zats($0.amount) == nil }) {
             return ("Enter an amount above zero, like 0.01.", true)
         }
-        guard let zatoshi else { return nil }
+        guard let zatoshi = total else { return nil }
         if spendable <= feeOrMinimum {
             return ("Your spendable balance (\(wallet.balance.zecString)) doesn't cover the network fee of \(Zatoshi(feeOrMinimum).zecString).", true)
         }
@@ -56,8 +93,8 @@ struct SendView: View {
     }
 
     private var valid: Bool {
-        guard zatoshi != nil else { return false }
-        return wallet.validate(address: address) && covered && amountNote?.blocking != true
+        guard payments != nil else { return false }
+        return covered && amountNote?.blocking != true
     }
 
     var body: some View {
@@ -92,7 +129,16 @@ struct SendView: View {
                 }
             }
             .sheet(isPresented: $picking) {
-                NavigationStack { ContactsView(pick: { address = $0.address }) }
+                NavigationStack {
+                    ContactsView(pick: { c in
+                        if let id = pickingExtra, let i = extras.firstIndex(where: { $0.id == id }) {
+                            extras[i].address = c.address
+                        } else {
+                            address = c.address
+                        }
+                        pickingExtra = nil
+                    })
+                }
             }
             .alert("Save to address book", isPresented: $askingName) {
                 TextField("Name", text: $savingName)
@@ -125,7 +171,10 @@ struct SendView: View {
                             Image(systemName: "qrcode.viewfinder").font(.title3)
                         }
                         .accessibilityLabel("Scan a QR code")
-                        Button { picking = true } label: {
+                        Button {
+                            pickingExtra = nil
+                            picking = true
+                        } label: {
                             Image(systemName: "person.crop.circle").font(.title3)
                         }
                         .accessibilityLabel("Address book")
@@ -145,10 +194,24 @@ struct SendView: View {
                     }
                 }
                 field("Amount (ZEC)", text: $amount, prompt: "0.1", keyboard: .decimalPad)
+                ForEach($extras) { $extra in
+                    extraRow($extra)
+                }
+                if extras.count + 1 < WalletModel.maxRecipients {
+                    Button {
+                        withAnimation(.snappy) { extras.append(Extra()) }
+                    } label: {
+                        Label("Add a recipient", systemImage: "plus.circle.fill").font(.subheadline.weight(.semibold))
+                    }
+                }
+                if !extras.isEmpty, let total {
+                    Text("\(extras.count + 1) recipients · \(Zatoshi(total).zecString) in total, in one transaction")
+                        .font(.footnote.weight(.semibold))
+                }
                 HStack {
                     Text("Spendable: \(wallet.balance.zecString)").font(.footnote).foregroundStyle(Theme.muted)
                     Spacer()
-                    if wallet.balance.amount > feeOrMinimum {
+                    if extras.isEmpty && wallet.balance.amount > feeOrMinimum {
                         Button("Max") {
                             let max = Decimal(wallet.balance.amount - feeOrMinimum) / 100_000_000
                             amount = "\(max)"
@@ -173,30 +236,78 @@ struct SendView: View {
                     Text("Network fee: \(fee.zecString)").font(.footnote).foregroundStyle(Theme.muted)
                 }
                 Button {
-                    guard let zatoshi else { return }
-                    Task { await wallet.send(to: address, zatoshi: zatoshi, memo: memo) }
+                    guard let payments else { return }
+                    Task { await wallet.send(payments, memo: memo) }
                 } label: {
-                    Label("Review on Flipper", systemImage: "shield.lefthalf.filled").primaryButton()
+                    Label(extras.isEmpty ? "Review on Flipper" : "Review \(extras.count + 1) payments on Flipper", systemImage: "shield.lefthalf.filled")
+                        .primaryButton()
                 }
                 .disabled(!valid)
                 .opacity(valid ? 1 : 0.5)
                 .padding(.top, 8)
-                Text("Your Flipper will show the amount, the recipient and the fee. Check them there, then hold OK to sign.")
+                Text(extras.isEmpty
+                     ? "Your Flipper will show the amount, the recipient and the fee. Check them there, then hold OK to sign."
+                     : "Your Flipper will show each payment on its own page (◀ ▶), then the total and the fee. One hold of OK signs them all.")
                     .font(.footnote)
                     .foregroundStyle(Theme.muted)
             }
             .padding(20)
         }
-        .task(id: "\(address)|\(amount)") {
+        .task(id: "\(address)|\(amount)|\(extras.map { $0.address + "=" + $0.amount }.joined(separator: ","))") {
             if Demo.scene != nil {
                 fee = zatoshi == nil ? nil : WalletModel.minimumFee
                 return
             }
             fee = nil
-            guard let zatoshi, wallet.validate(address: address) else { return }
+            guard let payments else { return }
             try? await Task.sleep(nanoseconds: 400_000_000)
-            fee = await wallet.proposalFee(to: address, zatoshi: zatoshi)
+            fee = await wallet.proposalFee(payments)
         }
+    }
+
+    /// Another recipient: its address (with the address book), its amount, and a remove button.
+    private func extraRow(_ extra: Binding<Extra>) -> some View {
+        let n = (extras.firstIndex(where: { $0.id == extra.wrappedValue.id }) ?? 0) + 2
+        let bad = !extra.wrappedValue.address.isEmpty && !wallet.validate(address: extra.wrappedValue.address)
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Recipient \(n)").font(.caption.weight(.semibold)).foregroundStyle(Theme.muted)
+                if let c = book.named(extra.wrappedValue.address) {
+                    Text("· \(c.name)").font(.caption.weight(.semibold)).foregroundStyle(Theme.zcash)
+                }
+                Spacer()
+                Button {
+                    withAnimation(.snappy) { extras.removeAll { $0.id == extra.wrappedValue.id } }
+                } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(Theme.muted)
+                }
+                .accessibilityLabel("Remove recipient \(n)")
+            }
+            HStack(spacing: 8) {
+                TextField("u1… shielded address", text: extra.address)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                Button {
+                    pickingExtra = extra.wrappedValue.id
+                    picking = true
+                } label: {
+                    Image(systemName: "person.crop.circle").font(.title3)
+                }
+            }
+            .padding(14)
+            .background(Theme.card)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            if bad {
+                Text("Not a valid Zcash address for this network.").font(.footnote).foregroundStyle(.orange)
+            }
+            TextField("Amount (ZEC)", text: extra.amount)
+                .keyboardType(.decimalPad)
+                .padding(14)
+                .background(Theme.card)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .padding(12)
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(Theme.card, lineWidth: 1.5))
     }
 
     private func field(_ title: String, text: Binding<String>, prompt: String, keyboard: UIKeyboardType = .default) -> some View {

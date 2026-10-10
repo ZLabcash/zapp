@@ -518,18 +518,62 @@ final class WalletModel: ObservableObject {
     }
 
     /// Builds the transaction, has the Flipper check and sign it, proves and broadcasts.
+    /// One payment: an address and an amount.
+    struct Payment: Equatable {
+        var address: String
+        var zatoshi: Int64
+    }
+
+    /// Most recipients in one transaction. Each adds ~1 KB to what the Flipper must hold in
+    /// its RAM to check the transaction; 5 is what has been checked to fit so far.
+    static let maxRecipients = 5
+
+    /// The proposal for paying `payments` in one transaction: a plain transfer for one, a
+    /// ZIP 321 payment request for several (each recipient gets the memo, if shielded).
+    private func propose(_ payments: [Payment], memo: String, synchronizer: SDKSynchronizer, account: AccountUUID) async throws -> Proposal {
+        if payments.count == 1, let p = payments.first {
+            return try await synchronizer.proposeTransfer(
+                accountUUID: account,
+                recipient: try Recipient(p.address, network: networkType),
+                amount: Zatoshi(p.zatoshi),
+                memo: memo.isEmpty ? nil : try Memo(string: memo)
+            )
+        }
+        return try await synchronizer.proposefulfillingPaymentURI(Self.paymentURI(payments, memo: memo), accountUUID: account)
+    }
+
+    /// ZIP 321: zcash:?address=…&amount=…&memo=…&address.1=…&amount.1=…
+    static func paymentURI(_ payments: [Payment], memo: String) -> String {
+        let memo64 = memo.isEmpty ? nil : Data(memo.utf8).base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+        var params: [String] = []
+        for (i, p) in payments.enumerated() {
+            let suffix = i == 0 ? "" : ".\(i)"
+            params.append("address\(suffix)=\(p.address)")
+            params.append("amount\(suffix)=\(decimalZEC(p.zatoshi))")
+            if let memo64, !p.address.hasPrefix("t") { params.append("memo\(suffix)=\(memo64)") }
+        }
+        return "zcash:?" + params.joined(separator: "&")
+    }
+
+    /// 12345 zatoshis → "0.00012345" (no trailing zeros, no exponent).
+    static func decimalZEC(_ z: Int64) -> String {
+        var frac = String(format: "%08lld", z % 100_000_000)
+        while frac.hasSuffix("0") { frac.removeLast() }
+        return "\(z / 100_000_000)" + (frac.isEmpty ? "" : ".\(frac)")
+    }
+
     func send(to address: String, zatoshi: Int64, memo: String) async {
+        await send([Payment(address: address, zatoshi: zatoshi)], memo: memo)
+    }
+
+    /// Builds the transaction, has the Flipper check and sign it (one signature, however many
+    /// recipients), proves and broadcasts.
+    func send(_ payments: [Payment], memo: String) async {
         guard let synchronizer, let accountUUID, let pairing else { return }
         sendStep = .preparing
         do {
-            let recipient = try Recipient(address, network: networkType)
-            let memo = memo.isEmpty ? nil : try Memo(string: memo)
-            let proposal = try await synchronizer.proposeTransfer(
-                accountUUID: accountUUID,
-                recipient: recipient,
-                amount: Zatoshi(zatoshi),
-                memo: memo
-            )
+            let proposal = try await propose(payments, memo: memo, synchronizer: synchronizer, account: accountUUID)
             let pczt = try await synchronizer.createPCZTFromProposal(accountUUID: accountUUID, proposal: proposal)
             let request = try Bridge.signRequest(pczt: pczt, ufvk: pairing.ufvk)
 
@@ -562,7 +606,7 @@ final class WalletModel: ObservableObject {
                 }
             }
         } catch {
-            sendStep = .failed(Self.explain(error, zatoshi: zatoshi))
+            sendStep = .failed(Self.explain(error, zatoshi: payments.reduce(0) { $0 + $1.zatoshi }))
         }
     }
 
@@ -583,12 +627,12 @@ final class WalletModel: ObservableObject {
     }
 
     func proposalFee(to address: String, zatoshi: Int64) async -> Zatoshi? {
-        guard let synchronizer, let accountUUID, let recipient = try? Recipient(address, network: networkType) else {
-            return nil
-        }
-        let proposal = try? await synchronizer.proposeTransfer(
-            accountUUID: accountUUID, recipient: recipient, amount: Zatoshi(zatoshi), memo: nil
-        )
+        await proposalFee([Payment(address: address, zatoshi: zatoshi)])
+    }
+
+    func proposalFee(_ payments: [Payment]) async -> Zatoshi? {
+        guard let synchronizer, let accountUUID, payments.allSatisfy({ validate(address: $0.address) }) else { return nil }
+        let proposal = try? await propose(payments, memo: "", synchronizer: synchronizer, account: accountUUID)
         return proposal?.totalFeeRequired()
     }
 }
