@@ -1,7 +1,7 @@
 # ZApp
 
-The phone app for hardware signers: a [ZFlip](https://github.com/Zfactorycash/zflip)
-Flipper Zero over Bluetooth, and soon a [ZKindle](https://github.com/Zfactorycash/zkindle)
+The phone app for hardware signers: a [ZFlip](https://github.com/ZLabcash/zflip)
+Flipper Zero over Bluetooth, and soon a [ZKindle](https://github.com/ZLabcash/zkindle)
 over local Wi-Fi. Watch-only: it syncs, prepares and proves; the device signs.
 
 iOS (SwiftUI, ZcashLightClientKit). Build the bridge first, with the zflip repo
