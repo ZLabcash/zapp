@@ -120,47 +120,85 @@ struct Ring: View {
     }
 }
 
-/// Incoming ZEC on its way to spendable: a ring filling with confirmations, the
-/// amount, and roughly how long until it can be spent (a block every 75 seconds).
-struct IncomingRow: View {
+/// Incoming ZEC on its way to spendable: an hourglass turning, "+0.0001 ⓩ
+/// confirming". Tap for the confirmations, the time left and the transaction on ZScan.
+struct ConfirmingPill: View {
     @EnvironmentObject var wallet: WalletModel
+    @State private var details = false
     static let needed = 10
 
     var body: some View {
-        let confirmations = currentConfirmations
-        HStack(spacing: 14) {
-            ZStack {
-                Ring(progress: Double(confirmations ?? 0) / Double(Self.needed), lineWidth: 4)
-                Text(confirmations.map { "\($0)/\(Self.needed)" } ?? "…")
-                    .font(.system(size: 11, weight: .bold, design: .rounded)).monospacedDigit()
+        Button { details = true } label: {
+            HStack(spacing: 7) {
+                Hourglass().frame(width: 16, height: 16)
+                Text("+" + (wallet.showsAmounts ? wallet.pending.zecAmount : "••••"))
+                    .font(.subheadline.weight(.bold)).monospacedDigit()
+                ZecLogo().frame(width: 16, height: 16)
+                Text("confirming").font(.subheadline)
             }
-            .frame(width: 44, height: 44)
-            VStack(alignment: .leading, spacing: 3) {
-                Text("+\(wallet.pending.zecString) incoming")
-                    .font(.subheadline.weight(.semibold))
-                Text(detail(confirmations)).font(.caption).foregroundStyle(Theme.muted)
-            }
-            Spacer(minLength: 0)
+            .foregroundStyle(Theme.zcash)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Theme.zcash.opacity(0.14))
+            .clipShape(Capsule())
         }
-        .padding(12)
-        .background(Theme.zcash.opacity(0.12))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .buttonStyle(.plain)
+        .popover(isPresented: $details) {
+            let tx = waiting
+            let n = tx.flatMap { wallet.confirmations($0) } ?? 0
+            VStack(alignment: .leading, spacing: 10) {
+                HStack(spacing: 12) {
+                    ZStack {
+                        Ring(progress: Double(n) / Double(Self.needed), lineWidth: 4)
+                        Text("\(n)/\(Self.needed)").font(.system(size: 11, weight: .bold, design: .rounded))
+                    }
+                    .frame(width: 44, height: 44)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Confirming").font(.headline)
+                        Text(timeLeft(n)).font(.footnote).foregroundStyle(Theme.muted)
+                    }
+                }
+                Text("Received ZEC can be spent after \(Self.needed) confirmations, one per block (about 75 s).")
+                    .font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
+                if let tx, let url = WalletModel.zscanURL(tx) {
+                    Link(destination: url) {
+                        Label("View on ZScan", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
+                    }
+                }
+            }
+            .padding(18)
+            .frame(width: 290)
+            .presentationCompactAdaptation(.popover)
+        }
     }
 
     /// The least-confirmed received transaction still under the threshold.
-    private var currentConfirmations: Int? {
-        let incoming = wallet.transactions.filter { !$0.isSentTransaction && $0.isExpiredUmined != true }
-        let waiting = incoming.compactMap { tx -> Int? in
-            guard let n = wallet.confirmations(tx) else { return 0 }
-            return n < Self.needed ? n : nil
-        }
-        return waiting.min()
+    private var waiting: ZcashTransaction.Overview? {
+        wallet.transactions
+            .filter { !$0.isSentTransaction && $0.isExpiredUmined != true && (wallet.confirmations($0) ?? 0) < Self.needed }
+            .min { (wallet.confirmations($0) ?? 0) < (wallet.confirmations($1) ?? 0) }
     }
 
-    private func detail(_ n: Int?) -> String {
-        guard let n, n > 0 else { return "Waiting for its first block · about 13 min to spendable" }
+    private func timeLeft(_ n: Int) -> String {
+        if n == 0 { return "Waiting for its first block · about 13 min" }
         let minutes = max(1, ((Self.needed - n) * 75 + 59) / 60)
-        return "Spendable in about \(minutes) min · \(n) of \(Self.needed) confirmations"
+        return "\(n) of \(Self.needed) · spendable in about \(minutes) min"
+    }
+}
+
+/// An hourglass that drains and turns over, again and again.
+struct Hourglass: View {
+    private static let frames = ["hourglass.tophalf.filled", "hourglass", "hourglass.bottomhalf.filled"]
+
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 0.6)) { context in
+            let step = Int(context.date.timeIntervalSinceReferenceDate / 0.6) % 4
+            Image(systemName: Self.frames[min(step, 2)])
+                .resizable()
+                .scaledToFit()
+                .rotationEffect(.degrees(step == 3 ? 180 : 0))
+                .animation(.easeInOut(duration: 0.35), value: step)
+        }
     }
 }
 
@@ -173,15 +211,19 @@ struct BalanceCard: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.muted)
             HStack(alignment: .center, spacing: 10) {
-                Text(wallet.balance.zecAmount)
+                Text(wallet.showsAmounts ? wallet.balance.zecAmount : "••••••")
                     .font(.system(size: 40, weight: .bold, design: .rounded))
                     .minimumScaleFactor(0.5)
                     .lineLimit(1)
                     .contentTransition(.numericText())
                 ZecLogo().frame(width: 34, height: 34)
             }
+            if !wallet.showsAmounts {
+                Label("Connect your Flipper Zero to see your balance", systemImage: "eye.slash")
+                    .font(.footnote).foregroundStyle(Theme.muted)
+            }
             if wallet.pending.amount > 0 {
-                IncomingRow()
+                ConfirmingPill()
             }
         }
         .padding(22)
@@ -502,7 +544,7 @@ struct ActivityCard: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                Text((sent ? "−" : "+") + Zatoshi(abs(tx.value.amount)).zecString)
+                Text((sent ? "−" : "+") + (wallet.showsAmounts ? Zatoshi(abs(tx.value.amount)).zecString : "•••• ZEC"))
                     .font(.subheadline.weight(.semibold).monospacedDigit())
                 Label("ZScan", systemImage: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
             }

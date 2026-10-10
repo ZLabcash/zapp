@@ -12,6 +12,7 @@ struct SendView: View {
     @State private var memo = ""
     @State private var fee: Zatoshi?
     @State private var picking = false
+    @State private var scanning = false
     @State private var savingName = ""
     @State private var askingName = false
 
@@ -69,6 +70,28 @@ struct SendView: View {
             }
             .background(Theme.background.ignoresSafeArea())
             .navigationTitle("Send ZEC")
+            .sheet(isPresented: $scanning) {
+                NavigationStack {
+                    Group {
+                        if QRScanner.available {
+                            QRScanner { text in
+                                let request = PaymentRequest(text)
+                                address = request.address
+                                if let a = request.amount { amount = a }
+                                if let m = request.memo { memo = m }
+                                scanning = false
+                            }
+                            .ignoresSafeArea()
+                        } else {
+                            Text("The camera isn't available. Allow it for ZApp in Settings.")
+                                .multilineTextAlignment(.center).padding()
+                        }
+                    }
+                    .navigationTitle("Scan a Zcash QR code")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar { Button("Cancel") { scanning = false } }
+                }
+            }
             .sheet(isPresented: $picking) {
                 NavigationStack { ContactsView(pick: { address = $0.address }) }
             }
@@ -106,6 +129,10 @@ struct SendView: View {
                         TextField("u1… shielded address", text: $address)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
+                        Button { scanning = true } label: {
+                            Image(systemName: "qrcode.viewfinder").font(.title3)
+                        }
+                        .accessibilityLabel("Scan a QR code")
                         Button { picking = true } label: {
                             Image(systemName: "person.crop.circle").font(.title3)
                         }

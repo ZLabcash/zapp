@@ -60,6 +60,10 @@ final class WalletModel: ObservableObject {
     @Published private(set) var bluetoothDenied = false
     /// The Flipper accepted this connection's HELLO (it will take sign requests).
     var flipperReady: Bool { flipperState == .ready }
+    /// Amounts show only while the Flipper is connected: a glance at the phone
+    /// alone gives nothing away. (Privacy from onlookers, not security: the viewing
+    /// key is on the phone.)
+    var showsAmounts: Bool { flipperReady }
     /// INFO from a Flipper holding another wallet, kept to adopt it on request.
     private var otherWallet: (info: FlipperProtocol.Info, id: UUID)?
 
