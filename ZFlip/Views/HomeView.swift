@@ -20,7 +20,6 @@ struct HomeView: View {
                             .disabled(!canSend)
                             .opacity(canSend ? 1 : 0.45)
                     }
-                    DevicesCard()
                     ActivityCard()
                 }
                 .padding(.horizontal, 20)
@@ -106,7 +105,7 @@ struct SyncPill: View {
                 if !wallet.synced && wallet.scannedHeight > 0 {
                     LabeledContent("Scanned up to", value: wallet.scannedHeight.formatted())
                 }
-                LabeledContent("Server", value: "zec.rocks")
+                LabeledContent("Server", value: WalletModel.server)
             }
             .font(.subheadline)
             .padding(18)
@@ -175,7 +174,7 @@ struct ConfirmingPill: View {
                     .font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
                 if let tx, let url = WalletModel.zscanURL(tx) {
                     Link(destination: url) {
-                        Label("View on ZScan", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
+                        Label("View on the explorer", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
                     }
                 }
             }
@@ -272,7 +271,6 @@ struct DevicesCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Text("Devices").font(.headline)
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Flipper Zero").font(.subheadline.weight(.semibold))
@@ -579,7 +577,7 @@ struct ActivityCard: View {
             VStack(alignment: .trailing, spacing: 2) {
                 Text((sent ? "−" : "+") + (wallet.showsAmounts ? Zatoshi(abs(tx.value.amount)).zecString : "•••• ZEC"))
                     .font(.subheadline.weight(.semibold).monospacedDigit())
-                Label("ZScan", systemImage: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
+                Image(systemName: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
             }
         }
         .contentShape(Rectangle())

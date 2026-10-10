@@ -213,9 +213,9 @@ struct SendView: View {
                 Text("Sent").font(.largeTitle.bold())
                 Text(txid).font(.system(.caption, design: .monospaced)).foregroundStyle(Theme.muted)
                     .multilineTextAlignment(.center).textSelection(.enabled)
-                if let url = URL(string: "https://zscan.cash/tx/\(txid)") {
+                if let url = WalletModel.explorerURL(txid: txid) {
                     Link(destination: url) {
-                        Label("View on ZScan", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
+                        Label("View on the explorer", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
                     }
                 }
                 Button("Done") {

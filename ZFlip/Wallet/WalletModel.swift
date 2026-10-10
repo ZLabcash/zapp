@@ -315,9 +315,10 @@ final class WalletModel: ObservableObject {
     private func makeSynchronizer(network: ZcashNetwork) throws -> SDKSynchronizer {
         let base = try Self.dataDirectory(network.networkType)
         try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
-        let endpoint = network.networkType == .testnet
-            ? LightWalletEndpoint(address: "testnet.zec.rocks", port: 443)
-            : LightWalletEndpoint(address: "zec.rocks", port: 443)
+        let server = network.networkType == .testnet ? "testnet.zec.rocks:443" : Self.server
+        let parts = server.split(separator: ":")
+        let endpoint = LightWalletEndpoint(address: String(parts.first ?? "zec.rocks"),
+                                           port: parts.count > 1 ? Int(parts[1]) ?? 443 : 443)
         let initializer = Initializer(
             cacheDbURL: nil,
             fsBlockDbRoot: base.appendingPathComponent("fs_cache", isDirectory: true),
@@ -408,10 +409,46 @@ final class WalletModel: ObservableObject {
         return tipHeight - mined + 1
     }
 
-    /// The transaction on ZScan (txids are shown byte-reversed).
+    // MARK: Server and explorer
+
+    /// Mainnet lightwalletd servers to choose from ("host:port").
+    static let servers = ["zec.rocks:443", "na.zec.rocks:443", "eu.zec.rocks:443", "ap.zec.rocks:443", "sa.zec.rocks:443"]
+    static var server: String {
+        UserDefaults.standard.string(forKey: "zapp.server") ?? servers[0]
+    }
+
+    /// Restarts the sync on another server (the wallet's data stays).
+    func switchServer(to server: String) async {
+        let clean = server.trimmingCharacters(in: .whitespaces)
+        guard !clean.isEmpty, clean != Self.server else { return }
+        UserDefaults.standard.set(clean.contains(":") ? clean : clean + ":443", forKey: "zapp.server")
+        synchronizer?.stop()
+        synchronizer = nil
+        accountUUID = nil
+        syncCancellables.removeAll()
+        synced = false
+        syncError = nil
+        await resume()
+    }
+
+    /// Transaction pages: "{txid}" is replaced by the transaction id.
+    static let explorers: [(name: String, template: String)] = [
+        ("ZScan", "https://zscan.cash/tx/{txid}"),
+        ("Blockchair", "https://blockchair.com/zcash/transaction/{txid}"),
+        ("3xpl", "https://3xpl.com/zcash/transaction/{txid}"),
+    ]
+    static var explorer: String {
+        UserDefaults.standard.string(forKey: "zapp.explorer") ?? explorers[0].template
+    }
+
+    /// The transaction on the chosen explorer (txids are shown byte-reversed).
+    static func explorerURL(txid: String) -> URL? {
+        let template = explorer.contains("{txid}") ? explorer : explorer + "{txid}"
+        return URL(string: template.replacingOccurrences(of: "{txid}", with: txid))
+    }
+
     static func zscanURL(_ tx: ZcashTransaction.Overview) -> URL? {
-        let hex = tx.rawID.reversed().map { String(format: "%02x", $0) }.joined()
-        return URL(string: "https://zscan.cash/tx/\(hex)")
+        explorerURL(txid: tx.rawID.reversed().map { String(format: "%02x", $0) }.joined())
     }
 
     // MARK: Sending
