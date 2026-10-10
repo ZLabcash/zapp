@@ -461,8 +461,24 @@ final class WalletModel: ObservableObject {
                 }
             }
         } catch {
-            sendStep = .failed(error.localizedDescription)
+            sendStep = .failed(Self.explain(error, zatoshi: zatoshi))
         }
+    }
+
+    /// ZIP 317: 5,000 zatoshis per logical action, at least two. A simple shielded
+    /// payment pays this.
+    static let minimumFee = Zatoshi(10_000)
+
+    /// What went wrong, in words (the SDK's errors carry the Rust message inside).
+    private static func explain(_ error: Error, zatoshi: Int64) -> String {
+        if case ZcashError.rustCreateToAddress(let detail) = error {
+            print("[zapp] propose failed: \(detail)")
+            if detail.localizedCaseInsensitiveContains("insufficient") {
+                return "Not enough spendable ZEC. Sending \(Zatoshi(zatoshi).zecString) also costs a network fee of at least \(minimumFee.zecString), and received funds become spendable after 10 confirmations."
+            }
+            return "Could not prepare the transaction: \(detail)"
+        }
+        return error.localizedDescription
     }
 
     func proposalFee(to address: String, zatoshi: Int64) async -> Zatoshi? {

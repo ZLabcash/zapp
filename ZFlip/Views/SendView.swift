@@ -18,9 +18,18 @@ struct SendView: View {
         return z > 0 ? z : nil
     }
 
+    /// The fee shown once estimated, the ZIP 317 minimum until then.
+    private var feeOrMinimum: Int64 { (fee ?? WalletModel.minimumFee).amount }
+
+    /// The amount plus its fee fits in what is spendable now.
+    private var covered: Bool {
+        guard let zatoshi else { return true }
+        return zatoshi + feeOrMinimum <= wallet.balance.amount
+    }
+
     private var valid: Bool {
-        guard let zatoshi else { return false }
-        return wallet.validate(address: address) && zatoshi <= wallet.balance.amount
+        guard zatoshi != nil else { return false }
+        return wallet.validate(address: address) && covered
     }
 
     var body: some View {
@@ -53,7 +62,27 @@ struct SendView: View {
                     Text("Not a valid Zcash address for this network.").font(.footnote).foregroundStyle(.orange)
                 }
                 field("Amount (ZEC)", text: $amount, prompt: "0.1", keyboard: .decimalPad)
-                Text("Available: \(wallet.balance.zecString)").font(.footnote).foregroundStyle(Theme.muted)
+                HStack {
+                    Text("Spendable: \(wallet.balance.zecString)").font(.footnote).foregroundStyle(Theme.muted)
+                    Spacer()
+                    if wallet.balance.amount > feeOrMinimum {
+                        Button("Max") {
+                            let max = Decimal(wallet.balance.amount - feeOrMinimum) / 100_000_000
+                            amount = "\(max)"
+                        }
+                        .font(.footnote.weight(.semibold))
+                    }
+                }
+                if wallet.pending.amount > 0 {
+                    Text("\(wallet.pending.zecString) still confirming: spendable after 10 confirmations.")
+                        .font(.footnote).foregroundStyle(Theme.muted)
+                }
+                if !covered {
+                    Text(wallet.balance.amount <= feeOrMinimum
+                         ? "Your spendable balance doesn't cover the network fee (at least \(WalletModel.minimumFee.zecString))."
+                         : "The amount plus the network fee (\(Zatoshi(feeOrMinimum).zecString)) is more than you can spend.")
+                        .font(.footnote).foregroundStyle(.orange)
+                }
                 field("Memo (optional)", text: $memo, prompt: "Private message")
                 if let fee {
                     Text("Network fee: \(fee.zecString)").font(.footnote).foregroundStyle(Theme.muted)
