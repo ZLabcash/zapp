@@ -42,6 +42,10 @@ struct ContactsView: View {
             .onDelete { offsets in book.delete(offsets.map { book.contacts[$0].id }) }
         }
         .navigationTitle("Address book")
+        .navigationBarTitleDisplayMode(.inline)
+        .scrollContentBackground(.hidden)
+        .background(Theme.background.ignoresSafeArea())
+        .backArrow()
         .toolbar {
             Button { adding = true } label: { Image(systemName: "plus") }
         }

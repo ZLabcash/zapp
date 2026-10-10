@@ -61,7 +61,7 @@ struct SendView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        Group {
             Group {
                 switch wallet.sendStep {
                 case .idle: form
@@ -74,14 +74,13 @@ struct SendView: View {
                 NavigationStack {
                     Group {
                         if QRScanner.available {
-                            QRScanner { text in
+                            ScannerScreen { text in
                                 let request = PaymentRequest(text)
                                 address = request.address
                                 if let a = request.amount { amount = a }
                                 if let m = request.memo { memo = m }
                                 scanning = false
                             }
-                            .ignoresSafeArea()
                         } else {
                             Text("The camera isn't available. Allow it for ZApp in Settings.")
                                 .multilineTextAlignment(.center).padding()
@@ -104,14 +103,7 @@ struct SendView: View {
                 Button("Cancel", role: .cancel) {}
             }
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") {
-                        wallet.sendStep = .idle
-                        dismiss()
-                    }
-                }
-            }
+            .backArrow { wallet.sendStep = .idle }
         }
     }
 
@@ -263,55 +255,6 @@ struct SendView: View {
             return "Signed by your Flipper. Sending it to the Zcash network."
         default:
             return "Building a shielded transaction and its zero-knowledge proof."
-        }
-    }
-}
-
-struct SettingsView: View {
-    @EnvironmentObject var wallet: WalletModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var confirmForget = false
-    @AppStorage("appearance") private var appearance = 0
-
-    var body: some View {
-        NavigationStack {
-            List {
-                Section("Appearance") {
-                    Picker("Theme", selection: $appearance) {
-                        Text("System").tag(0)
-                        Text("Light").tag(1)
-                        Text("Dark").tag(2)
-                    }
-                    .pickerStyle(.segmented)
-                }
-                Section {
-                    NavigationLink {
-                        ContactsView()
-                    } label: {
-                        Label("Address book", systemImage: "person.2")
-                    }
-                }
-                Section("Flipper") {
-                    LabeledContent("Name", value: wallet.pairing?.flipperName ?? "-")
-                    LabeledContent("Network", value: wallet.pairing?.network == 1 ? "Testnet" : "Mainnet")
-                    LabeledContent("Scanning from block", value: "\(wallet.pairing?.birthday ?? 0)")
-                }
-                Section {
-                    Button("Forget this wallet", role: .destructive) { confirmForget = true }
-                } footer: {
-                    Text("Removes the watch-only wallet from this iPhone. Your funds stay safe: the keys are on the Flipper.")
-                }
-            }
-            .navigationTitle("Settings")
-            .toolbar { Button("Done") { dismiss() } }
-            .confirmationDialog("Forget this wallet?", isPresented: $confirmForget, titleVisibility: .visible) {
-                Button("Forget", role: .destructive) {
-                    Task {
-                        await wallet.forget()
-                        dismiss()
-                    }
-                }
-            }
         }
     }
 }

@@ -5,6 +5,7 @@ struct ZFlipApp: App {
     @StateObject private var link: FlipperLink
     @StateObject private var wallet: WalletModel
     @StateObject private var contacts = ContactBook()
+    @StateObject private var prices = PriceService()
     /// 0 = follow the system, 1 = light, 2 = dark.
     @AppStorage("appearance") private var appearance = 0
 
@@ -26,6 +27,7 @@ struct ZFlipApp: App {
             .environmentObject(link)
             .environmentObject(wallet)
             .environmentObject(contacts)
+            .environmentObject(prices)
             .preferredColorScheme(appearance == 1 ? .light : appearance == 2 ? .dark : nil)
             .tint(Theme.zcash)
             .background(Theme.background.ignoresSafeArea())

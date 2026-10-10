@@ -141,3 +141,36 @@ extension View {
             .clipShape(RoundedRectangle(cornerRadius: 18))
     }
 }
+
+/// A plain back arrow at the far left instead of the system "< Back" or Close.
+private struct BackArrow: ViewModifier {
+    @Environment(\.dismiss) private var dismiss
+    let before: () -> Void
+
+    func body(content: Content) -> some View {
+        content
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        before()
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundStyle(Theme.ink)
+                            .frame(width: 36, height: 36)
+                            .background(Theme.card)
+                            .clipShape(Circle())
+                    }
+                    .accessibilityLabel("Back")
+                }
+            }
+    }
+}
+
+extension View {
+    func backArrow(before: @escaping () -> Void = {}) -> some View {
+        modifier(BackArrow(before: before))
+    }
+}

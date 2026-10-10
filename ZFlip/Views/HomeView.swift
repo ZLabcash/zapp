@@ -3,6 +3,7 @@ import ZcashLightClientKit
 
 struct HomeView: View {
     @EnvironmentObject var wallet: WalletModel
+    @EnvironmentObject var prices: PriceService
     @State private var showReceive = false
     @State private var showSend = false
     @State private var showSettings = false
@@ -27,9 +28,16 @@ struct HomeView: View {
             }
             .background(Theme.background.ignoresSafeArea())
             .toolbar(.hidden, for: .navigationBar)
+            .task {
+                // The ZEC price, for the balance in the user's currency.
+                while !Task.isCancelled {
+                    await prices.refreshIfStale()
+                    try? await Task.sleep(nanoseconds: 300_000_000_000)
+                }
+            }
             .sheet(isPresented: $showReceive) { ReceiveView() }
-            .sheet(isPresented: $showSend) { SendView() }
-            .sheet(isPresented: $showSettings) { SettingsView() }
+            .navigationDestination(isPresented: $showSend) { SendView() }
+            .navigationDestination(isPresented: $showSettings) { SettingsView() }
         }
     }
 
@@ -209,19 +217,36 @@ struct Hourglass: View {
 
 struct BalanceCard: View {
     @EnvironmentObject var wallet: WalletModel
+    @EnvironmentObject var prices: PriceService
+    @AppStorage("currency") private var currency = "usd"
+    /// Tapping the balance shows (or hides) its value in the chosen currency.
+    @AppStorage("showFiat") private var showFiat = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Shielded balance", systemImage: "lock.shield.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.muted)
-            HStack(alignment: .center, spacing: 10) {
-                Text(wallet.showsAmounts ? wallet.balance.zecAmount : "••••••")
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .minimumScaleFactor(0.5)
-                    .lineLimit(1)
-                    .contentTransition(.numericText())
-                ZecLogo().frame(width: 34, height: 34)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .center, spacing: 10) {
+                    Text(wallet.showsAmounts ? wallet.balance.zecAmount : "••••••")
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                        .contentTransition(.numericText())
+                    ZecLogo().frame(width: 34, height: 34)
+                }
+                if wallet.showsAmounts && showFiat {
+                    Text(prices.format(zatoshi: wallet.balance.amount, in: currency).map { "≈ \($0)" } ?? "Price unavailable")
+                        .font(.title3.weight(.semibold)).monospacedDigit()
+                        .foregroundStyle(Theme.muted)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                guard wallet.showsAmounts else { return }
+                withAnimation(.snappy) { showFiat.toggle() }
             }
             if wallet.showsAmounts && wallet.pending.amount > 0 {
                 ConfirmingPill()
