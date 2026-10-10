@@ -17,6 +17,13 @@ struct SettingsView: View {
                     header("Devices")
                     DevicesCard()
                 }
+                section("Appearance") {
+                    HStack(spacing: 8) {
+                        chip("System", icon: "circle.lefthalf.filled", tag: 0)
+                        chip("Light", icon: "sun.max.fill", tag: 1)
+                        chip("Dark", icon: "moon.fill", tag: 2)
+                    }
+                }
                 section("Wallet") {
                     NavigationLink { ContactsView() } label: {
                         SettingsRow(icon: "person.2.fill", title: "Address book",
@@ -48,13 +55,6 @@ struct SettingsView: View {
                                     chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
-                }
-                section("Appearance") {
-                    HStack(spacing: 8) {
-                        chip("System", icon: "circle.lefthalf.filled", tag: 0)
-                        chip("Light", icon: "sun.max.fill", tag: 1)
-                        chip("Dark", icon: "moon.fill", tag: 2)
-                    }
                 }
                 section("About") {
                     NavigationLink { ReleaseNotesView() } label: {
