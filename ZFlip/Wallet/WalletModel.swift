@@ -47,9 +47,17 @@ final class WalletModel: ObservableObject {
     @Published private(set) var syncProgress: Float = 0
     @Published private(set) var synced = false
     @Published private(set) var syncError: String?
+    /// The chain tip, and the height scanned contiguously from the birthday.
+    @Published private(set) var tipHeight = 0
+    @Published private(set) var scannedHeight = 0
+    /// This wallet's transactions, newest first.
+    @Published private(set) var transactions: [ZcashTransaction.Overview] = []
+    private var lastTransactionsRefresh = Date.distantPast
     @Published private(set) var address: String?
     @Published var sendStep = SendStep.idle
     @Published private(set) var flipperState = FlipperState.idle
+    /// Bluetooth permission refused: only Settings can grant it now.
+    @Published private(set) var bluetoothDenied = false
     /// The Flipper accepted this connection's HELLO (it will take sign requests).
     var flipperReady: Bool { flipperState == .ready }
     /// INFO from a Flipper holding another wallet, kept to adopt it on request.
@@ -63,6 +71,15 @@ final class WalletModel: ObservableObject {
     private var syncCancellables = Set<AnyCancellable>()
 
     private static let pairingKey = "zflip.pairing"
+    /// 2026-10-01: no ZFlip wallet is older. A Flipper whose clock was never set
+    /// stamps its wallet years in the past, which would mean scanning the whole chain.
+    private static let zflipEpoch = Date(timeIntervalSince1970: 1_790_812_800)
+    /// NU5 (June 2022): the Orchard pool, the oldest a ZFlip wallet can hold funds in.
+    private static let nu5Date = Date(timeIntervalSince1970: 1_654_041_600)
+
+    private static func nu5Height(_ network: NetworkType) -> Int {
+        network == .testnet ? 1_842_420 : 1_687_104
+    }
 
     init(link: FlipperLink) {
         self.link = link
@@ -115,19 +132,20 @@ final class WalletModel: ObservableObject {
             throw FlipperError.rejected("This Flipper holds another wallet.")
         }
         flipperState = .ready
-        if pairing != nil { remember(index: info.addressIndex) }
+        if pairing != nil {
+            remember(index: info.addressIndex)
+            await repairBirthday(info)
+        }
         return info
     }
 
     /// Creates the watch-only wallet for a Flipper. `restoredFrom` is the date to
     /// scan from when the Flipper's seed was restored rather than created on it.
     func createWallet(info: FlipperProtocol.Info, flipperID: UUID, restoredFrom: Date?) async throws {
+        await tearDown()
         let network = ZcashNetworkBuilder.network(for: info.network == 1 ? .testnet : .mainnet)
-        let created = info.createdAt > 0 ? Date(timeIntervalSince1970: TimeInterval(info.createdAt)) : nil
-        let since = created ?? restoredFrom ?? Date(timeIntervalSince1970: 1_654_041_600) // NU5, June 2022
         let synchronizer = try makeSynchronizer(network: network)
-        // A day of margin: the Flipper's clock may be off.
-        let birthday = synchronizer.estimateBirthdayHeight(for: since.addingTimeInterval(-86_400))
+        let birthday = Self.birthday(for: info, restoredFrom: restoredFrom, synchronizer: synchronizer)
         let pairing = Pairing(
             flipperID: flipperID,
             flipperName: info.deviceName,
@@ -144,11 +162,66 @@ final class WalletModel: ObservableObject {
         flipperState = .ready
     }
 
+    /// Where to start scanning: the wallet's creation day (less a day of margin),
+    /// never before ZFlip existed for a wallet made on a Flipper, never before NU5.
+    private static func birthday(for info: FlipperProtocol.Info, restoredFrom: Date?, synchronizer: SDKSynchronizer) -> Int {
+        let since: Date
+        if info.createdAt > 0 {
+            since = max(Date(timeIntervalSince1970: TimeInterval(info.createdAt)), zflipEpoch)
+        } else {
+            since = max(restoredFrom ?? nu5Date, nu5Date)
+        }
+        let estimate = synchronizer.estimateBirthdayHeight(for: since.addingTimeInterval(-86_400))
+        return max(estimate, nu5Height(info.network == 1 ? .testnet : .mainnet))
+    }
+
+    /// Stops and erases the current watch-only wallet (the keys stay on the Flipper).
+    private func tearDown() async {
+        synchronizer?.stop()
+        if let synchronizer {
+            _ = try? await synchronizer.wipe().values.first(where: { _ in true })
+        }
+        synchronizer = nil
+        accountUUID = nil
+        syncCancellables.removeAll()
+        address = nil
+        balance = .zero
+        pending = .zero
+        transactions = []
+        tipHeight = 0
+        scannedHeight = 0
+        synced = false
+        syncProgress = 0
+    }
+
+    /// A wallet paired with a wrong birthday (a Flipper clock that was never set):
+    /// rebuilt from the right one, which this Flipper's INFO gives.
+    private func repairBirthday(_ info: FlipperProtocol.Info) async {
+        guard let pairing, let synchronizer, info.createdAt > 0 else { return }
+        let expected = Self.birthday(for: info, restoredFrom: nil, synchronizer: synchronizer)
+        guard pairing.birthday + 1_000 < expected else { return }
+        print("[zapp] birthday \(pairing.birthday) -> \(expected): rebuilding the wallet")
+        try? await createWallet(info: info, flipperID: pairing.flipperID, restoredFrom: nil)
+    }
+
     /// Opens the saved wallet at launch.
     func resume() async {
-        guard let pairing, synchronizer == nil else { return }
+        guard var pairing, synchronizer == nil else { return }
         do {
             let network = ZcashNetworkBuilder.network(for: networkType)
+            // Pairings made before the birthday fix, from a Flipper whose clock was never
+            // set, start before NU5 (or exactly at it, from a first repair). No such wallet
+            // predates ZFlip: start from ZFlip's first day instead, on a fresh database.
+            if pairing.birthday <= Self.nu5Height(networkType) {
+                try? FileManager.default.removeItem(at: try Self.dataDirectory(networkType))
+                let synchronizer = try makeSynchronizer(network: network)
+                pairing.birthday = synchronizer.estimateBirthdayHeight(for: Self.zflipEpoch.addingTimeInterval(-86_400))
+                self.pairing = pairing
+                UserDefaults.standard.set(try JSONEncoder().encode(pairing), forKey: Self.pairingKey)
+                print("[zapp] birthday reset to \(pairing.birthday)")
+                try await open(pairing, synchronizer: synchronizer, importing: true)
+                return
+            }
             try await open(pairing, synchronizer: try makeSynchronizer(network: network), importing: false)
         } catch {
             syncError = error.localizedDescription
@@ -162,6 +235,7 @@ final class WalletModel: ObservableObject {
         guard let pairing, !flipperReady else { return }
         if case .connecting = link.state { return }
         flipperState = .connecting
+        bluetoothDenied = false
         do {
             if !link.isConnected {
                 try await link.connect(pairing.flipperID, timeout: 20)
@@ -169,6 +243,9 @@ final class WalletModel: ObservableObject {
             _ = try await requestInfo()
         } catch FlipperError.timeout {
             flipperState = .failed("Flipper not found. Open ZFlip on it and unlock it.")
+        } catch FlipperError.bluetoothDenied {
+            bluetoothDenied = true
+            flipperState = .failed(FlipperError.bluetoothDenied.localizedDescription)
         } catch {
             if case .otherWallet = flipperState { return }
             flipperState = .failed(error.localizedDescription)
@@ -184,15 +261,6 @@ final class WalletModel: ObservableObject {
     func adoptFlipperWallet() async {
         guard let (info, id) = otherWallet else { return }
         otherWallet = nil
-        synchronizer?.stop()
-        if let synchronizer {
-            _ = try? await synchronizer.wipe().values.first(where: { _ in true })
-        }
-        synchronizer = nil
-        accountUUID = nil
-        syncCancellables.removeAll()
-        address = nil
-        balance = .zero
         do {
             try await createWallet(info: info, flipperID: id, restoredFrom: nil)
             flipperState = .ready
@@ -225,13 +293,7 @@ final class WalletModel: ObservableObject {
     }
 
     func forget() async {
-        synchronizer?.stop()
-        if let synchronizer {
-            _ = try? await synchronizer.wipe().values.first(where: { _ in true })
-        }
-        synchronizer = nil
-        accountUUID = nil
-        syncCancellables.removeAll()
+        await tearDown()
         flipperState = .idle
         UserDefaults.standard.removeObject(forKey: Self.pairingKey)
         pairing = nil
@@ -240,10 +302,14 @@ final class WalletModel: ObservableObject {
         link.disconnect()
     }
 
-    private func makeSynchronizer(network: ZcashNetwork) throws -> SDKSynchronizer {
-        let base = try FileManager.default
+    private static func dataDirectory(_ network: NetworkType) throws -> URL {
+        try FileManager.default
             .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            .appendingPathComponent("ZFlip-\(network.networkType == .testnet ? "test" : "main")", isDirectory: true)
+            .appendingPathComponent("ZFlip-\(network == .testnet ? "test" : "main")", isDirectory: true)
+    }
+
+    private func makeSynchronizer(network: ZcashNetwork) throws -> SDKSynchronizer {
+        let base = try Self.dataDirectory(network.networkType)
         try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
         let endpoint = network.networkType == .testnet
             ? LightWalletEndpoint(address: "testnet.zec.rocks", port: 443)
@@ -259,6 +325,7 @@ final class WalletModel: ObservableObject {
             spendParamsURL: base.appendingPathComponent("sapling-spend.params"),
             outputParamsURL: base.appendingPathComponent("sapling-output.params"),
             saplingParamsSourceURL: .default,
+            loggingPolicy: .custom(ConsoleLogger()),
             isTorEnabled: false,
             isExchangeRateEnabled: false
         )
@@ -297,6 +364,9 @@ final class WalletModel: ObservableObject {
     }
 
     private func update(_ state: SynchronizerState) {
+        if state.latestBlockHeight > 0 { tipHeight = state.latestBlockHeight }
+        if state.fullyScannedHeight > 0 { scannedHeight = state.fullyScannedHeight }
+        refreshTransactions(force: false)
         if let id = accountUUID, let b = state.accountsBalances[id] {
             balance = b.ironwoodBalance.spendableValue + b.orchardBalance.spendableValue
             let total = b.ironwoodBalance.total() + b.orchardBalance.total()
@@ -316,6 +386,28 @@ final class WalletModel: ObservableObject {
         default:
             break
         }
+    }
+
+    /// At most every 3 seconds while syncing; at once when asked.
+    func refreshTransactions(force: Bool) {
+        guard let synchronizer, force || Date().timeIntervalSince(lastTransactionsRefresh) > 3 else { return }
+        lastTransactionsRefresh = Date()
+        Task {
+            let all = await synchronizer.transactions
+            self.transactions = all.sorted { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }
+        }
+    }
+
+    /// Confirmations of a mined transaction (nil while in the mempool).
+    func confirmations(_ tx: ZcashTransaction.Overview) -> Int? {
+        guard let mined = tx.minedHeight, tipHeight >= mined else { return nil }
+        return tipHeight - mined + 1
+    }
+
+    /// The transaction on ZScan (txids are shown byte-reversed).
+    static func zscanURL(_ tx: ZcashTransaction.Overview) -> URL? {
+        let hex = tx.rawID.reversed().map { String(format: "%02x", $0) }.joined()
+        return URL(string: "https://zscan.cash/tx/\(hex)")
     }
 
     // MARK: Sending
@@ -385,6 +477,11 @@ final class WalletModel: ObservableObject {
 }
 
 extension Zatoshi {
+    /// The amount alone ("1.2345"), for next to the ZEC symbol.
+    var zecAmount: String {
+        String(zecString.dropLast(4))
+    }
+
     /// "1.2345 ZEC" style, trimming trailing zeros.
     var zecString: String {
         let formatter = NumberFormatter()
@@ -395,4 +492,16 @@ extension Zatoshi {
         formatter.usesGroupingSeparator = false
         return (formatter.string(from: NSNumber(value: Double(amount) / 1e8)) ?? "0") + " ZEC"
     }
+}
+
+/// The SDK's log on stdout (seen with `devicectl ... --console`), info and up.
+struct ConsoleLogger: ZcashLightClientKit.Logger {
+    func maxLogLevel() -> OSLogger.LogLevel? { .info }
+    private func out(_ level: String, _ message: String) { print("[zcash \(level)] \(message)") }
+    func debug(_ message: String, file: StaticString, function: StaticString, line: Int) {}
+    func info(_ message: String, file: StaticString, function: StaticString, line: Int) { out("info", message) }
+    func event(_ message: String, file: StaticString, function: StaticString, line: Int) { out("event", message) }
+    func warn(_ message: String, file: StaticString, function: StaticString, line: Int) { out("warn", message) }
+    func error(_ message: String, file: StaticString, function: StaticString, line: Int) { out("error", message) }
+    func sync(_ message: String, file: StaticString, function: StaticString, line: Int) { out("sync", message) }
 }

@@ -103,6 +103,11 @@ struct SendView: View {
                 Text("Sent").font(.largeTitle.bold())
                 Text(txid).font(.system(.caption, design: .monospaced)).foregroundStyle(Theme.muted)
                     .multilineTextAlignment(.center).textSelection(.enabled)
+                if let url = URL(string: "https://zscan.cash/tx/\(txid)") {
+                    Link(destination: url) {
+                        Label("View on ZScan", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
+                    }
+                }
                 Button("Done") {
                     wallet.sendStep = .idle
                     dismiss()

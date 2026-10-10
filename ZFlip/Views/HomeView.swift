@@ -13,13 +13,14 @@ struct HomeView: View {
                 VStack(spacing: 18) {
                     header
                     BalanceCard()
-                    FlipperCard()
                     HStack(spacing: 12) {
                         ActionTile(title: "Receive", icon: "arrow.down") { showReceive = true }
                         ActionTile(title: "Send", icon: "arrow.up") { showSend = true }
                             .disabled(!wallet.synced || wallet.balance.amount == 0)
                             .opacity(!wallet.synced || wallet.balance.amount == 0 ? 0.45 : 1)
                     }
+                    DevicesCard()
+                    ActivityCard()
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 30)
@@ -57,23 +58,32 @@ struct BalanceCard: View {
             Label("Shielded balance", systemImage: "lock.shield.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(Theme.muted)
-            Text(wallet.balance.zecString)
-                .font(.system(size: 40, weight: .bold, design: .rounded))
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
-                .contentTransition(.numericText())
+            HStack(alignment: .center, spacing: 10) {
+                Text(wallet.balance.zecAmount)
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
+                    .contentTransition(.numericText())
+                ZecLogo().frame(width: 34, height: 34)
+            }
             if wallet.pending.amount > 0 {
-                Text("+ \(wallet.pending.zecString) confirming").font(.footnote).foregroundStyle(Theme.zcash)
+                Text("+ \(wallet.pending.zecString) confirming · spendable after 10 confirmations (about 12 min)")
+                    .font(.footnote).foregroundStyle(Theme.zcash)
             }
             if let error = wallet.syncError {
                 Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange)
             } else if wallet.synced {
-                Label("Up to date", systemImage: "checkmark.circle.fill").font(.footnote).foregroundStyle(Theme.scan)
+                Label("Up to date · block \(wallet.tipHeight.formatted())", systemImage: "checkmark.circle.fill")
+                    .font(.footnote).foregroundStyle(Theme.scan)
             } else {
                 VStack(alignment: .leading, spacing: 6) {
                     ProgressView(value: wallet.syncProgress).tint(Theme.zcash)
                     Text("Syncing with the Zcash network · \(Int(wallet.syncProgress * 100))%")
                         .font(.footnote).foregroundStyle(Theme.muted)
+                    if wallet.tipHeight > 0 {
+                        Text("Chain at block \(wallet.tipHeight.formatted())")
+                            .font(.caption2).foregroundStyle(Theme.muted)
+                    }
                 }
             }
         }
@@ -87,22 +97,40 @@ struct BalanceCard: View {
     }
 }
 
-/// The paired Flipper: what it is doing and the one action that makes sense now.
-struct FlipperCard: View {
+/// The signing devices, each with its name over its picture and a Connect button:
+/// the Flipper Zero over Bluetooth, and soon a Kindle over local Wi-Fi.
+struct DevicesCard: View {
     @EnvironmentObject var wallet: WalletModel
+    @Environment(\.openURL) private var openURL
     @State private var pulse = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(spacing: 14) {
-                FlipperGlyph(color: tint, pulsing: pulsing && pulse)
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title).font(.headline)
-                    Text(subtitle).font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
+        VStack(alignment: .leading, spacing: 18) {
+            Text("Devices").font(.headline)
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Flipper Zero").font(.subheadline.weight(.semibold))
+                    FlipperZeroIcon(light: light, pulsing: pulsing && pulse).frame(width: 120)
                 }
-                Spacer(minLength: 0)
+                Spacer()
+                flipperButton
             }
-            actions
+            if let note {
+                Text(note).font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
+            }
+            extraActions
+            Divider()
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Kindle").font(.subheadline.weight(.semibold))
+                    KindleIcon().frame(width: 38, height: 50)
+                }
+                Spacer()
+                ConnectPill(title: "Connect", glyph: AnyView(Image(systemName: "wifi").font(.subheadline.weight(.bold))),
+                            style: .disabled) {}
+                    .disabled(true)
+            }
+            .opacity(0.45)
         }
         .padding(20)
         .background(Theme.card)
@@ -112,8 +140,6 @@ struct FlipperCard: View {
         }
     }
 
-    private var name: String { wallet.pairing?.flipperName ?? "your Flipper" }
-
     private var pulsing: Bool {
         switch wallet.flipperState {
         case .connecting, .approve: return true
@@ -121,96 +147,278 @@ struct FlipperCard: View {
         }
     }
 
-    private var tint: Color {
+    private var light: Color {
         switch wallet.flipperState {
         case .ready: return Theme.scan
-        case .approve: return Theme.zcash
+        case .approve, .connecting: return Theme.zcash
         case .otherWallet: return .orange
         case .failed: return .red
-        default: return Theme.muted
+        case .idle: return Color.gray
         }
     }
 
-    private var title: String {
+    /// One line, only when there is something to do or know.
+    private var note: String? {
         switch wallet.flipperState {
-        case .idle: return "Flipper not connected"
-        case .connecting: return "Connecting to \(name)…"
-        case .approve: return "Press OK on your Flipper"
-        case .ready: return "\(name) connected"
-        case .otherWallet: return "Another wallet on this Flipper"
-        case .failed: return "Could not connect"
-        }
-    }
-
-    private var subtitle: String {
-        switch wallet.flipperState {
-        case .idle: return "Open ZFlip on the Flipper and unlock it, then connect. It signs everything you send."
-        case .connecting: return "Keep ZFlip open on the Flipper, close to this iPhone."
-        case .approve: return "The Flipper asks to share this wallet's viewing key. It can see, never spend."
-        case .ready: return "Ready to sign. Your keys never leave the Flipper."
-        case .otherWallet(let flipper):
-            return "\(flipper) holds a different wallet than the one on this iPhone. Use it instead?"
+        case .idle, .ready: return nil
+        case .connecting: return "Open ZFlip on the Flipper and unlock it, close to this phone."
+        case .approve: return "Press OK on your Flipper to share the viewing key (it can see, never spend)."
+        case .otherWallet(let flipper): return "\(flipper) holds a different wallet than this phone."
         case .failed(let message): return message
         }
     }
 
-    @ViewBuilder private var actions: some View {
+    @ViewBuilder private var flipperButton: some View {
         switch wallet.flipperState {
-        case .idle, .failed:
-            Button { Task { await wallet.connectFlipper() } } label: {
-                Label(wallet.flipperState == .idle ? "Connect to Flipper" : "Try again",
-                      systemImage: "dot.radiowaves.left.and.right").primaryButton()
+        case .idle, .failed, .otherWallet:
+            ConnectPill(title: "Connect", glyph: AnyView(BluetoothGlyph().frame(width: 10, height: 16)), style: .primary) {
+                Task { await wallet.connectFlipper() }
             }
         case .connecting, .approve:
-            Button { wallet.disconnectFlipper() } label: {
-                Text("Cancel").font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity).padding(.vertical, 12)
-                    .background(Color.primary.opacity(0.08)).clipShape(RoundedRectangle(cornerRadius: 14))
+            ConnectPill(title: "Cancel", glyph: AnyView(ProgressView().controlSize(.small)), style: .plain) {
+                wallet.disconnectFlipper()
             }
-            .buttonStyle(.plain)
         case .ready:
-            Button { wallet.disconnectFlipper() } label: {
-                Text("Disconnect").font(.subheadline.weight(.semibold)).foregroundStyle(Theme.muted)
+            ConnectPill(title: "Connected", glyph: AnyView(BluetoothGlyph().frame(width: 10, height: 16)), style: .connected) {
+                wallet.disconnectFlipper()
             }
-            .buttonStyle(.plain)
-        case .otherWallet:
-            VStack(spacing: 10) {
-                Button { Task { await wallet.adoptFlipperWallet() } } label: {
-                    Label("Use this Flipper's wallet", systemImage: "arrow.triangle.2.circlepath").primaryButton()
-                }
-                Button { wallet.disconnectFlipper() } label: {
-                    Text("Keep the current one").font(.subheadline).foregroundStyle(Theme.muted)
-                }
-                .buttonStyle(.plain)
+        }
+    }
+
+    @ViewBuilder private var extraActions: some View {
+        if wallet.bluetoothDenied {
+            Button("Open Settings") {
+                if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
+            }
+            .font(.subheadline.weight(.semibold))
+        }
+        if case .otherWallet = wallet.flipperState {
+            Button { Task { await wallet.adoptFlipperWallet() } } label: {
+                Label("Use this Flipper's wallet", systemImage: "arrow.triangle.2.circlepath").primaryButton()
             }
         }
     }
 }
 
-/// A small Flipper Zero: an orange screen with the ZScan shield, and a status light.
-struct FlipperGlyph: View {
-    let color: Color
+/// The Connect button: a capsule with the link's symbol.
+struct ConnectPill: View {
+    enum Style { case primary, connected, plain, disabled }
+    let title: String
+    let glyph: AnyView
+    let style: Style
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                glyph
+                Text(title).font(.subheadline.weight(.bold))
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 11)
+            .foregroundStyle(foreground)
+            .background(background)
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var foreground: Color {
+        switch style {
+        case .primary, .connected: return .black
+        case .plain, .disabled: return .primary
+        }
+    }
+
+    private var background: Color {
+        switch style {
+        case .primary: return Theme.zcash
+        case .connected: return Theme.scan
+        case .plain, .disabled: return Color.primary.opacity(0.1)
+        }
+    }
+}
+
+/// The Bluetooth rune (SF Symbols has none).
+struct BluetoothGlyph: View {
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width, h = geo.size.height
+            Path { p in
+                p.move(to: CGPoint(x: 0, y: h * 0.27))
+                p.addLine(to: CGPoint(x: w, y: h * 0.73))
+                p.addLine(to: CGPoint(x: w * 0.5, y: h))
+                p.addLine(to: CGPoint(x: w * 0.5, y: 0))
+                p.addLine(to: CGPoint(x: w, y: h * 0.27))
+                p.addLine(to: CGPoint(x: 0, y: h * 0.73))
+            }
+            .stroke(style: StrokeStyle(lineWidth: max(1.6, w * 0.2), lineCap: .round, lineJoin: .round))
+        }
+    }
+}
+
+/// The Flipper Zero, front view: the white body with its rounded right end, the
+/// orange screen, the round d-pad with its OK button, the back button, and the
+/// status light (the connection's colour).
+struct FlipperZeroIcon: View {
+    let light: Color
     let pulsing: Bool
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(white: 0.96))
-                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.primary.opacity(0.15), lineWidth: 1))
-                .frame(width: 58, height: 40)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color(red: 1, green: 0.55, blue: 0.1))
-                        .frame(width: 30, height: 20)
-                        .overlay(Shield().frame(width: 14, height: 14))
-                        .offset(x: -6)
-                )
-            Circle()
-                .fill(color)
-                .frame(width: 12, height: 12)
-                .overlay(Circle().stroke(Theme.card, lineWidth: 2))
-                .scaleEffect(pulsing ? 1.35 : 1)
-                .offset(x: 4, y: -4)
+        GeometryReader { geo in
+            let w = geo.size.width
+            let h = w * 0.42
+            ZStack(alignment: .topLeading) {
+                // Body: a long capsule, the d-pad end a little taller, like the device.
+                UnevenRoundedRectangle(topLeadingRadius: h * 0.28, bottomLeadingRadius: h * 0.28,
+                                       bottomTrailingRadius: h * 0.5, topTrailingRadius: h * 0.5)
+                    .fill(Color(white: 0.95))
+                    .overlay(
+                        UnevenRoundedRectangle(topLeadingRadius: h * 0.28, bottomLeadingRadius: h * 0.28,
+                                               bottomTrailingRadius: h * 0.5, topTrailingRadius: h * 0.5)
+                            .stroke(Color.black.opacity(0.25), lineWidth: 1)
+                    )
+                    .frame(width: w, height: h)
+                // Screen bezel and the orange LCD.
+                RoundedRectangle(cornerRadius: h * 0.08)
+                    .fill(Color(white: 0.2))
+                    .frame(width: w * 0.46, height: h * 0.62)
+                    .offset(x: w * 0.1, y: h * 0.19)
+                RoundedRectangle(cornerRadius: h * 0.04)
+                    .fill(Color(red: 1, green: 0.55, blue: 0.1))
+                    .frame(width: w * 0.4, height: h * 0.48)
+                    .overlay(Shield().frame(width: h * 0.34, height: h * 0.34))
+                    .offset(x: w * 0.13, y: h * 0.26)
+                // D-pad ring and OK.
+                Circle()
+                    .stroke(Color(white: 0.55), lineWidth: h * 0.07)
+                    .frame(width: h * 0.56, height: h * 0.56)
+                    .offset(x: w * 0.68, y: h * 0.22)
+                Circle()
+                    .fill(Color(white: 0.7))
+                    .frame(width: h * 0.2, height: h * 0.2)
+                    .offset(x: w * 0.68 + h * 0.18, y: h * 0.4)
+                // Back button.
+                Circle()
+                    .fill(Color(white: 0.7))
+                    .frame(width: h * 0.16, height: h * 0.16)
+                    .offset(x: w * 0.9, y: h * 0.68)
+                // Status light.
+                Circle()
+                    .fill(light)
+                    .frame(width: h * 0.13, height: h * 0.13)
+                    .scaleEffect(pulsing ? 1.5 : 1)
+                    .offset(x: w * 0.04, y: h * 0.12)
+            }
+            .frame(width: w, height: h)
         }
+        .aspectRatio(1 / 0.42, contentMode: .fit)
+    }
+}
+
+/// A Kindle e-reader: a black frame and a pale e-ink page.
+struct KindleIcon: View {
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width, h = geo.size.height
+            RoundedRectangle(cornerRadius: w * 0.16)
+                .fill(Color(white: 0.18))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(Color(white: 0.88))
+                        .frame(width: w * 0.78, height: h * 0.76)
+                        .overlay(VStack(spacing: h * 0.06) {
+                            ForEach(0..<4) { _ in Capsule().fill(Color(white: 0.6)).frame(width: w * 0.55, height: 2) }
+                        })
+                        .offset(y: -h * 0.04)
+                )
+        }
+    }
+}
+
+/// The ZEC coin: the Zcash yellow disc and its Z with the two bars.
+struct ZecLogo: View {
+    var body: some View {
+        GeometryReader { geo in
+            let s = min(geo.size.width, geo.size.height)
+            ZStack {
+                Circle().fill(Theme.zcash)
+                Path { p in
+                    let u = s / 32
+                    p.move(to: CGPoint(x: 16 * u, y: 5.5 * u))
+                    p.addLine(to: CGPoint(x: 16 * u, y: 9 * u))
+                    p.move(to: CGPoint(x: 10 * u, y: 10 * u))
+                    p.addLine(to: CGPoint(x: 22 * u, y: 10 * u))
+                    p.addLine(to: CGPoint(x: 10 * u, y: 22 * u))
+                    p.addLine(to: CGPoint(x: 22 * u, y: 22 * u))
+                    p.move(to: CGPoint(x: 16 * u, y: 23 * u))
+                    p.addLine(to: CGPoint(x: 16 * u, y: 26.5 * u))
+                }
+                .stroke(Color.black, style: StrokeStyle(lineWidth: s * 0.1, lineCap: .square, lineJoin: .miter))
+            }
+            .frame(width: s, height: s)
+        }
+        .aspectRatio(1, contentMode: .fit)
+    }
+}
+
+/// Recent transactions; each opens on ZScan.
+struct ActivityCard: View {
+    @EnvironmentObject var wallet: WalletModel
+    @Environment(\.openURL) private var openURL
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Activity").font(.headline)
+            if wallet.transactions.isEmpty {
+                Text(wallet.synced ? "No transactions yet." : "Transactions appear here as the wallet syncs.")
+                    .font(.footnote).foregroundStyle(Theme.muted)
+            }
+            ForEach(wallet.transactions.prefix(20)) { tx in
+                Button {
+                    if let url = WalletModel.zscanURL(tx) { openURL(url) }
+                } label: {
+                    row(tx)
+                }
+                .buttonStyle(.plain)
+                if tx.id != wallet.transactions.prefix(20).last?.id { Divider() }
+            }
+        }
+        .padding(20)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Theme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+    }
+
+    private func row(_ tx: ZcashTransaction.Overview) -> some View {
+        let sent = tx.isSentTransaction
+        return HStack(spacing: 12) {
+            Image(systemName: sent ? "arrow.up" : "arrow.down")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.black)
+                .frame(width: 34, height: 34)
+                .background(sent ? Color(white: 0.75) : Theme.zcash)
+                .clipShape(Circle())
+            VStack(alignment: .leading, spacing: 2) {
+                Text(sent ? "Sent" : "Received").font(.subheadline.weight(.semibold))
+                Text(status(tx)).font(.caption).foregroundStyle(Theme.muted)
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 2) {
+                Text((sent ? "−" : "+") + Zatoshi(abs(tx.value.amount)).zecString)
+                    .font(.subheadline.weight(.semibold).monospacedDigit())
+                Label("ZScan", systemImage: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
+            }
+        }
+        .contentShape(Rectangle())
+    }
+
+    private func status(_ tx: ZcashTransaction.Overview) -> String {
+        if tx.isExpiredUmined == true { return "Expired" }
+        guard let n = wallet.confirmations(tx) else { return "Pending · in the mempool" }
+        let when = tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? ""
+        if n < 10 { return "Confirming · \(n) of 10" }
+        return when.isEmpty ? "Confirmed" : when
     }
 }
 

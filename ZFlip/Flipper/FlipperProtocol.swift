@@ -133,6 +133,7 @@ enum FlipperProtocol {
 
 enum FlipperError: LocalizedError {
     case bluetoothOff
+    case bluetoothDenied
     case notConnected
     case timeout
     case rejected(String)
@@ -140,7 +141,8 @@ enum FlipperError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .bluetoothOff: return "Bluetooth is off or not allowed for ZFlip."
+        case .bluetoothOff: return "Bluetooth is off. Turn it on to connect."
+        case .bluetoothDenied: return "ZApp may not use Bluetooth. Allow it in Settings."
         case .notConnected: return "The Flipper is not connected."
         case .timeout: return "The Flipper did not answer in time."
         case .rejected(let message): return message

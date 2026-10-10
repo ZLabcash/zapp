@@ -35,7 +35,8 @@ final class FlipperLink: NSObject, ObservableObject {
     /// Called when the Flipper reports the receiving address it shows.
     var onAddress: ((UInt32, String) -> Void)?
 
-    private var central: CBCentralManager!
+    /// Created on the first Connect, so iOS asks for Bluetooth then, not at launch.
+    private var central: CBCentralManager?
     private var peripherals: [UUID: CBPeripheral] = [:]
     private var peripheral: CBPeripheral?
     private var rx: CBCharacteristic?
@@ -45,12 +46,17 @@ final class FlipperLink: NSObject, ObservableObject {
     private var ready: CheckedContinuation<Void, Error>?
     /// A scan was asked for before Bluetooth was ready: start it once it is.
     private var wantsScan = false
-    /// Waiting for Bluetooth to power on (commands sent before are dropped by iOS).
-    private var poweredOnWaiters: [CheckedContinuation<Void, Never>] = []
-
     override init() {
         super.init()
-        central = CBCentralManager(delegate: self, queue: .main)
+    }
+
+    /// A new manager also makes iOS show its "Turn On Bluetooth" alert when it is off.
+    @discardableResult
+    private func manager(fresh: Bool = false) -> CBCentralManager {
+        if let central, !fresh { return central }
+        let made = CBCentralManager(delegate: self, queue: .main, options: [CBCentralManagerOptionShowPowerAlertKey: true])
+        central = made
+        return made
     }
 
     var isConnected: Bool {
@@ -60,6 +66,7 @@ final class FlipperLink: NSObject, ObservableObject {
 
     func scan() {
         wantsScan = true
+        let central = manager()
         guard central.state == .poweredOn else {
             if central.state != .unknown && central.state != .resetting { state = .off }
             return
@@ -71,19 +78,33 @@ final class FlipperLink: NSObject, ObservableObject {
 
     func stopScan() {
         wantsScan = false
-        central.stopScan()
+        central?.stopScan()
         if state == .scanning { state = .idle }
     }
 
-    private func waitPoweredOn() async {
-        if central.state == .poweredOn { return }
-        await withCheckedContinuation { poweredOnWaiters.append($0) }
+    /// Bluetooth ready, or why not: asks for permission the first time; when it is
+    /// off, iOS offers to turn it on.
+    private func waitPoweredOn() async throws -> CBCentralManager {
+        let first = central == nil
+        var central = manager()
+        for _ in 0..<30 where central.state == .unknown || central.state == .resetting {
+            try? await Task.sleep(nanoseconds: 100_000_000)
+        }
+        switch central.state {
+        case .poweredOn:
+            return central
+        case .unauthorized:
+            throw FlipperError.bluetoothDenied
+        default:
+            if !first { central = manager(fresh: true) }
+            throw FlipperError.bluetoothOff
+        }
     }
 
     /// Connects to a scanned Flipper, or to a known one by identifier. Gives up after
     /// `timeout` seconds (ZFlip Sign closed, Flipper out of range) so callers can retry.
     func connect(_ id: UUID, timeout: TimeInterval = 15) async throws {
-        await waitPoweredOn()
+        let central = try await waitPoweredOn()
         wantsScan = false
         central.stopScan()
         let target = peripherals[id] ?? central.retrievePeripherals(withIdentifiers: [id]).first
@@ -94,7 +115,7 @@ final class FlipperLink: NSObject, ObservableObject {
         let timer = Task { @MainActor [weak self] in
             try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000_000))
             guard let self, case .connecting = self.state else { return }
-            self.central.cancelPeripheralConnection(target)
+            central.cancelPeripheralConnection(target)
             self.ready?.resume(throwing: FlipperError.timeout)
             self.ready = nil
             self.state = .idle
@@ -107,7 +128,7 @@ final class FlipperLink: NSObject, ObservableObject {
     }
 
     func disconnect() {
-        if let peripheral { central.cancelPeripheralConnection(peripheral) }
+        if let peripheral { central?.cancelPeripheralConnection(peripheral) }
         reset(.idle)
     }
 
@@ -186,8 +207,6 @@ extension FlipperLink: CBCentralManagerDelegate {
             switch central.state {
             case .poweredOn:
                 if state == .off { state = .idle }
-                poweredOnWaiters.forEach { $0.resume() }
-                poweredOnWaiters.removeAll()
                 if wantsScan { scan() }
             case .unknown, .resetting:
                 break

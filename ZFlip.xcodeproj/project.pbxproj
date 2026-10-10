@@ -242,7 +242,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ZApp;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZFlip talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -333,7 +333,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = ZApp;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZFlip talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
