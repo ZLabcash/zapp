@@ -243,6 +243,7 @@ struct DevicesCard: View {
     @EnvironmentObject var wallet: WalletModel
     @Environment(\.openURL) private var openURL
     @State private var pulse = false
+    @State private var confirmDisconnect = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -320,7 +321,13 @@ struct DevicesCard: View {
             }
         case .ready:
             ConnectPill(title: "Connected", glyph: AnyView(BluetoothGlyph().frame(width: 10, height: 16)), style: .connected) {
-                wallet.disconnectFlipper()
+                confirmDisconnect = true
+            }
+            .confirmationDialog("Disconnect from your Flipper Zero?", isPresented: $confirmDisconnect, titleVisibility: .visible) {
+                Button("Disconnect", role: .destructive) { wallet.disconnectFlipper() }
+                Button("Stay connected", role: .cancel) {}
+            } message: {
+                Text("Your balance will be hidden and you won't be able to send until you connect again.")
             }
         }
     }
