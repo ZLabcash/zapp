@@ -52,6 +52,7 @@
 		7F9431D6101C4121770C2EE2 /* ZFlip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZFlip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99EC8939B570D6BFFDC2F442 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		9E5A8E5DBD32B7EC08817276 /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
+		A3E16D31095C345F2E73A77B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C545E4E2810FF36757DA2B81 /* WalletModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletModel.swift; sourceTree = "<group>"; };
 		C753E21F2C6F1AA26042ADA7 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZFlipBridge.xcframework; path = Frameworks/ZFlipBridge.xcframework; sourceTree = "<group>"; };
@@ -74,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				1B0FA9F71B5C174437916D6E /* Assets.xcassets */,
+				A3E16D31095C345F2E73A77B /* Info.plist */,
 				DCE4154F94C2729A65354C79 /* App */,
 				DDBFF121D0ECB47B052E97A1 /* Flipper */,
 				3DAD4DB894476E22FF1E93AE /* Views */,
@@ -253,6 +255,7 @@
 					"\"Frameworks\"",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ZFlip/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ZApp;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "ZApp reads Zcash address QR codes to fill in who you send to.";
@@ -345,6 +348,7 @@
 					"\"Frameworks\"",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ZFlip/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = ZApp;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "ZApp reads Zcash address QR codes to fill in who you send to.";

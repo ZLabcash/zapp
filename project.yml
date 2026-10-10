@@ -18,6 +18,12 @@ targets:
     type: application
     platform: iOS
     sources: [ZFlip]
+    # Keeps the Bluetooth link to the Flipper while the user switches apps; only
+    # closing ZApp (or Disconnect) ends it.
+    info:
+      path: ZFlip/Info.plist
+      properties:
+        UIBackgroundModes: [bluetooth-central]
     dependencies:
       - package: ZcashLightClientKit
       - framework: Frameworks/ZFlipBridge.xcframework
