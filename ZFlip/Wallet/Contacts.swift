@@ -15,6 +15,10 @@ final class ContactBook: ObservableObject {
     private static let key = "zapp.contacts"
 
     init() {
+        if Demo.scene != nil {
+            contacts = [Contact(name: "Alice", address: Demo.friend)]
+            return
+        }
         if let data = UserDefaults.standard.data(forKey: Self.key),
            let saved = try? JSONDecoder().decode([Contact].self, from: data) {
             contacts = saved

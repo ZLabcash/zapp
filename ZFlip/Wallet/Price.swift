@@ -44,6 +44,11 @@ final class PriceService: ObservableObject {
     }
 
     func refresh() async {
+        if Demo.scene != nil {
+            prices = ["usd": 1224.0]
+            updated = Date()
+            return
+        }
         guard !refreshing else { return }
         refreshing = true
         defer { refreshing = false }

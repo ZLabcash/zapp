@@ -1,7 +1,7 @@
 import CoreBluetooth
 import Foundation
 
-/// The Bluetooth link to the "ZFlip Sign" app on a Flipper Zero.
+/// The Bluetooth link to the ZFlip app on a Flipper Zero.
 ///
 /// The Flipper exposes its serial GATT service under a ZFlip profile of its own
 /// (advertised as "ZFlip <name>"). The first write triggers iOS pairing: the
@@ -48,6 +48,8 @@ final class FlipperLink: NSObject, ObservableObject {
     private var wantsScan = false
     override init() {
         super.init()
+        // Filming the send screen: the Flipper "has the transaction" and waits for OK.
+        if Demo.scene == "send-confirm" { awaitingFlipper = true }
     }
 
     /// A new manager also makes iOS show its "Turn On Bluetooth" alert when it is off.
@@ -102,7 +104,7 @@ final class FlipperLink: NSObject, ObservableObject {
     }
 
     /// Connects to a scanned Flipper, or to a known one by identifier. Gives up after
-    /// `timeout` seconds (ZFlip Sign closed, Flipper out of range) so callers can retry.
+    /// `timeout` seconds (ZFlip closed, Flipper out of range) so callers can retry.
     func connect(_ id: UUID, timeout: TimeInterval = 15) async throws {
         let central = try await waitPoweredOn()
         wantsScan = false

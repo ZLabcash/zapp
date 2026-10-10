@@ -4,9 +4,9 @@ import ZcashLightClientKit
 struct HomeView: View {
     @EnvironmentObject var wallet: WalletModel
     @EnvironmentObject var prices: PriceService
-    @State private var showReceive = false
-    @State private var showSend = false
-    @State private var showSettings = false
+    @State private var showReceive = Demo.on("receive")
+    @State private var showSend = Demo.on("send")
+    @State private var showSettings = Demo.on("settings")
 
     var body: some View {
         NavigationStack {
@@ -172,7 +172,7 @@ struct ConfirmingPill: View {
                 }
                 Text("Received ZEC can be spent after \(Self.needed) confirmations, one per block (about 75 s).")
                     .font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
-                if let tx, let url = WalletModel.zscanURL(tx) {
+                if let url = tx?.url {
                     Link(destination: url) {
                         Label("View on the explorer", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
                     }
@@ -185,9 +185,9 @@ struct ConfirmingPill: View {
     }
 
     /// The least-confirmed received transaction still under the threshold.
-    private var waiting: ZcashTransaction.Overview? {
-        wallet.transactions
-            .filter { !$0.isSentTransaction && $0.isExpiredUmined != true && (wallet.confirmations($0) ?? 0) < Self.needed }
+    private var waiting: WalletModel.ActivityItem? {
+        wallet.activity
+            .filter { !$0.sent && !$0.expired && (wallet.confirmations($0) ?? 0) < Self.needed }
             .min { (wallet.confirmations($0) ?? 0) < (wallet.confirmations($1) ?? 0) }
     }
 
@@ -540,18 +540,18 @@ struct ActivityCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Activity").font(.headline)
-            if wallet.transactions.isEmpty {
+            if wallet.activity.isEmpty {
                 Text(wallet.synced ? "No transactions yet." : "Transactions appear here as the wallet syncs.")
                     .font(.footnote).foregroundStyle(Theme.muted)
             }
-            ForEach(wallet.transactions.prefix(20)) { tx in
+            ForEach(wallet.activity.prefix(20)) { tx in
                 Button {
-                    if let url = WalletModel.zscanURL(tx) { openURL(url) }
+                    if let url = tx.url { openURL(url) }
                 } label: {
                     row(tx)
                 }
                 .buttonStyle(.plain)
-                if tx.id != wallet.transactions.prefix(20).last?.id { Divider() }
+                if tx.id != wallet.activity.prefix(20).last?.id { Divider() }
             }
         }
         .padding(20)
@@ -560,8 +560,8 @@ struct ActivityCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 24))
     }
 
-    private func row(_ tx: ZcashTransaction.Overview) -> some View {
-        let sent = tx.isSentTransaction
+    private func row(_ tx: WalletModel.ActivityItem) -> some View {
+        let sent = tx.sent
         return HStack(spacing: 12) {
             Image(systemName: sent ? "arrow.up" : "arrow.down")
                 .font(.subheadline.weight(.bold))
@@ -575,7 +575,7 @@ struct ActivityCard: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 2) {
-                Text((sent ? "−" : "+") + (wallet.showsAmounts ? Zatoshi(abs(tx.value.amount)).zecString : "•••• ZEC"))
+                Text((sent ? "−" : "+") + (wallet.showsAmounts ? Zatoshi(tx.zatoshi).zecString : "•••• ZEC"))
                     .font(.subheadline.weight(.semibold).monospacedDigit())
                 Image(systemName: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
             }
@@ -583,8 +583,8 @@ struct ActivityCard: View {
         .contentShape(Rectangle())
     }
 
-    private func status(_ tx: ZcashTransaction.Overview) -> String {
-        if tx.isExpiredUmined == true { return "Expired" }
+    private func status(_ tx: WalletModel.ActivityItem) -> String {
+        if tx.expired { return "Expired" }
         guard let n = wallet.confirmations(tx) else { return "Pending · in the mempool" }
         let when = tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? ""
         if n < 10 { return "Confirming · \(n) of 10" }

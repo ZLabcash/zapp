@@ -50,8 +50,19 @@ final class WalletModel: ObservableObject {
     /// The chain tip, and the height scanned contiguously from the birthday.
     @Published private(set) var tipHeight = 0
     @Published private(set) var scannedHeight = 0
+    /// One line of Activity: what the views need from a transaction.
+    struct ActivityItem: Identifiable, Equatable {
+        let id: Data
+        let sent: Bool
+        let zatoshi: Int64
+        let minedHeight: Int?
+        let expired: Bool
+        let blockTime: TimeInterval?
+        let url: URL?
+    }
+
     /// This wallet's transactions, newest first.
-    @Published private(set) var transactions: [ZcashTransaction.Overview] = []
+    @Published private(set) var activity: [ActivityItem] = []
     private var lastTransactionsRefresh = Date.distantPast
     @Published private(set) var address: String?
     @Published var sendStep = SendStep.idle
@@ -87,6 +98,10 @@ final class WalletModel: ObservableObject {
 
     init(link: FlipperLink) {
         self.link = link
+        if let scene = Demo.scene {
+            applyDemo(scene)
+            return
+        }
         link.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
@@ -191,7 +206,7 @@ final class WalletModel: ObservableObject {
         address = nil
         balance = .zero
         pending = .zero
-        transactions = []
+        activity = []
         tipHeight = 0
         scannedHeight = 0
         synced = false
@@ -208,8 +223,36 @@ final class WalletModel: ObservableObject {
         try? await createWallet(info: info, flipperID: pairing.flipperID, restoredFrom: nil)
     }
 
+    /// A fixed state for filming (see `Demo`): no sync, no Flipper, nothing saved.
+    private func applyDemo(_ scene: String) {
+        pairing = Pairing(flipperID: UUID(), flipperName: "Flipper", network: 0, ufvk: Demo.ufvk,
+                          seedFingerprint: Demo.seedFingerprint, account: 0, birthday: 3_390_000, addressIndex: scene == "receive-next" ? 8 : 7)
+        synced = true
+        syncProgress = 1
+        tipHeight = 3_513_402
+        scannedHeight = 3_513_402
+        let locked = scene == "home-locked" || scene == "settings-idle"
+        flipperState = locked ? .idle : scene == "settings-connecting" ? .approve : .ready
+        let after = scene.hasPrefix("after")
+        balance = Zatoshi(after ? 14_990_000 : 20_000_000)
+        pending = .zero
+        let url = Self.explorerURL(txid: Demo.txid)
+        let received = ActivityItem(id: Data([1]), sent: false, zatoshi: 20_000_000, minedHeight: 3_512_960, expired: false,
+                                    blockTime: 1_791_640_800, url: url)
+        let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_010_000, minedHeight: 3_513_400, expired: false,
+                                blockTime: nil, url: url)
+        activity = after ? [sent, received] : [received]
+        switch scene {
+        case "send-confirm": sendStep = .confirmOnFlipper
+        case "send-broadcast": sendStep = .broadcasting
+        case "send-sent": sendStep = .sent(Demo.txid)
+        default: break
+        }
+    }
+
     /// Opens the saved wallet at launch.
     func resume() async {
+        guard Demo.scene == nil else { return }
         guard var pairing, synchronizer == nil else { return }
         do {
             let network = ZcashNetworkBuilder.network(for: networkType)
@@ -233,7 +276,7 @@ final class WalletModel: ObservableObject {
     }
 
     /// Connects to the paired Flipper and opens a session (the user presses OK on
-    /// the Flipper). Waits as long as it takes for ZFlip Sign to appear.
+    /// the Flipper). Waits as long as it takes for ZFlip to appear.
     /// "Connect to Flipper": connects and opens a session (OK on the Flipper).
     func connectFlipper() async {
         guard let pairing, !flipperReady else { return }
@@ -399,12 +442,17 @@ final class WalletModel: ObservableObject {
         lastTransactionsRefresh = Date()
         Task {
             let all = await synchronizer.transactions
-            self.transactions = all.sorted { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }
+            self.activity = all
+                .sorted { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }
+                .map {
+                    ActivityItem(id: $0.rawID, sent: $0.isSentTransaction, zatoshi: abs($0.value.amount), minedHeight: $0.minedHeight,
+                                 expired: $0.isExpiredUmined == true, blockTime: $0.blockTime, url: Self.zscanURL($0))
+                }
         }
     }
 
     /// Confirmations of a mined transaction (nil while in the mempool).
-    func confirmations(_ tx: ZcashTransaction.Overview) -> Int? {
+    func confirmations(_ tx: ActivityItem) -> Int? {
         guard let mined = tx.minedHeight, tipHeight >= mined else { return nil }
         return tipHeight - mined + 1
     }
@@ -539,11 +587,11 @@ extension Zatoshi {
         String(zecString.dropLast(4))
     }
 
-    /// "1.2345 ZEC" style, trimming trailing zeros.
+    /// "1.2345 ZEC" style: at most 5 decimals (0.00001 ZEC), trailing zeros trimmed.
     var zecString: String {
         let formatter = NumberFormatter()
         formatter.minimumFractionDigits = 2
-        formatter.maximumFractionDigits = 8
+        formatter.maximumFractionDigits = 5
         formatter.minimumIntegerDigits = 1
         formatter.decimalSeparator = "."
         formatter.usesGroupingSeparator = false

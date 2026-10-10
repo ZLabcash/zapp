@@ -15,6 +15,7 @@
 		71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */; };
 		7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB6C35499251397CE3CDF1 /* FlipperLink.swift */; };
 		8ADBEF852FBE580D1B58D605 /* QRScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9503A91120791D250E5D11 /* QRScanner.swift */; };
+		8BE0BD2FFE20B3D795BA572C /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56EA4E93FB6EF49BAEB13A26 /* Demo.swift */; };
 		8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C753E21F2C6F1AA26042ADA7 /* Theme.swift */; };
 		A1D6EDB220AA4C6F6738C198 /* ZFlipBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; };
 		B6A4D3974539859A7E367415 /* ZFlipBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -49,6 +50,7 @@
 		2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
 		2FC314C4271ACEC63AFE8EBA /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 		5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
+		56EA4E93FB6EF49BAEB13A26 /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFlipApp.swift; sourceTree = "<group>"; };
 		63DB6C35499251397CE3CDF1 /* FlipperLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperLink.swift; sourceTree = "<group>"; };
 		7832494FBCBCB7D24626728F /* FlipperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperProtocol.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 		DCE4154F94C2729A65354C79 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				56EA4E93FB6EF49BAEB13A26 /* Demo.swift */,
 				5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */,
 			);
 			path = App;
@@ -235,6 +238,7 @@
 				3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */,
 				BAC2FDAD8F5A51A5DE5A268C /* Contacts.swift in Sources */,
 				71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */,
+				8BE0BD2FFE20B3D795BA572C /* Demo.swift in Sources */,
 				7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */,
 				CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */,
 				4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */,

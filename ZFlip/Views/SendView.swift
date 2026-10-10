@@ -7,8 +7,8 @@ struct SendView: View {
     @EnvironmentObject var book: ContactBook
     @Environment(\.dismiss) private var dismiss
 
-    @State private var address = ""
-    @State private var amount = ""
+    @State private var address = Demo.on("send-filled") ? Demo.friend : ""
+    @State private var amount = Demo.on("send-filled") ? "0.05" : ""
     @State private var memo = ""
     @State private var fee: Zatoshi?
     @State private var picking = false
@@ -184,6 +184,10 @@ struct SendView: View {
             .padding(20)
         }
         .task(id: "\(address)|\(amount)") {
+            if Demo.scene != nil {
+                fee = zatoshi == nil ? nil : WalletModel.minimumFee
+                return
+            }
             fee = nil
             guard let zatoshi, wallet.validate(address: address) else { return }
             try? await Task.sleep(nanoseconds: 400_000_000)
@@ -250,7 +254,7 @@ struct SendView: View {
     private var stepDetail: String {
         switch wallet.sendStep {
         case .confirmOnFlipper:
-            return "Open ZFlip Sign. Check each payment and the fee on the Flipper's screen, then hold OK. Press Back to refuse."
+            return "Check each payment and the fee on the Flipper's screen, then hold OK. Press Back to refuse."
         case .broadcasting:
             return "Signed by your Flipper. Sending it to the Zcash network."
         default:
