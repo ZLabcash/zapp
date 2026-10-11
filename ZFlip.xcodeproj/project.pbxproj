@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03D4237A790543DC92CFB302 /* WalletsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB335278375D20CB2EA8306 /* WalletsViews.swift */; };
 		0ECBB93EE2C6578AE20D1C34 /* ZcashLightClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5AC814CBCD201CBB7AA058A9 /* ZcashLightClientKit */; };
 		1F872BD039EBB0E3D9D5CD92 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC314C4271ACEC63AFE8EBA /* Price.swift */; };
 		3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5A8E5DBD32B7EC08817276 /* Bridge.swift */; };
@@ -20,6 +21,7 @@
 		8BE0BD2FFE20B3D795BA572C /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56EA4E93FB6EF49BAEB13A26 /* Demo.swift */; };
 		8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C753E21F2C6F1AA26042ADA7 /* Theme.swift */; };
 		A1D6EDB220AA4C6F6738C198 /* ZFlipBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; };
+		AB9561B156BBA559F9C6A56E /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73075DA85A43091042D06D54 /* Keychain.swift */; };
 		AD42775279272F77CB2DF1CF /* ActivityViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137E5DB0CB713CA14EA77BE3 /* ActivityViews.swift */; };
 		B6A4D3974539859A7E367415 /* ZFlipBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BA9A3CE61E487D0106785182 /* ZFlipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */; };
@@ -55,10 +57,12 @@
 		2B9503A91120791D250E5D11 /* QRScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScanner.swift; sourceTree = "<group>"; };
 		2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
 		2FC314C4271ACEC63AFE8EBA /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
+		4EB335278375D20CB2EA8306 /* WalletsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsViews.swift; sourceTree = "<group>"; };
 		5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
 		56EA4E93FB6EF49BAEB13A26 /* Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Demo.swift; sourceTree = "<group>"; };
 		5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZFlipApp.swift; sourceTree = "<group>"; };
 		63DB6C35499251397CE3CDF1 /* FlipperLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperLink.swift; sourceTree = "<group>"; };
+		73075DA85A43091042D06D54 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		7832494FBCBCB7D24626728F /* FlipperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperProtocol.swift; sourceTree = "<group>"; };
 		7F9431D6101C4121770C2EE2 /* ZFlip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZFlip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		99EC8939B570D6BFFDC2F442 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -120,6 +124,7 @@
 				2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */,
 				C1F40E04FBC8069D4E27206D /* SettingsView.swift */,
 				C753E21F2C6F1AA26042ADA7 /* Theme.swift */,
+				4EB335278375D20CB2EA8306 /* WalletsViews.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -137,6 +142,7 @@
 			children = (
 				9E5A8E5DBD32B7EC08817276 /* Bridge.swift */,
 				178AA570216EF523337E0F8D /* Contacts.swift */,
+				73075DA85A43091042D06D54 /* Keychain.swift */,
 				2FC314C4271ACEC63AFE8EBA /* Price.swift */,
 				C545E4E2810FF36757DA2B81 /* WalletModel.swift */,
 			);
@@ -269,6 +275,7 @@
 				7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */,
 				CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */,
 				4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */,
+				AB9561B156BBA559F9C6A56E /* Keychain.swift in Sources */,
 				39646AAC53DEEB0779877131 /* Language.swift in Sources */,
 				BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */,
 				1F872BD039EBB0E3D9D5CD92 /* Price.swift in Sources */,
@@ -277,6 +284,7 @@
 				CD298EAA5C3A84A11926883E /* SettingsView.swift in Sources */,
 				8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */,
 				4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */,
+				03D4237A790543DC92CFB302 /* WalletsViews.swift in Sources */,
 				BA9A3CE61E487D0106785182 /* ZFlipApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

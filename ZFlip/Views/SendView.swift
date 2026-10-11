@@ -188,7 +188,9 @@ struct SendView: View {
                 .disabled(!valid)
                 .opacity(valid ? 1 : 0.5)
                 .padding(.top, 4)
-                Text(multi
+                Text(wallet.pairing?.isPhone == true
+                     ? (multi ? "One transaction for all of them. Face ID unlocks this phone's keys to sign it." : "Face ID unlocks this phone's keys to sign it.")
+                     : multi
                      ? "One transaction, one signature. Your signing device shows each payment in turn, then the total and the fee: approve once to sign them all."
                      : "Your signing device shows the amount, the recipient and the fee. Check them on its screen, then approve to sign.")
                     .font(.footnote)

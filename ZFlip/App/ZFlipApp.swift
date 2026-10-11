@@ -21,7 +21,7 @@ struct ZFlipApp: App {
         WindowGroup {
             Group {
                 if wallet.pairing == nil {
-                    PairView()
+                    NavigationStack { AddWalletView(welcome: true, onDone: {}) }
                 } else {
                     HomeView().task { await wallet.resume() }
                 }

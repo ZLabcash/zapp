@@ -17,6 +17,30 @@ enum Bridge {
         return bytes
     }
 
+    /// 24 words from 32 bytes of entropy.
+    static func mnemonicNew(entropy: [UInt8]) throws -> String {
+        let bytes = try entropy.withUnsafeBufferPointer { e in try call { out in zflip_mnemonic_new(e.baseAddress, out) } }
+        return String(decoding: bytes, as: UTF8.self)
+    }
+
+    /// The 64-byte seed of a recovery phrase; throws if a word or the checksum is wrong.
+    static func mnemonicSeed(_ phrase: String) throws -> [UInt8] {
+        do {
+            return [UInt8](try call { out in zflip_mnemonic_seed(phrase, out) })
+        } catch {
+            throw Failure(message: String(localized: "These words aren't a valid recovery phrase. Check each word and their order."))
+        }
+    }
+
+    static func seedFingerprint(_ seed: [UInt8]) throws -> [UInt8] {
+        [UInt8](try seed.withUnsafeBufferPointer { s in try call { out in zflip_seed_fingerprint(s.baseAddress, s.count, out) } })
+    }
+
+    /// Lowercase words separated by single spaces.
+    static func normalized(_ phrase: String) -> String {
+        phrase.lowercased().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+    }
+
     /// The unified address at diversifier index `index`: the Flipper's "Address #index".
     static func address(ufvk: String, index: UInt32) throws -> String {
         let bytes = try call { out in zflip_address(ufvk, index, out) }

@@ -19,9 +19,12 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                VStack(alignment: .leading, spacing: 8) {
-                    header("Devices")
-                    DevicesCard()
+                // A Flipper wallet's device; a phone wallet has its keys here instead.
+                if wallet.pairing?.isPhone != true {
+                    VStack(alignment: .leading, spacing: 8) {
+                        header("Devices")
+                        DevicesCard()
+                    }
                 }
                 section("Appearance") {
                     HStack(spacing: 8) {
@@ -38,6 +41,13 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                 }
                 section("Wallet") {
+                    if wallet.pairing?.isPhone == true {
+                        NavigationLink { RecoveryPhraseView() } label: {
+                            SettingsRow(icon: "key.fill", title: "Recovery phrase", chevron: "chevron.right")
+                        }
+                        .buttonStyle(.plain)
+                        Divider()
+                    }
                     NavigationLink { AllActivityView() } label: {
                         SettingsRow(icon: "list.bullet.rectangle.portrait.fill", title: "All activity",
                                     value: wallet.activity.isEmpty ? nil : "\(wallet.activity.count)", chevron: "chevron.right")
@@ -133,7 +143,9 @@ struct SettingsView: View {
                 }
             }
         } message: {
-            Text("Removes the watch-only wallet from this phone. Your funds stay safe: the keys are on your Flipper.")
+            Text(wallet.pairing?.isPhone == true
+                 ? "Its recovery phrase is erased from this phone. Without your written 24 words, its funds are lost."
+                 : "Removes the watch-only wallet from this phone. Your funds stay safe: the keys are on your Flipper.")
         }
     }
 

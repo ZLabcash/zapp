@@ -5,6 +5,8 @@ import SwiftUI
 struct PairView: View {
     @EnvironmentObject var wallet: WalletModel
     @EnvironmentObject var link: FlipperLink
+    /// Called once the Flipper's wallet is added (when opened from Add a wallet).
+    var onDone: (() -> Void)? = nil
 
     enum Step: Equatable {
         case intro
@@ -159,6 +161,7 @@ struct PairView: View {
         step = .creating
         do {
             try await wallet.createWallet(info: info, flipperID: flipperID, restoredFrom: restoredFrom)
+            onDone?()
         } catch {
             self.error = error.localizedDescription
             step = .intro

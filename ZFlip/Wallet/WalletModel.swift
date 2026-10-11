@@ -3,14 +3,23 @@ import Foundation
 import Network
 import ZcashLightClientKit
 
-/// The watch-only Zcash wallet backed by the Flipper's viewing key.
+/// The phone's Zcash wallets, one active at a time, all synced together (one SDK database,
+/// one account each).
 ///
-/// The phone syncs, builds transactions as PCZTs and proves them; it never holds a
-/// spending key. Spends are signed by the Flipper after its user checks them there.
+/// - A Flipper wallet is watch-only here: the phone syncs, builds transactions as PCZTs and
+///   proves them; the Flipper checks and signs.
+/// - A phone wallet keeps its recovery phrase in the Keychain (Face ID) and signs here.
 @MainActor
 final class WalletModel: ObservableObject {
-    /// What the Flipper told us when it was paired (persisted).
-    struct Pairing: Codable, Equatable {
+    /// One wallet (persisted). The name stays `Pairing` from when the app had one Flipper:
+    /// a Flipper wallet is still one, a phone wallet has `kind == .phone`.
+    struct Pairing: Codable, Equatable, Identifiable {
+        enum Kind: String, Codable { case flipper, phone, multisig }
+
+        /// Wallets saved before multi-wallet support have none: their id is the Flipper's.
+        var walletID: UUID?
+        var kind: Kind?
+        var name: String?
         var flipperID: UUID
         var flipperName: String
         var network: UInt8
@@ -18,8 +27,13 @@ final class WalletModel: ObservableObject {
         var seedFingerprint: [UInt8]
         var account: UInt32
         var birthday: Int
-        /// The receiving address index last shown on the Flipper.
+        /// The receiving address index last shown on the Flipper (or here, for a phone wallet).
         var addressIndex: UInt32?
+
+        var id: UUID { walletID ?? flipperID }
+        var isFlipper: Bool { (kind ?? .flipper) == .flipper }
+        var isPhone: Bool { kind == .phone }
+        var displayName: String { name ?? flipperName }
     }
 
     /// The link to the paired Flipper, as the Home screen shows it.
@@ -44,7 +58,11 @@ final class WalletModel: ObservableObject {
         case failed(String)
     }
 
+    /// The active wallet, and all of them.
     @Published private(set) var pairing: Pairing?
+    @Published private(set) var wallets: [Pairing] = []
+    /// Each wallet's balance (spendable + own change), for the wallet list.
+    @Published private(set) var balances: [UUID: Zatoshi] = [:]
     @Published private(set) var balance = Zatoshi.zero
     /// Received from others, not yet spendable (10 confirmations).
     @Published private(set) var pending = Zatoshi.zero
@@ -178,7 +196,9 @@ final class WalletModel: ObservableObject {
     /// Amounts show only while the Flipper is connected: a glance at the phone
     /// alone gives nothing away. (Privacy from onlookers, not security: the viewing
     /// key is on the phone.)
-    var showsAmounts: Bool { flipperReady }
+    var showsAmounts: Bool { pairing?.isPhone == true || flipperReady }
+    /// This wallet can sign now: a phone wallet always (Face ID), a Flipper wallet when connected.
+    var canSign: Bool { pairing?.isPhone == true || flipperReady }
     /// INFO from a Flipper holding another wallet, kept to adopt it on request.
     private var otherWallet: (info: FlipperProtocol.Info, id: UUID)?
 
@@ -190,6 +210,11 @@ final class WalletModel: ObservableObject {
     private var syncCancellables = Set<AnyCancellable>()
 
     private static let pairingKey = "zflip.pairing"
+    private static let walletsKey = "zapp.wallets"
+    private static let activeKey = "zapp.activeWallet"
+    /// SDK account of each wallet, found or imported when the database opens.
+    private var accounts: [UUID: AccountUUID] = [:]
+    private var lastState: SynchronizerState?
     /// 2026-10-01: no ZFlip wallet is older. A Flipper whose clock was never set
     /// stamps its wallet years in the past, which would mean scanning the whole chain.
     private static let zflipEpoch = Date(timeIntervalSince1970: 1_790_812_800)
@@ -230,10 +255,7 @@ final class WalletModel: ObservableObject {
             }
             .store(in: &cancellables)
         link.onAddress = { [weak self] index, text in self?.flipperShows(index, text) }
-        if let data = UserDefaults.standard.data(forKey: Self.pairingKey),
-           let saved = try? JSONDecoder().decode(Pairing.self, from: data) {
-            pairing = saved
-        }
+        loadWallets()
         loadPending()
         pathMonitor.pathUpdateHandler = { [weak self] path in
             let up = path.status == .satisfied
@@ -256,9 +278,14 @@ final class WalletModel: ObservableObject {
         }
         let info = try FlipperProtocol.Info(reply.payload)
         if let pairing, info.ufvk != pairing.ufvk {
-            otherWallet = (info, pairing.flipperID)
-            flipperState = .otherWallet(info.deviceName)
-            throw FlipperError.rejected("This Flipper holds another wallet.")
+            // A wallet this phone already has: switch to it.
+            if let known = wallets.first(where: { $0.ufvk == info.ufvk }) {
+                try await activate(known.id)
+            } else {
+                otherWallet = (info, pairing.flipperID)
+                flipperState = .otherWallet(info.deviceName)
+                throw FlipperError.rejected(String(localized: "This Flipper holds another wallet."))
+            }
         }
         flipperState = .ready
         if pairing != nil {
@@ -271,11 +298,16 @@ final class WalletModel: ObservableObject {
     /// Creates the watch-only wallet for a Flipper. `restoredFrom` is the date to
     /// scan from when the Flipper's seed was restored rather than created on it.
     func createWallet(info: FlipperProtocol.Info, flipperID: UUID, restoredFrom: Date?) async throws {
-        await tearDown()
-        let network = ZcashNetworkBuilder.network(for: info.network == 1 ? .testnet : .mainnet)
-        let synchronizer = try makeSynchronizer(network: network)
+        let synchronizer = try await database()
         let birthday = Self.birthday(for: info, restoredFrom: restoredFrom, synchronizer: synchronizer)
+        // The same Flipper wallet again: replace it (e.g. a corrected birthday).
+        if let old = wallets.first(where: { $0.isFlipper && $0.ufvk == info.ufvk }) {
+            await remove(old.id, keepingDatabase: true)
+        }
         let pairing = Pairing(
+            walletID: UUID(),
+            kind: .flipper,
+            name: info.deviceName,
             flipperID: flipperID,
             flipperName: info.deviceName,
             network: info.network,
@@ -285,10 +317,181 @@ final class WalletModel: ObservableObject {
             birthday: birthday,
             addressIndex: info.addressIndex
         )
-        try await open(pairing, synchronizer: synchronizer, importing: true)
-        UserDefaults.standard.set(try JSONEncoder().encode(pairing), forKey: Self.pairingKey)
-        self.pairing = pairing
+        try await add(pairing)
         flipperState = .ready
+    }
+
+    // MARK: Wallets
+
+    private func loadWallets() {
+        let d = UserDefaults.standard
+        if let data = d.data(forKey: Self.walletsKey), let list = try? JSONDecoder().decode([Pairing].self, from: data) {
+            wallets = list
+        } else if let data = d.data(forKey: Self.pairingKey), let legacy = try? JSONDecoder().decode(Pairing.self, from: data) {
+            wallets = [legacy] // the single Flipper wallet of earlier versions
+        }
+        let active = d.string(forKey: Self.activeKey).flatMap(UUID.init(uuidString:))
+        pairing = wallets.first { $0.id == active } ?? wallets.first
+        saveWallets()
+    }
+
+    private func saveWallets() {
+        let d = UserDefaults.standard
+        d.set(try? JSONEncoder().encode(wallets), forKey: Self.walletsKey)
+        d.set(pairing?.id.uuidString, forKey: Self.activeKey)
+        d.removeObject(forKey: Self.pairingKey)
+    }
+
+    private func store(_ wallet: Pairing) {
+        if let i = wallets.firstIndex(where: { $0.id == wallet.id }) { wallets[i] = wallet } else { wallets.append(wallet) }
+        if pairing?.id == wallet.id { pairing = wallet }
+        saveWallets()
+    }
+
+    /// The shared database, opened (and syncing) if it isn't yet.
+    private func database() async throws -> SDKSynchronizer {
+        if let synchronizer { return synchronizer }
+        let network = ZcashNetworkBuilder.network(for: networkType)
+        let synchronizer = try makeSynchronizer(network: network)
+        let birthday = wallets.map(\.birthday).min() ?? synchronizer.estimateBirthdayHeight(for: Date())
+        _ = try await synchronizer.prepare(with: nil, walletBirthday: birthday, name: "ZApp", keySource: "zapp")
+        self.synchronizer = synchronizer
+        synchronizer.stateStream
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in self?.update(state) }
+            .store(in: &syncCancellables)
+        try await synchronizer.start(retry: true)
+        return synchronizer
+    }
+
+    /// This wallet's SDK account: found by its viewing key, or imported.
+    private func account(for wallet: Pairing, in synchronizer: SDKSynchronizer) async throws -> AccountUUID {
+        if let id = accounts[wallet.id] { return id }
+        if let found = try await synchronizer.listAccounts().first(where: { $0.ufvk?.stringEncoded == wallet.ufvk }) {
+            accounts[wallet.id] = found.id
+            return found.id
+        }
+        // "spending" with the seed fingerprint and ZIP 32 index: the SDK then stamps PCZT
+        // spends with the derivation path an external signer needs.
+        let id = try await synchronizer.importAccount(
+            ufvk: wallet.ufvk,
+            seedFingerprint: wallet.seedFingerprint,
+            zip32AccountIndex: Zip32AccountIndex(wallet.account),
+            purpose: .spending,
+            name: wallet.displayName,
+            keySource: wallet.isPhone ? "zapp" : "zflip",
+            birthday: wallet.birthday
+        )
+        accounts[wallet.id] = id
+        return id
+    }
+
+    /// Adds a wallet and makes it the active one.
+    func add(_ wallet: Pairing) async throws {
+        let synchronizer = try await database()
+        _ = try await account(for: wallet, in: synchronizer)
+        store(wallet)
+        try await activate(wallet.id)
+    }
+
+    /// Switches the app to another wallet: balance, activity, addresses, signing device.
+    func activate(_ id: UUID) async throws {
+        guard let wallet = wallets.first(where: { $0.id == id }) else { return }
+        if let current = pairing, current.id != id, current.isFlipper {
+            link.disconnect()
+            flipperState = .idle
+        }
+        pairing = wallet
+        saveWallets()
+        let synchronizer = try await database()
+        accountUUID = try await account(for: wallet, in: synchronizer)
+        address = try? await synchronizer.getUnifiedAddress(accountUUID: accountUUID!).stringEncoded
+        activity = []
+        if let lastState { update(lastState) }
+        refreshTransactions(force: true)
+    }
+
+    /// Removes a wallet from this phone (its account, and its recovery phrase for a phone
+    /// wallet). Funds stay on the chain: the words or the Flipper restore it.
+    func remove(_ id: UUID, keepingDatabase: Bool = false) async {
+        if let synchronizer, let account = accounts[id] {
+            try? await synchronizer.deleteAccount(account)
+        }
+        accounts[id] = nil
+        SeedVault.delete(id)
+        wallets.removeAll { $0.id == id }
+        balances[id] = nil
+        if pairing?.id == id {
+            // Straight to the next wallet, without passing through the welcome screen.
+            if !keepingDatabase, let next = wallets.first {
+                try? await activate(next.id)
+                return
+            }
+            pairing = nil
+            accountUUID = nil
+            if keepingDatabase { saveWallets(); return }
+            await tearDown()
+            link.disconnect()
+            flipperState = .idle
+        }
+        saveWallets()
+    }
+
+    func rename(_ id: UUID, to name: String) {
+        guard var w = wallets.first(where: { $0.id == id }) else { return }
+        let clean = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        w.name = clean.isEmpty ? nil : clean
+        store(w)
+    }
+
+    // MARK: Phone wallets (keys on this phone)
+
+    /// A fresh 24-word recovery phrase from the system's secure random generator.
+    static func newRecoveryPhrase() throws -> String {
+        var entropy = [UInt8](repeating: 0, count: 32)
+        guard SecRandomCopyBytes(kSecRandomDefault, 32, &entropy) == errSecSuccess else {
+            throw Bridge.Failure(message: String(localized: "This phone couldn't produce random numbers."))
+        }
+        defer { entropy.withUnsafeMutableBytes { _ = memset($0.baseAddress, 0, 32) } }
+        return try Bridge.mnemonicNew(entropy: entropy)
+    }
+
+    /// Creates (new phrase, `since` nil: starts at today's block) or restores a phone wallet.
+    func addPhoneWallet(name: String, phrase: String, since: Date?) async throws {
+        let seed = try Bridge.mnemonicSeed(phrase)
+        let tool = DerivationTool(networkType: networkType)
+        let usk = try tool.deriveUnifiedSpendingKey(seed: seed, accountIndex: Zip32AccountIndex(0))
+        let ufvk = try tool.deriveUnifiedFullViewingKey(from: usk).stringEncoded
+        let fingerprint = try Bridge.seedFingerprint(seed)
+        if wallets.contains(where: { $0.ufvk == ufvk }) {
+            throw Bridge.Failure(message: String(localized: "This wallet is already on this phone."))
+        }
+        let synchronizer = try await database()
+        let birthday = since.map { max(synchronizer.estimateBirthdayHeight(for: $0.addingTimeInterval(-86_400)), Self.nu5Height(networkType)) }
+            ?? max(tipHeight, synchronizer.estimateBirthdayHeight(for: Date()))
+        let id = UUID()
+        try SeedVault.save(Bridge.normalized(phrase), for: id)
+        let wallet = Pairing(walletID: id, kind: .phone, name: name, flipperID: id, flipperName: name, network: 0,
+                             ufvk: ufvk, seedFingerprint: fingerprint, account: 0, birthday: birthday, addressIndex: 0)
+        do {
+            try await add(wallet)
+        } catch {
+            SeedVault.delete(id)
+            throw error
+        }
+    }
+
+    /// The active phone wallet's words, after Face ID.
+    func recoveryPhrase() throws -> String {
+        guard let pairing, pairing.isPhone else { throw Bridge.Failure(message: String(localized: "This wallet's words are on its device.")) }
+        return try SeedVault.read(pairing.id, reason: String(localized: "Show your recovery phrase"))
+    }
+
+    /// A phone wallet's next receiving address (any number of them, all unlinkable).
+    func newPhoneAddress() {
+        guard var w = pairing, w.isPhone else { return }
+        w.addressIndex = (w.addressIndex ?? 0) + 1
+        store(w)
     }
 
     /// Where to start scanning: the wallet's creation day (less a day of margin),
@@ -312,6 +515,8 @@ final class WalletModel: ObservableObject {
         }
         synchronizer = nil
         accountUUID = nil
+        accounts = [:]
+        lastState = nil
         syncCancellables.removeAll()
         address = nil
         balance = .zero
@@ -366,26 +571,20 @@ final class WalletModel: ObservableObject {
         }
     }
 
-    /// Opens the saved wallet at launch.
+    /// Opens the saved wallets at launch.
     func resume() async {
         guard Demo.scene == nil else { return }
         guard var pairing, synchronizer == nil else { return }
         do {
-            let network = ZcashNetworkBuilder.network(for: networkType)
-            // Pairings made before the birthday fix, from a Flipper whose clock was never
-            // set, start before NU5 (or exactly at it, from a first repair). No such wallet
-            // predates ZFlip: start from ZFlip's first day instead, on a fresh database.
-            if pairing.birthday <= Self.nu5Height(networkType) {
+            // A single Flipper wallet paired before the birthday fix (a Flipper clock that was
+            // never set) starts before NU5: start it from ZFlip's first day, on a fresh database.
+            if wallets.count == 1, pairing.isFlipper, pairing.birthday <= Self.nu5Height(networkType) {
                 try? FileManager.default.removeItem(at: try Self.dataDirectory(networkType))
-                let synchronizer = try makeSynchronizer(network: network)
-                pairing.birthday = synchronizer.estimateBirthdayHeight(for: Self.zflipEpoch.addingTimeInterval(-86_400))
-                self.pairing = pairing
-                UserDefaults.standard.set(try JSONEncoder().encode(pairing), forKey: Self.pairingKey)
-                print("[zapp] birthday reset to \(pairing.birthday)")
-                try await open(pairing, synchronizer: synchronizer, importing: true)
-                return
+                let probe = try makeSynchronizer(network: ZcashNetworkBuilder.network(for: networkType))
+                pairing.birthday = probe.estimateBirthdayHeight(for: Self.zflipEpoch.addingTimeInterval(-86_400))
+                store(pairing)
             }
-            try await open(pairing, synchronizer: try makeSynchronizer(network: network), importing: false)
+            try await activate(pairing.id)
         } catch {
             syncError = error.localizedDescription
         }
@@ -395,7 +594,7 @@ final class WalletModel: ObservableObject {
     /// the Flipper). Waits as long as it takes for ZFlip to appear.
     /// "Connect to Flipper": connects and opens a session (OK on the Flipper).
     func connectFlipper() async {
-        guard let pairing, !flipperReady else { return }
+        guard let pairing, pairing.isFlipper, !flipperReady else { return }
         if case .connecting = link.state { return }
         flipperState = .connecting
         bluetoothDenied = false
@@ -442,8 +641,7 @@ final class WalletModel: ObservableObject {
     private func remember(index: UInt32) {
         guard var p = pairing, p.addressIndex != index else { return }
         p.addressIndex = index
-        pairing = p
-        if let data = try? JSONEncoder().encode(p) { UserDefaults.standard.set(data, forKey: Self.pairingKey) }
+        store(p)
     }
 
     /// The receiving address the Flipper shows (or showed last).
@@ -455,14 +653,10 @@ final class WalletModel: ObservableObject {
         return try? Bridge.address(ufvk: ufvk, index: index)
     }
 
+    /// Removes the active wallet.
     func forget() async {
-        await tearDown()
-        flipperState = .idle
-        UserDefaults.standard.removeObject(forKey: Self.pairingKey)
-        pairing = nil
-        address = nil
-        balance = .zero
-        link.disconnect()
+        guard let pairing else { return }
+        await remove(pairing.id)
     }
 
     private static func dataDirectory(_ network: NetworkType) throws -> URL {
@@ -496,38 +690,14 @@ final class WalletModel: ObservableObject {
         return SDKSynchronizer(initializer: initializer)
     }
 
-    private func open(_ pairing: Pairing, synchronizer: SDKSynchronizer, importing: Bool) async throws {
-        _ = try await synchronizer.prepare(with: nil, walletBirthday: pairing.birthday, name: "ZFlip", keySource: "zflip")
-        var account = try await synchronizer.listAccounts().first
-        if account == nil || importing {
-            if account == nil {
-                // "spending" with the seed fingerprint and ZIP 32 index: the SDK then
-                // stamps PCZT spends with the derivation path an external signer needs.
-                let id = try await synchronizer.importAccount(
-                    ufvk: pairing.ufvk,
-                    seedFingerprint: pairing.seedFingerprint,
-                    zip32AccountIndex: Zip32AccountIndex(pairing.account),
-                    purpose: .spending,
-                    name: pairing.flipperName,
-                    keySource: "zflip",
-                    birthday: pairing.birthday
-                )
-                account = try await synchronizer.listAccounts().first(where: { $0.id == id })
+    private func update(_ state: SynchronizerState) {
+        lastState = state
+        for (wallet, account) in accounts {
+            if let b = state.accountsBalances[account] {
+                balances[wallet] = b.ironwoodBalance.spendableValue + b.orchardBalance.spendableValue
+                    + b.ironwoodBalance.changePendingConfirmation + b.orchardBalance.changePendingConfirmation
             }
         }
-        guard let account else { throw FlipperError.protocolError("Could not create the wallet account") }
-        self.synchronizer = synchronizer
-        self.accountUUID = account.id
-        address = try? await synchronizer.getUnifiedAddress(accountUUID: account.id).stringEncoded
-
-        synchronizer.stateStream
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in self?.update(state) }
-            .store(in: &syncCancellables)
-        try await synchronizer.start(retry: true)
-    }
-
-    private func update(_ state: SynchronizerState) {
         if state.latestBlockHeight > 0 { tipHeight = state.latestBlockHeight }
         if state.fullyScannedHeight > 0 { scannedHeight = state.fullyScannedHeight }
         refreshTransactions(force: false)
@@ -559,7 +729,7 @@ final class WalletModel: ObservableObject {
         Task {
             let all = await synchronizer.transactions
             var items: [ActivityItem] = []
-            for tx in all.sorted(by: { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }) {
+            for tx in all.filter({ $0.accountUUID == self.accountUUID }).sorted(by: { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }) {
                 let fee = tx.isSentTransaction ? tx.fee?.amount : nil
                 let memos = ((try? await synchronizer.getMemos(for: tx)) ?? []).compactMap { $0.toString() }.filter { !$0.isEmpty }
                 items.append(ActivityItem(id: tx.rawID, sent: tx.isSentTransaction, zatoshi: abs(tx.value.amount) - (fee ?? 0),
@@ -696,6 +866,26 @@ final class WalletModel: ObservableObject {
         sendStep = .preparing
         do {
             let proposal = try await propose(payments, synchronizer: synchronizer, account: accountUUID)
+            if pairing.isPhone {
+                // Keys on this phone: Face ID unlocks them, the SDK proves, signs and sends.
+                let phrase = try SeedVault.read(pairing.id, reason: String(localized: "Sign this payment"))
+                let tool = DerivationTool(networkType: networkType)
+                let usk = try tool.deriveUnifiedSpendingKey(seed: try Bridge.mnemonicSeed(phrase), accountIndex: Zip32AccountIndex(pairing.account))
+                sendStep = .broadcasting
+                let results = try await synchronizer.createProposedTransactions(proposal: proposal, spendingKey: usk)
+                var error: String?
+                for try await result in results {
+                    switch result {
+                    case .success(let txId): sendStep = .sent(txId.reversed().map { String(format: "%02x", $0) }.joined())
+                    case .grpcFailure(_, let e): error = String(localized: "Couldn't reach the network (\(e.localizedDescription)). The wallet will retry on its own.")
+                    case .submitFailure(_, _, let d): error = d
+                    case .notAttempted: error = String(localized: "The transaction was not submitted.")
+                    }
+                }
+                if let error { sendStep = .failed(error) }
+                refreshTransactions(force: true)
+                return
+            }
             let pczt = try await synchronizer.createPCZTFromProposal(accountUUID: accountUUID, proposal: proposal)
             let request = try Bridge.signRequest(pczt: pczt, ufvk: pairing.ufvk)
 
