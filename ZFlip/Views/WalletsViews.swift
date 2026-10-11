@@ -7,7 +7,6 @@ struct WalletsSheet: View {
     @EnvironmentObject var wallet: WalletModel
     @Environment(\.dismiss) private var dismiss
     @State private var renaming: WalletModel.Pairing?
-    @State private var newName = ""
     @State private var removing: WalletModel.Pairing?
 
     var body: some View {
@@ -26,10 +25,7 @@ struct WalletsSheet: View {
                         .buttonStyle(.plain)
                         .swipeActions {
                             Button(role: .destructive) { removing = w } label: { Label("Remove", systemImage: "trash") }
-                            Button {
-                                newName = w.displayName
-                                renaming = w
-                            } label: { Label("Rename", systemImage: "pencil") }
+                            Button { renaming = w } label: { Label("Rename", systemImage: "pencil") }
                         }
                     }
                 }
@@ -43,11 +39,7 @@ struct WalletsSheet: View {
             .background(Theme.background.ignoresSafeArea())
             .navigationTitle("Wallets")
             .navigationBarTitleDisplayMode(.inline)
-            .alert("Rename wallet", isPresented: Binding(get: { renaming != nil }, set: { if !$0 { renaming = nil } })) {
-                TextField("Name", text: $newName)
-                Button("Save") { if let r = renaming { wallet.rename(r.id, to: newName) } }
-                Button("Cancel", role: .cancel) {}
-            }
+            .sheet(item: $renaming) { RenameWalletSheet($0) }
             .confirmationDialog(removing.map { String(localized: "Remove “\($0.displayName)”?") } ?? "",
                                 isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }), titleVisibility: .visible) {
                 Button("Remove", role: .destructive) {
@@ -59,6 +51,56 @@ struct WalletsSheet: View {
                      : "It's removed from this phone. Your funds stay safe: the keys are on your device.")
             }
         }
+    }
+}
+
+/// Rename a wallet: a small sheet with the name and Save, readable in light and dark.
+struct RenameWalletSheet: View {
+    @EnvironmentObject var wallet: WalletModel
+    @Environment(\.dismiss) private var dismiss
+    let id: UUID
+    @State private var name: String
+    @FocusState private var focused: Bool
+
+    init(_ w: WalletModel.Pairing) {
+        id = w.id
+        _name = State(initialValue: w.displayName)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Rename wallet").font(.headline)
+                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark").font(.subheadline.weight(.bold)).foregroundStyle(Theme.ink)
+                        .frame(width: 32, height: 32).background(Theme.card).clipShape(Circle())
+                }
+                .accessibilityLabel("Cancel")
+            }
+            HStack {
+                TextField("Name", text: $name)
+                    .focused($focused)
+                    .submitLabel(.done)
+                    .onSubmit(save)
+                if !name.isEmpty {
+                    Button { name = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(Theme.muted) }
+                        .buttonStyle(.plain)
+                }
+            }
+            .padding(14).background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 12))
+            Button(action: save) { Text("Save").primaryButton() }
+        }
+        .padding(20)
+        .presentationDetents([.height(220)])
+        .presentationDragIndicator(.visible)
+        .presentationBackground(Theme.background)
+        .onAppear { focused = true }
+    }
+
+    private func save() {
+        wallet.rename(id, to: name)
+        dismiss()
     }
 }
 
