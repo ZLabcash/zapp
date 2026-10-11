@@ -45,8 +45,8 @@ struct ActivityCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]) }
-        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]) }
+        .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
+        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
     }
 }
 
@@ -80,6 +80,7 @@ struct PendingRow: View {
 /// What the signed payment pays, its deadline, and the two choices: broadcast or discard.
 struct PendingView: View {
     @EnvironmentObject var wallet: WalletModel
+    @EnvironmentObject var book: ContactBook
     @Environment(\.dismiss) private var dismiss
     let p: WalletModel.PendingBroadcast
     @State private var working = false
@@ -89,7 +90,6 @@ struct PendingView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                Capsule().fill(Theme.muted).frame(width: 40, height: 5).padding(.top, 10)
                 Image(systemName: "clock.badge.checkmark").font(.system(size: 44)).foregroundStyle(Theme.zcash)
                 Text("Signed, waiting to be broadcast").font(.title3.bold())
                 Text("Your Flipper signed this payment. Nothing has left your wallet yet: it happens when you broadcast it.")
@@ -102,7 +102,8 @@ struct PendingView: View {
                                 Spacer()
                                 Text(Zatoshi(pay.zatoshi).zecString).fontWeight(.semibold).monospacedDigit()
                             }
-                            Text(pay.address).font(.system(.caption2, design: .monospaced)).foregroundStyle(Theme.muted).lineLimit(2)
+                            Text(book.named(pay.address)?.name ?? AddressRow.short(pay.address))
+                                .font(.system(.caption, design: .monospaced)).foregroundStyle(Theme.muted)
                             if !pay.memo.isEmpty { Text("“\(pay.memo)”").font(.caption) }
                         }
                         .font(.subheadline)
@@ -150,6 +151,7 @@ struct PendingView: View {
                 }
             }
             .padding(.horizontal, 20)
+            .padding(.top, 28)
             .padding(.bottom, 24)
         }
         .background(Theme.background.ignoresSafeArea())
@@ -221,7 +223,6 @@ struct TxDetailView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 18) {
-                Capsule().fill(Theme.muted).frame(width: 40, height: 5).padding(.top, 10)
                 VStack(spacing: 8) {
                     Image(systemName: tx.sent ? "arrow.up" : "arrow.down")
                         .font(.title2.weight(.bold)).foregroundStyle(.black)
@@ -240,7 +241,7 @@ struct TxDetailView: View {
                             row("To", "Shielded recipient")
                         }
                         ForEach(Array(recipients.enumerated()), id: \.offset) { i, r in
-                            row(recipients.count > 1 ? "To (\(i + 1))" : "To", r, mono: true)
+                            AddressRow(label: recipients.count > 1 ? "To (\(i + 1))" : "To", address: r)
                         }
                         if let fee = tx.fee { row("Network fee", Zatoshi(fee).zecString) }
                     } else {
@@ -286,6 +287,7 @@ struct TxDetailView: View {
                 }
             }
             .padding(.horizontal, 20)
+            .padding(.top, 28)
             .padding(.bottom, 24)
         }
         .background(Theme.background.ignoresSafeArea())
@@ -379,7 +381,49 @@ struct AllActivityView: View {
         .navigationTitle("All activity")
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
-        .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]) }
-        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]) }
+        .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
+        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
+    }
+}
+
+/// A recipient address, short (with the contact's name when known); tap to see it whole and copy it.
+struct AddressRow: View {
+    @EnvironmentObject var book: ContactBook
+    let label: String
+    let address: String
+    @State private var open = false
+
+    static func short(_ a: String) -> String { a.count > 24 ? "\(a.prefix(10))…\(a.suffix(8))" : a }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Button {
+                withAnimation(.snappy) { open.toggle() }
+                if open { UIPasteboard.general.string = address }
+            } label: {
+                VStack(alignment: .trailing, spacing: 6) {
+                    HStack(alignment: .firstTextBaseline, spacing: 16) {
+                        Text(label).font(.subheadline).foregroundStyle(Theme.muted)
+                        Spacer(minLength: 20)
+                        VStack(alignment: .trailing, spacing: 2) {
+                            if let name = book.named(address)?.name {
+                                Text(name).font(.subheadline.weight(.semibold))
+                            }
+                            Text(Self.short(address)).font(.system(.caption, design: .monospaced)).foregroundStyle(Theme.muted)
+                        }
+                        Image(systemName: open ? "chevron.up" : "chevron.down").font(.caption2.weight(.bold)).foregroundStyle(Theme.muted)
+                    }
+                    if open {
+                        Text(address).font(.system(.caption2, design: .monospaced)).textSelection(.enabled)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Label("Copied", systemImage: "checkmark").font(.caption2.weight(.semibold)).foregroundStyle(Theme.scan)
+                    }
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.vertical, 12)
+            Divider()
+        }
     }
 }
