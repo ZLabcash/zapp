@@ -41,10 +41,6 @@ struct ActivityCard: View {
         .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 24))
         .sheet(item: $selected) { TxDetailView(tx: $0) }
-        .onAppear {
-            // Filming: open a transaction's sheet straight away.
-            if Demo.on("detail") { selected = wallet.activity.first }
-        }
     }
 }
 

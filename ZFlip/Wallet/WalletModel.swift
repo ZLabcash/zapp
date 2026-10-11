@@ -179,7 +179,7 @@ final class WalletModel: ObservableObject {
     }
 
     private func savePending() {
-        guard Demo.scene == nil, let url = try? Self.pendingFile(networkType) else { return }
+        guard let url = try? Self.pendingFile(networkType) else { return }
         try? JSONEncoder().encode(pendingBroadcasts).write(to: url, options: [.atomic, .completeFileProtection])
     }
 
@@ -279,10 +279,6 @@ final class WalletModel: ObservableObject {
 
     init(link: FlipperLink) {
         self.link = link
-        if let scene = Demo.scene {
-            applyDemo(scene)
-            return
-        }
         link.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
@@ -612,41 +608,8 @@ final class WalletModel: ObservableObject {
         try? await createWallet(info: info, flipperID: pairing.flipperID, restoredFrom: nil)
     }
 
-    /// A fixed state for filming (see `Demo`): no sync, no Flipper, nothing saved.
-    private func applyDemo(_ scene: String) {
-        pairing = Pairing(flipperID: UUID(), flipperName: "Flipper", network: 0, ufvk: Demo.ufvk,
-                          seedFingerprint: Demo.seedFingerprint, account: 0, birthday: 3_390_000, addressIndex: scene == "receive-next" ? 8 : 7)
-        synced = true
-        syncProgress = 1
-        tipHeight = 3_513_402
-        scannedHeight = 3_513_402
-        let locked = scene == "home-locked" || scene == "settings-idle"
-        flipperState = locked ? .idle : scene == "settings-connecting" ? .approve : .ready
-        let after = scene.hasPrefix("after") || scene == "detail"
-        balance = Zatoshi(after ? 14_990_000 : 20_000_000)
-        pending = .zero
-        change = .zero
-        let url = Self.explorerURL(txid: Demo.txid)
-        let received = ActivityItem(id: Data([1]), sent: false, zatoshi: 20_000_000, minedHeight: 3_512_960, expired: false,
-                                    blockTime: 1_791_640_800, url: url, memos: ["For the Flipper wallet test"])
-        let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_000_000, fee: 10_000, minedHeight: 3_513_400, expired: false,
-                                blockTime: nil, url: url, memos: ["lunch, thanks!"])
-        activity = after ? [sent, received] : [received]
-        if scene == "pending" {
-            pendingBroadcasts = [PendingBroadcast(created: Date(), payments: [Payment(address: Demo.friend, zatoshi: 5_000_000, memo: "lunch, thanks!")],
-                                                  expiryHeight: 3_513_430, proofs: Data(), sigs: Data())]
-        }
-        switch scene {
-        case "send-confirm": sendStep = .confirmOnFlipper
-        case "send-broadcast": sendStep = .broadcasting
-        case "send-sent": sendStep = .sent(Demo.txid)
-        default: break
-        }
-    }
-
     /// Opens the saved wallets at launch.
     func resume() async {
-        guard Demo.scene == nil else { return }
         guard var pairing, synchronizer == nil else { return }
         do {
             // A single Flipper wallet paired before the birthday fix (a Flipper clock that was
@@ -856,7 +819,6 @@ final class WalletModel: ObservableObject {
 
     /// Who a payment went to (not this wallet's own change).
     func recipients(of item: ActivityItem) async -> [String] {
-        if Demo.scene != nil { return item.sent ? [Demo.friend] : [] }
         guard let synchronizer, let tx = overviews[item.id] else { return [] }
         return await synchronizer.getRecipients(for: tx).compactMap {
             if case .address(let r) = $0 { return r.stringEncoded }
