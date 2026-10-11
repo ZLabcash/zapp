@@ -21,6 +21,13 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>cash.zscan.zapp.refresh</string>
+		<string>cash.zscan.zapp.sync</string>
 	</array>
 </dict>
 </plist>

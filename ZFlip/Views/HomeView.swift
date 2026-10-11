@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var showReceive = Demo.on("receive")
     @State private var showSend = Demo.on("send")
     @State private var showSettings = Demo.on("settings") || AppLanguage.takeReopenSettings()
+    @State private var showWallets = false
 
     var body: some View {
         NavigationStack {
@@ -35,20 +36,31 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showReceive) { ReceiveView() }
+            .sheet(isPresented: $showWallets) { WalletsSheet() }
             .navigationDestination(isPresented: $showSend) { SendView() }
             .navigationDestination(isPresented: $showSettings) { SettingsView() }
         }
     }
 
-    /// Sending needs the Flipper (it signs), a synced wallet and something to spend.
+    /// Sending needs a signer (this phone, or the connected Flipper), a synced wallet and
+    /// something to spend.
     private var canSend: Bool {
-        wallet.flipperReady && wallet.synced && wallet.balance.amount > 0
+        wallet.canSign && wallet.synced && wallet.balance.amount > 0
     }
 
     private var header: some View {
         HStack(spacing: 10) {
             Shield().frame(width: 34, height: 34)
-            Text("ZApp").font(.system(size: 28, weight: .heavy, design: .rounded))
+            // The active wallet; tap to switch, add or manage wallets.
+            Button { showWallets = true } label: {
+                HStack(spacing: 5) {
+                    Text(verbatim: wallet.pairing?.displayName ?? "ZApp")
+                        .font(.system(size: 24, weight: .heavy, design: .rounded))
+                        .lineLimit(1)
+                    Image(systemName: "chevron.down").font(.caption.weight(.bold)).foregroundStyle(Theme.muted)
+                }
+            }
+            .buttonStyle(.plain)
             if wallet.pairing?.network == 1 {
                 Text("TESTNET").font(.caption2.bold()).padding(.horizontal, 6).padding(.vertical, 3)
                     .background(.orange.opacity(0.25)).clipShape(Capsule())
@@ -561,25 +573,28 @@ struct ActionTile: View {
     }
 }
 
-/// The receiving address the Flipper shows, checked against this iPhone's own
-/// derivation from the viewing key.
+/// The receiving address: for a Flipper wallet the one the Flipper shows, checked against
+/// this iPhone's own derivation from the viewing key; for a phone wallet, a new one on demand.
 struct ReceiveView: View {
     @EnvironmentObject var wallet: WalletModel
     @State private var copied = false
 
     var body: some View {
+        let phone = wallet.pairing?.isPhone == true
         let index = wallet.receiveIndex
         let address = wallet.address(at: index)
         VStack(spacing: 18) {
             Capsule().fill(Theme.muted).frame(width: 40, height: 5).padding(.top, 8)
             Text("Receive ZEC").font(.title2.bold())
-            HStack(spacing: 6) {
-                Image(systemName: wallet.flipperReady ? "checkmark.seal.fill" : "clock.arrow.circlepath")
-                Text(wallet.flipperReady ? "Same address as on your Flipper"
-                                         : "Last address shown on your Flipper")
+            if !phone {
+                HStack(spacing: 6) {
+                    Image(systemName: wallet.flipperReady ? "checkmark.seal.fill" : "clock.arrow.circlepath")
+                    Text(wallet.flipperReady ? "Same address as on your Flipper"
+                                             : "Last address shown on your Flipper")
+                }
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(wallet.flipperReady ? Theme.scan : Theme.muted)
             }
-            .font(.footnote.weight(.semibold))
-            .foregroundStyle(wallet.flipperReady ? Theme.scan : Theme.muted)
             if let address {
                 QRCode(text: address)
                     .padding(16)
@@ -603,8 +618,19 @@ struct ReceiveView: View {
                     }
                 }
                 .padding(.horizontal)
-                Text("A new address each time ZFlip opens, or press ▶ in Receive on the Flipper: this screen follows it.")
-                    .font(.caption).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.horizontal)
+                if phone {
+                    Button {
+                        wallet.newPhoneAddress()
+                        copied = false
+                    } label: {
+                        Label("New address", systemImage: "arrow.triangle.2.circlepath").font(.subheadline.weight(.semibold))
+                    }
+                    Text("Every address reaches this same wallet, and nobody can link them together.")
+                        .font(.caption).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.horizontal)
+                } else {
+                    Text("A new address each time ZFlip opens, or press ▶ in Receive on the Flipper: this screen follows it.")
+                        .font(.caption).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.horizontal)
+                }
             } else {
                 ProgressView()
             }

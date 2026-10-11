@@ -107,7 +107,7 @@ struct PendingView: View {
                                 Spacer()
                                 Text(Zatoshi(pay.zatoshi).zecString).fontWeight(.semibold).monospacedDigit()
                             }
-                            Text(book.named(pay.address)?.name ?? AddressRow.short(pay.address))
+                            Text(book.named(pay.address)?.name ?? wallet.walletName(for: pay.address) ?? AddressRow.short(pay.address))
                                 .font(.system(.caption, design: .monospaced)).foregroundStyle(Theme.muted)
                             if !pay.memo.isEmpty { Text("“\(pay.memo)”").font(.caption) }
                         }
@@ -402,6 +402,7 @@ struct AllActivityView: View {
 /// A recipient address, short (with the contact's name when known); tap to see it whole and copy it.
 struct AddressRow: View {
     @EnvironmentObject var book: ContactBook
+    @EnvironmentObject var wallet: WalletModel
     let label: LocalizedStringKey
     let address: String
     @State private var open = false
@@ -420,7 +421,7 @@ struct AddressRow: View {
                         Text(label).font(.subheadline).foregroundStyle(Theme.muted)
                         Spacer(minLength: 20)
                         VStack(alignment: .trailing, spacing: 2) {
-                            if let name = book.named(address)?.name {
+                            if let name = book.named(address)?.name ?? wallet.walletName(for: address) {
                                 Text(name).font(.subheadline.weight(.semibold))
                             }
                             Text(Self.short(address)).font(.system(.caption, design: .monospaced)).foregroundStyle(Theme.muted)

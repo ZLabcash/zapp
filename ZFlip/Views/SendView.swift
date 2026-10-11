@@ -188,7 +188,9 @@ struct SendView: View {
                 .disabled(!valid)
                 .opacity(valid ? 1 : 0.5)
                 .padding(.top, 4)
-                Text(multi
+                Text(wallet.pairing?.isPhone == true
+                     ? (multi ? "One transaction for all of them. Face ID unlocks this phone's keys to sign it." : "Face ID unlocks this phone's keys to sign it.")
+                     : multi
                      ? "One transaction, one signature. Your signing device shows each payment in turn, then the total and the fee: approve once to sign them all."
                      : "Your signing device shows the amount, the recipient and the fee. Check them on its screen, then approve to sign.")
                     .font(.footnote)
@@ -261,8 +263,8 @@ struct SendView: View {
         return VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 6) {
                 Text(multi ? "Recipient \(i + 1)" : "To").font(.subheadline.weight(.semibold))
-                if let c = book.named(l.address) {
-                    Text("· \(c.name)").font(.subheadline.weight(.semibold)).foregroundStyle(Theme.zcash)
+                if let name = book.named(l.address)?.name ?? wallet.walletName(for: l.address) {
+                    Text("· \(name)").font(.subheadline.weight(.semibold)).foregroundStyle(Theme.zcash)
                 }
                 Spacer()
                 if multi {
@@ -292,7 +294,7 @@ struct SendView: View {
             .clipShape(RoundedRectangle(cornerRadius: 12))
             if bad {
                 Text("Not a valid Zcash address for this network.").font(.footnote).foregroundStyle(.orange)
-            } else if wallet.validate(address: l.address) && book.named(l.address) == nil {
+            } else if wallet.validate(address: l.address) && book.named(l.address) == nil && wallet.walletName(for: l.address) == nil {
                 Button { saving = (l.id, "") } label: {
                     Label("Save to address book", systemImage: "person.badge.plus").font(.footnote.weight(.semibold))
                 }

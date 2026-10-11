@@ -1,318 +1,402 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "CFBundleDisplayName": {
-      "comment": "Bundle display name",
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp"
           }
         }
       }
     },
-    "CFBundleName": {
-      "comment": "Bundle name",
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+    "CFBundleName" : {
+      "comment" : "Bundle name",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZFlip"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZFlip"
           }
         }
       }
     },
-    "NSBluetoothAlwaysUsageDescription": {
-      "comment": "Privacy - Bluetooth Always Usage Description",
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "يتصل ZApp بجهاز Flipper Zero عبر البلوتوث لتوقيع معاملات Zcash."
+    "NSBluetoothAlwaysUsageDescription" : {
+      "comment" : "Privacy - Bluetooth Always Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يتصل ZApp بجهاز Flipper Zero عبر البلوتوث لتوقيع معاملات Zcash."
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp kommuniziert per Bluetooth mit deinem Flipper Zero, um Zcash-Transaktionen zu signieren."
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp kommuniziert per Bluetooth mit deinem Flipper Zero, um Zcash-Transaktionen zu signieren."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp se comunica con tu Flipper Zero por Bluetooth para firmar transacciones de Zcash."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp se comunica con tu Flipper Zero por Bluetooth para firmar transacciones de Zcash."
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp communique avec votre Flipper Zero en Bluetooth pour signer les transactions Zcash."
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp communique avec votre Flipper Zero en Bluetooth pour signer les transactions Zcash."
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp comunica con il tuo Flipper Zero via Bluetooth per firmare le transazioni Zcash."
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp comunica con il tuo Flipper Zero via Bluetooth per firmare le transazioni Zcash."
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp は Bluetooth で Flipper Zero と通信し、Zcash トランザクションに署名します。"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp は Bluetooth で Flipper Zero と通信し、Zcash トランザクションに署名します。"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp은 Bluetooth로 Flipper Zero와 통신하여 Zcash 거래에 서명합니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp은 Bluetooth로 Flipper Zero와 통신하여 Zcash 거래에 서명합니다."
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O ZApp se comunica com seu Flipper Zero via Bluetooth para assinar transações Zcash."
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O ZApp se comunica com seu Flipper Zero via Bluetooth para assinar transações Zcash."
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp связывается с вашим Flipper Zero по Bluetooth, чтобы подписывать транзакции Zcash."
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp связывается с вашим Flipper Zero по Bluetooth, чтобы подписывать транзакции Zcash."
           }
         },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp เชื่อมต่อกับ Flipper Zero ผ่านบลูทูธเพื่อเซ็นธุรกรรม Zcash"
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp เชื่อมต่อกับ Flipper Zero ผ่านบลูทูธเพื่อเซ็นธุรกรรม Zcash"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp зв’язується з вашим Flipper Zero через Bluetooth, щоб підписувати транзакції Zcash."
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp зв’язується з вашим Flipper Zero через Bluetooth, щоб підписувати транзакції Zcash."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp 通过蓝牙与你的 Flipper Zero 通信，以签署 Zcash 交易。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp 通过蓝牙与你的 Flipper Zero 通信，以签署 Zcash 交易。"
           }
         }
       }
     },
-    "NSCameraUsageDescription": {
-      "comment": "Privacy - Camera Usage Description",
-      "extractionState": "manual",
-      "localizations": {
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "يقرأ ZApp رموز QR لعناوين Zcash لملء خانة المستلم."
+    "NSCameraUsageDescription" : {
+      "comment" : "Privacy - Camera Usage Description",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يقرأ ZApp رموز QR لعناوين Zcash لملء خانة المستلم."
           }
         },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp liest QR-Codes mit Zcash-Adressen, um den Empfänger einzutragen."
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp liest QR-Codes mit Zcash-Adressen, um den Empfänger einzutragen."
           }
         },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp lee códigos QR de direcciones Zcash para rellenar el destinatario."
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp lee códigos QR de direcciones Zcash para rellenar el destinatario."
           }
         },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp lit les QR codes d'adresse Zcash pour remplir le destinataire."
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp lit les QR codes d'adresse Zcash pour remplir le destinataire."
           }
         },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp legge i codici QR degli indirizzi Zcash per compilare il destinatario."
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp legge i codici QR degli indirizzi Zcash per compilare il destinatario."
           }
         },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp は Zcash アドレスの QR コードを読み取り、送金先を入力します。"
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp は Zcash アドレスの QR コードを読み取り、送金先を入力します。"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp은 Zcash 주소 QR 코드를 읽어 받는 사람을 입력합니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp은 Zcash 주소 QR 코드를 읽어 받는 사람을 입력합니다."
           }
         },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "O ZApp lê QR codes de endereços Zcash para preencher o destinatário."
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O ZApp lê QR codes de endereços Zcash para preencher o destinatário."
           }
         },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp считывает QR-коды адресов Zcash, чтобы заполнить получателя."
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp считывает QR-коды адресов Zcash, чтобы заполнить получателя."
           }
         },
-        "th": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp อ่านคิวอาร์โค้ดที่อยู่ Zcash เพื่อกรอกผู้รับให้คุณ"
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp อ่านคิวอาร์โค้ดที่อยู่ Zcash เพื่อกรอกผู้รับให้คุณ"
           }
         },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp зчитує QR-коди адрес Zcash, щоб заповнити отримувача."
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp зчитує QR-коди адрес Zcash, щоб заповнити отримувача."
           }
         },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ZApp 读取 Zcash 地址二维码，自动填写收款人。"
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp 读取 Zcash 地址二维码，自动填写收款人。"
+          }
+        }
+      }
+    },
+    "NSFaceIDUsageDescription" : {
+      "comment" : "Privacy - Face ID Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يستخدم ZApp خاصية Face ID لفتح مفاتيح المحافظ المحفوظة على هذا الهاتف."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp verwendet Face ID, um die Schlüssel der Wallets auf diesem Telefon zu entsperren."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ZApp uses Face ID to unlock the keys of the wallets kept on this phone."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp usa Face ID para desbloquear las claves de las billeteras guardadas en este teléfono."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp utilise Face ID pour déverrouiller les clés des wallets gardés sur ce téléphone."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp usa Face ID per sbloccare le chiavi dei wallet custoditi su questo telefono."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp は Face ID を使って、この電話に保管されたウォレットの鍵をロック解除します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp은 이 휴대폰에 보관된 지갑의 키를 잠금 해제하기 위해 Face ID를 사용합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O ZApp usa o Face ID para desbloquear as chaves das carteiras guardadas neste telefone."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp использует Face ID, чтобы разблокировать ключи кошельков на этом телефоне."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp ใช้ Face ID เพื่อปลดล็อกกุญแจของกระเป๋าที่เก็บไว้บนโทรศัพท์นี้"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp використовує Face ID, щоб розблокувати ключі гаманців на цьому телефоні."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp 使用 Face ID 解锁保存在此手机上的钱包密钥。"
           }
         }
       }
     }
   },
-  "version": "1.0"
+  "version" : "1.0"
 }

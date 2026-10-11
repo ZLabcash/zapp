@@ -24,7 +24,8 @@ targets:
     info:
       path: ZFlip/Info.plist
       properties:
-        UIBackgroundModes: [bluetooth-central]
+        UIBackgroundModes: [bluetooth-central, fetch, processing]
+        BGTaskSchedulerPermittedIdentifiers: [cash.zscan.zapp.refresh, cash.zscan.zapp.sync]
     dependencies:
       - package: ZcashLightClientKit
       - framework: Frameworks/ZFlipBridge.xcframework
@@ -36,6 +37,7 @@ targets:
         TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription: "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions."
         INFOPLIST_KEY_NSCameraUsageDescription: "ZApp reads Zcash address QR codes to fill in who you send to."
+        INFOPLIST_KEY_NSFaceIDUsageDescription: "ZApp uses Face ID to unlock the keys of the wallets kept on this phone."
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_CFBundleDisplayName: ZApp

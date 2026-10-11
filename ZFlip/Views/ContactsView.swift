@@ -13,6 +13,40 @@ struct ContactsView: View {
 
     var body: some View {
         List {
+            // Picking a recipient: your other wallets first, by name.
+            if pick != nil {
+                let others = wallet.wallets.filter { $0.id != wallet.pairing?.id }
+                if !others.isEmpty {
+                    Section("My wallets") {
+                        ForEach(others) { w in
+                            if let address = wallet.receivingAddress(of: w) {
+                                Button {
+                                    pick?(Contact(name: w.displayName, address: address))
+                                    dismiss()
+                                } label: {
+                                    HStack(spacing: 12) {
+                                        Group {
+                                            if w.isPhone {
+                                                Image(systemName: "wallet.bifold.fill").font(.body).foregroundStyle(.black)
+                                                    .frame(width: 36, height: 36).background(Theme.zcash).clipShape(Circle())
+                                            } else {
+                                                FlipperZeroIcon(light: .green, pulsing: false).frame(width: 36)
+                                            }
+                                        }
+                                        .frame(width: 36, height: 36)
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(verbatim: w.displayName).font(.subheadline.weight(.semibold))
+                                            Text(short(address)).font(.caption.monospaced()).foregroundStyle(Theme.muted)
+                                        }
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                }
+            }
+            Section(pick != nil && wallet.wallets.count > 1 ? "Contacts" : "") {
             if book.contacts.isEmpty {
                 Text("No contacts yet. Add one with +, or save an address from Send.")
                     .font(.footnote).foregroundStyle(Theme.muted)
@@ -40,6 +74,7 @@ struct ContactsView: View {
                 .buttonStyle(.plain)
             }
             .onDelete { offsets in book.delete(offsets.map { book.contacts[$0].id }) }
+            }
         }
         .navigationTitle("Address book")
         .navigationBarTitleDisplayMode(.inline)
