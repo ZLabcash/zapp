@@ -497,18 +497,16 @@ struct CurrencyView: View {
                 }
             }
             .padding(20)
-            // CoinGecko's attribution for its free API.
+            // CoinGecko's attribution for its free API: one line, small mark.
             Link(destination: URL(string: "https://www.coingecko.com/en/api")!) {
-                VStack(spacing: 10) {
-                    Text("Powered by").font(.footnote.weight(.semibold)).foregroundStyle(Theme.muted)
-                    HStack(spacing: 12) {
-                        Image("CoinGecko").resizable().scaledToFit().frame(width: 52, height: 52)
-                        Text(verbatim: "coingecko").font(.system(size: 38, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
-                    }
-                    .environment(\.layoutDirection, .leftToRight)
+                HStack(spacing: 6) {
+                    Text("Fetched from").foregroundStyle(Theme.muted)
+                    Image("CoinGecko").resizable().scaledToFit().frame(width: 16, height: 16)
+                    Text(verbatim: "CoinGecko").fontWeight(.semibold).foregroundStyle(Theme.ink)
                 }
+                .font(.footnote)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 22)
+                .padding(.vertical, 12)
             }
             .buttonStyle(.plain)
         }
