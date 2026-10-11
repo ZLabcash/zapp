@@ -10,6 +10,12 @@ enum AppLanguage {
 
     static var current: String { UserDefaults.standard.string(forKey: key) ?? "" }
 
+    /// The flag shown for a language (Assets.xcassets/Flags, flag-icons, MIT).
+    static func flag(_ code: String) -> String {
+        ["en": "gb", "fr": "fr", "es": "es", "it": "it", "pt-BR": "br", "de": "de", "ru": "ru", "uk": "ua",
+         "zh-Hans": "cn", "ja": "jp", "ko": "kr", "ar": "sa", "th": "th"][code] ?? "gb"
+    }
+
     /// "Français", "日本語", "العربية": each language in its own words.
     static func name(_ code: String) -> String {
         Locale(identifier: code).localizedString(forIdentifier: code)?.capitalized(with: Locale(identifier: code)) ?? code

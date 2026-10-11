@@ -12,6 +12,9 @@ struct SettingsView: View {
     @AppStorage(AppLanguage.key) private var language = ""
     @AppStorage(WalletModel.autoBroadcastKey) private var autoBroadcast = true
     @State private var broadcastInfo = false
+    // Filming: open the language or currency page straight away.
+    @State private var demoLanguage = Demo.on("settings-lang")
+    @State private var demoCurrency = Demo.on("settings-currency")
 
     var body: some View {
         ScrollView {
@@ -28,17 +31,10 @@ struct SettingsView: View {
                     }
                 }
                 section("Language") {
-                    Menu {
-                        Picker("Language", selection: Binding(get: { language }, set: { AppLanguage.apply($0); language = $0 })) {
-                            Text("System").tag("")
-                            ForEach(AppLanguage.codes, id: \.self) { code in
-                                Text(verbatim: AppLanguage.name(code)).tag(code)
-                            }
-                        }
-                    } label: {
+                    NavigationLink { LanguageView() } label: {
                         SettingsRow(icon: "globe", title: "Language",
                                     value: language.isEmpty ? String(localized: "System") : AppLanguage.name(language),
-                                    chevron: "chevron.up.chevron.down")
+                                    flag: language.isEmpty ? nil : AppLanguage.flag(language), chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
                 }
@@ -55,15 +51,9 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                     Divider()
-                    Menu {
-                        Picker("Currency", selection: $currency) {
-                            ForEach(PriceService.currencies) { c in
-                                Text("\(c.code.uppercased())  \(c.name)").tag(c.code)
-                            }
-                        }
-                    } label: {
-                        SettingsRow(icon: "dollarsign.circle.fill", title: "Currency",
-                                    badge: currency.uppercased(), chevron: "chevron.up.chevron.down")
+                    NavigationLink { CurrencyView() } label: {
+                        SettingsRow(icon: "dollarsign.circle.fill", title: "Currency", badge: currency.uppercased(),
+                                    flag: PriceService.currencies.first { $0.code == currency }?.flag, chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
                     Divider()
@@ -135,6 +125,8 @@ struct SettingsView: View {
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
+        .navigationDestination(isPresented: $demoLanguage) { LanguageView() }
+        .navigationDestination(isPresented: $demoCurrency) { CurrencyView() }
         .confirmationDialog("Forget this wallet?", isPresented: $confirmForget, titleVisibility: .visible) {
             Button("Forget", role: .destructive) {
                 Task {
@@ -196,6 +188,7 @@ struct SettingsRow: View {
     let title: LocalizedStringKey
     var value: String? = nil
     var badge: String? = nil
+    var flag: String? = nil
     var chevron: String? = nil
 
     var body: some View {
@@ -208,6 +201,7 @@ struct SettingsRow: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8))
             Text(title).font(.subheadline.weight(.semibold))
             Spacer()
+            if let flag { Flag(name: flag, height: 16) }
             if let value { Text(value).font(.subheadline).foregroundStyle(Theme.muted).monospacedDigit().lineLimit(1) }
             if let badge {
                 Text(badge)
@@ -397,5 +391,118 @@ struct ReleaseNotesView: View {
         .navigationTitle("What's new")
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
+    }
+}
+
+/// A flag (4:3, flag-icons SVG kept as vectors), with softly rounded corners.
+struct Flag: View {
+    let name: String
+    var height: CGFloat = 21
+
+    var body: some View {
+        Image("Flags/\(name)")
+            .resizable()
+            .aspectRatio(4 / 3, contentMode: .fill)
+            .frame(width: height * 4 / 3, height: height)
+            .clipShape(RoundedRectangle(cornerRadius: height * 0.18))
+            .overlay(RoundedRectangle(cornerRadius: height * 0.18).stroke(Color.primary.opacity(0.12), lineWidth: 0.5))
+            .environment(\.layoutDirection, .leftToRight) // flags never mirror
+    }
+}
+
+/// One choice in a list: flag (or icon), a title, a subtitle, a check when selected.
+private struct ChoiceRow: View {
+    var flag: String?
+    var icon: String?
+    let title: String
+    var subtitle: String?
+    var trailing: String?
+    let selected: Bool
+
+    var body: some View {
+        HStack(spacing: 14) {
+            if let flag {
+                Flag(name: flag, height: 24)
+            } else if let icon {
+                Image(systemName: icon).font(.title3).foregroundStyle(Theme.zcash).frame(width: 32, height: 24)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(verbatim: title).font(.subheadline.weight(.semibold))
+                if let subtitle { Text(verbatim: subtitle).font(.caption).foregroundStyle(Theme.muted) }
+            }
+            Spacer()
+            if let trailing { Text(verbatim: trailing).font(.subheadline).foregroundStyle(Theme.muted).monospacedDigit() }
+            Image(systemName: selected ? "checkmark.circle.fill" : "circle")
+                .font(.title3)
+                .foregroundStyle(selected ? Theme.zcash : Theme.muted.opacity(0.5))
+        }
+        .padding(.vertical, 4)
+        .contentShape(Rectangle())
+    }
+}
+
+/// Settings → Language: the system's, or one of the 13 ZApp speaks, applied at once.
+struct LanguageView: View {
+    @AppStorage(AppLanguage.key) private var language = ""
+
+    var body: some View {
+        ScrollView {
+            SettingsCard {
+                Button { choose("") } label: {
+                    ChoiceRow(icon: "iphone", title: String(localized: "System"),
+                              subtitle: Locale.preferredLanguages.first.map { AppLanguage.name(Locale(identifier: $0).language.languageCode?.identifier ?? $0) },
+                              selected: language.isEmpty)
+                }
+                .buttonStyle(.plain)
+                ForEach(AppLanguage.codes, id: \.self) { code in
+                    Divider()
+                    Button { choose(code) } label: {
+                        ChoiceRow(flag: AppLanguage.flag(code), title: AppLanguage.name(code),
+                                  subtitle: Locale.current.localizedString(forIdentifier: code)?.capitalized,
+                                  selected: language == code)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(20)
+        }
+        .background(Theme.background.ignoresSafeArea())
+        .navigationTitle("Language")
+        .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+    }
+
+    private func choose(_ code: String) {
+        AppLanguage.apply(code)
+        language = code
+    }
+}
+
+/// Settings → Currency: what the balance is shown in, with 1 ZEC's price in each.
+struct CurrencyView: View {
+    @EnvironmentObject var prices: PriceService
+    @AppStorage("currency") private var currency = "usd"
+
+    var body: some View {
+        ScrollView {
+            SettingsCard {
+                ForEach(Array(PriceService.currencies.enumerated()), id: \.element.id) { i, c in
+                    if i > 0 { Divider() }
+                    Button { currency = c.code } label: {
+                        ChoiceRow(flag: c.flag, title: c.code.uppercased(), subtitle: c.name,
+                                  trailing: prices.format(zatoshi: 100_000_000, in: c.code), selected: currency == c.code)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(20)
+            Text("Price of 1 ZEC, from CoinGecko (ZScan for the US dollar if it can't be reached).")
+                .font(.caption).foregroundStyle(Theme.muted).padding(.horizontal, 24)
+        }
+        .background(Theme.background.ignoresSafeArea())
+        .navigationTitle("Currency")
+        .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+        .task { await prices.refreshIfStale() }
     }
 }

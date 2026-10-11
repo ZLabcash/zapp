@@ -7,6 +7,8 @@ final class PriceService: ObservableObject {
     struct Currency: Identifiable, Hashable {
         let code: String
         var id: String { code }
+        /// Its flag in Assets.xcassets/Flags (the euro's is the EU's).
+        var flag: String { ["usd": "us", "eur": "eu", "gbp": "gb", "chf": "ch", "cad": "ca", "aud": "au", "jpy": "jp"][code] ?? "us" }
         /// In the user's language, from the system ("US dollar", "dollar des États-Unis"…).
         var name: String { Locale.current.localizedString(forCurrencyCode: code.uppercased()) ?? code.uppercased() }
     }

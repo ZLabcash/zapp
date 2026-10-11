@@ -8513,6 +8513,82 @@
         }
       }
     },
+    "Price of 1 ZEC, from CoinGecko (ZScan for the US dollar if it can't be reached).": {
+      "localizations": {
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سعر 1 ZEC من CoinGecko (ومن ZScan للدولار الأمريكي إذا تعذّر الوصول إليه)."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preis für 1 ZEC laut CoinGecko (ZScan für den US-Dollar, falls es nicht erreichbar ist)."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Precio de 1 ZEC, según CoinGecko (ZScan para el dólar estadounidense si no responde)."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prix de 1 ZEC, d’après CoinGecko (ZScan pour le dollar américain s’il est injoignable)."
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prezzo di 1 ZEC, da CoinGecko (ZScan per il dollaro USA se non è raggiungibile)."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 ZEC の価格（CoinGecko より。接続できない場合、米ドルは ZScan から）。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 ZEC 가격, CoinGecko 기준 (연결할 수 없으면 미국 달러는 ZScan 기준)."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preço de 1 ZEC, segundo o CoinGecko (ZScan para o dólar americano se ele estiver fora do ar)."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Цена 1 ZEC по данным CoinGecko (для доллара США — ZScan, если CoinGecko недоступен)."
+          }
+        },
+        "th": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ราคาของ 1 ZEC จาก CoinGecko (ใช้ ZScan สำหรับดอลลาร์สหรัฐหากเชื่อมต่อไม่ได้)"
+          }
+        },
+        "uk": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ціна 1 ZEC за даними CoinGecko (для долара США — ZScan, якщо CoinGecko недоступний)."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "1 ZEC 的价格来自 CoinGecko（无法访问时，美元价格来自 ZScan）。"
+          }
+        }
+      }
+    },
     "Price unavailable": {
       "localizations": {
         "ar": {
