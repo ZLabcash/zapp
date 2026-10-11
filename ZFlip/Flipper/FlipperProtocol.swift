@@ -93,7 +93,7 @@ enum FlipperProtocol {
     /// `ERROR`: code and message.
     static func decodeError(_ data: Data) -> String {
         var r = Reader(data)
-        guard let code = try? r.u8(), let message = try? r.string() else { return "Unknown Flipper error" }
+        guard let code = try? r.u8(), let message = try? r.string() else { return String(localized: "Unknown Flipper error") }
         return code == 1 ? "Rejected on the Flipper" : message
     }
 
@@ -141,10 +141,10 @@ enum FlipperError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .bluetoothOff: return "Bluetooth is off. Turn it on to connect."
-        case .bluetoothDenied: return "ZApp may not use Bluetooth. Allow it in Settings."
-        case .notConnected: return "The Flipper is not connected."
-        case .timeout: return "The Flipper did not answer in time."
+        case .bluetoothOff: return String(localized: "Bluetooth is off. Turn it on to connect.")
+        case .bluetoothDenied: return String(localized: "ZApp may not use Bluetooth. Allow it in Settings.")
+        case .notConnected: return String(localized: "The Flipper is not connected.")
+        case .timeout: return String(localized: "The Flipper did not answer in time.")
         case .rejected(let message): return message
         case .protocolError(let message): return message
         }

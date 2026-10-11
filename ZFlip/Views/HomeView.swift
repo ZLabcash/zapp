@@ -192,9 +192,9 @@ struct ConfirmingPill: View {
     }
 
     private func timeLeft(_ n: Int) -> String {
-        if n == 0 { return "Waiting for its first block · about 13 min" }
+        if n == 0 { return String(localized: "Waiting for its first block · about 13 min") }
         let minutes = max(1, ((Self.needed - n) * 75 + 59) / 60)
-        return "\(n) of \(Self.needed) · spendable in about \(minutes) min"
+        return String(localized: "\(n) of \(Self.needed) · spendable in about \(minutes) min")
     }
 }
 
@@ -236,7 +236,7 @@ struct BalanceCard: View {
                     ZecLogo().frame(width: 34, height: 34)
                 }
                 if wallet.showsAmounts && showFiat {
-                    Text(prices.format(zatoshi: wallet.owned.amount, in: currency).map { "≈ \($0)" } ?? "Price unavailable")
+                    Text(prices.format(zatoshi: wallet.owned.amount, in: currency).map { "≈ \($0)" } ?? String(localized: "Price unavailable"))
                         .font(.title3.weight(.semibold)).monospacedDigit()
                         .foregroundStyle(Theme.muted)
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -325,9 +325,9 @@ struct DevicesCard: View {
     private var note: String? {
         switch wallet.flipperState {
         case .idle, .ready: return nil
-        case .connecting: return "Open ZFlip on the Flipper and unlock it, close to this phone."
-        case .approve: return "Press OK on your Flipper to share the viewing key (it can see, never spend)."
-        case .otherWallet(let flipper): return "\(flipper) holds a different wallet than this phone."
+        case .connecting: return String(localized: "Open ZFlip on the Flipper and unlock it, close to this phone.")
+        case .approve: return String(localized: "Press OK on your Flipper to share the viewing key (it can see, never spend).")
+        case .otherWallet(let flipper): return String(localized: "\(flipper) holds a different wallet than this phone.")
         case .failed(let message): return message
         }
     }
@@ -373,7 +373,7 @@ struct DevicesCard: View {
 /// The Connect button: a capsule with the link's symbol.
 struct ConnectPill: View {
     enum Style { case primary, connected, plain, disabled }
-    let title: String
+    let title: LocalizedStringKey
     let glyph: AnyView
     let style: Style
     let action: () -> Void
@@ -533,7 +533,7 @@ struct ZecLogo: View {
 }
 
 struct ActionTile: View {
-    let title: String
+    let title: LocalizedStringKey
     let icon: String
     let action: () -> Void
 

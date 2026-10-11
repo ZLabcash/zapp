@@ -63,21 +63,21 @@ struct SendView: View {
     private var amountNote: (text: String, blocking: Bool)? {
         let spendable = wallet.balance.amount
         if lines.contains(where: { !$0.amount.isEmpty && Self.zats($0.amount) == nil }) {
-            return ("Enter an amount above zero, like 0.01.", true)
+            return (String(localized: "Enter an amount above zero, like 0.01."), true)
         }
         guard let total else { return nil }
         if spendable <= feeOrMinimum {
-            return ("Your spendable balance (\(wallet.balance.zecString)) doesn't cover the network fee of \(Zatoshi(feeOrMinimum).zecString).", true)
+            return (String(localized: "Your spendable balance (\(wallet.balance.zecString)) doesn't cover the network fee of \(Zatoshi(feeOrMinimum).zecString)."), true)
         }
         if total > spendable {
-            return ("That's more than your spendable balance of \(wallet.balance.zecString).", true)
+            return (String(localized: "That's more than your spendable balance of \(wallet.balance.zecString)."), true)
         }
         if total + feeOrMinimum > spendable {
             let max = Zatoshi(spendable - feeOrMinimum)
-            return ("That leaves nothing for the network fee (\(Zatoshi(feeOrMinimum).zecString)). You can send up to \(max.zecString)\(multi ? " in total" : ": tap Max").", true)
+            return (String(localized: "That leaves nothing for the network fee (\(Zatoshi(feeOrMinimum).zecString)). You can send up to \(max.zecString)\(multi ? " in total" : ": tap Max")."), true)
         }
         if total < feeOrMinimum {
-            return ("Very small amount: the network fee (\(Zatoshi(feeOrMinimum).zecString)) is more than what you send.", false)
+            return (String(localized: "Very small amount: the network fee (\(Zatoshi(feeOrMinimum).zecString)) is more than what you send."), false)
         }
         return nil
     }
@@ -182,15 +182,15 @@ struct SendView: View {
                     guard let payments else { return }
                     Task { await wallet.send(payments) }
                 } label: {
-                    Label(multi ? "Review \(lines.count) payments on Flipper" : "Review on Flipper", systemImage: "shield.lefthalf.filled")
+                    Label(multi ? "Review & sign \(lines.count) payments" : "Review & sign", systemImage: "shield.lefthalf.filled")
                         .primaryButton()
                 }
                 .disabled(!valid)
                 .opacity(valid ? 1 : 0.5)
                 .padding(.top, 4)
                 Text(multi
-                     ? "One transaction, one signature. Your Flipper shows each payment on its own page (OK or ▶ for the next), then the total and the fee: hold OK once to sign them all."
-                     : "Your Flipper will show the amount, the recipient and the fee. Check them there, then hold OK to sign.")
+                     ? "One transaction, one signature. Your signing device shows each payment in turn, then the total and the fee: approve once to sign them all."
+                     : "Your signing device shows the amount, the recipient and the fee. Check them on its screen, then approve to sign.")
                     .font(.footnote)
                     .foregroundStyle(Theme.muted)
             }
@@ -243,7 +243,7 @@ struct SendView: View {
                     .foregroundStyle(.orange)
             }
             if !wallet.online {
-                Label("No network: you can still sign with your Flipper and broadcast later.", systemImage: "wifi.slash")
+                Label("No network: you can still sign with your device and broadcast later.", systemImage: "wifi.slash")
                     .foregroundStyle(Theme.muted)
             }
         }
@@ -321,7 +321,7 @@ struct SendView: View {
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
 
-    private func input(_ prompt: String, text: Binding<String>, onCard: Bool = false) -> some View {
+    private func input(_ prompt: LocalizedStringKey, text: Binding<String>, onCard: Bool = false) -> some View {
         TextField(prompt, text: text, axis: .vertical)
             .lineLimit(1...4)
             .padding(14)
@@ -352,8 +352,8 @@ struct SendView: View {
                 Image(systemName: "clock.badge.checkmark").font(.system(size: 66)).foregroundStyle(Theme.zcash)
                 Text("Signed, not broadcast yet").font(.title2.bold()).multilineTextAlignment(.center)
                 Text(wallet.online
-                     ? "Your Flipper signed it. It's waiting in Activity: broadcast it when you decide (within about 50 minutes, before it expires), or discard it."
-                     : "Your Flipper signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it.")
+                     ? "Your device signed it. It's waiting in Activity: broadcast it when you decide (within about 50 minutes, before it expires), or discard it."
+                     : "Your device signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it.")
                     .multilineTextAlignment(.center).foregroundStyle(Theme.muted)
                 Button("Done") {
                     wallet.sendStep = .idle
@@ -377,9 +377,9 @@ struct SendView: View {
 
     private var stepTitle: String {
         switch wallet.sendStep {
-        case .preparing: return "Preparing the transaction"
-        case .confirmOnFlipper: return link.awaitingFlipper ? "Confirm on your Flipper" : "Flipper is checking…"
-        case .broadcasting: return "Broadcasting"
+        case .preparing: return String(localized: "Preparing the transaction")
+        case .confirmOnFlipper: return link.awaitingFlipper ? "Confirm on your device" : "Your device is checking…"
+        case .broadcasting: return String(localized: "Broadcasting")
         default: return ""
         }
     }
@@ -387,11 +387,11 @@ struct SendView: View {
     private var stepDetail: String {
         switch wallet.sendStep {
         case .confirmOnFlipper:
-            return "Check each payment and the fee on the Flipper's screen, then hold OK. Press Back to refuse."
+            return String(localized: "Check each payment and the fee on your device's screen, then approve it there. Refuse it there to cancel.")
         case .broadcasting:
-            return "Signed by your Flipper. Sending it to the Zcash network."
+            return String(localized: "Signed by your device. Sending it to the Zcash network.")
         default:
-            return "Building a shielded transaction and its zero-knowledge proof."
+            return String(localized: "Building a shielded transaction and its zero-knowledge proof.")
         }
     }
 }

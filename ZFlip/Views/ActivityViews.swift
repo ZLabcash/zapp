@@ -7,7 +7,7 @@ struct ActivityCard: View {
     @State private var selected: WalletModel.ActivityItem?
     @State private var pending: WalletModel.PendingBroadcast?
 
-    private var recent: (title: String, items: [WalletModel.ActivityItem]) {
+    private var recent: (title: LocalizedStringKey, items: [WalletModel.ActivityItem]) {
         let today = wallet.activity.filter { item in
             guard let t = item.blockTime else { return true } // in the mempool: happening now
             return Calendar.current.isDateInToday(Date(timeIntervalSince1970: t))
@@ -69,8 +69,8 @@ struct PendingRow: View {
                 .clipShape(Circle())
             VStack(alignment: .leading, spacing: 2) {
                 Text("Signed · not broadcast").font(.subheadline.weight(.semibold))
-                Text(wallet.expired(p) ? "Expired: discard it and send again"
-                     : wallet.minutesLeft(p).map { "Broadcast within about \($0) min" } ?? "Waiting to be broadcast")
+                Text(wallet.expired(p) ? String(localized: "Expired: discard it and send again")
+                     : wallet.minutesLeft(p).map { String(localized: "Broadcast within about \($0) min") } ?? String(localized: "Waiting to be broadcast"))
                     .font(.caption).foregroundStyle(wallet.expired(p) ? .red : .orange)
             }
             Spacer()
@@ -125,7 +125,7 @@ struct PendingView: View {
                     HStack {
                         Text("Expires").foregroundStyle(Theme.muted)
                         Spacer()
-                        Text(wallet.expired(p) ? "Expired" : "Block \(p.expiryHeight.formatted())" + (wallet.minutesLeft(p).map { " · ~\($0) min" } ?? ""))
+                        Text(wallet.expired(p) ? String(localized: "Expired") : String(localized: "Block \(p.expiryHeight.formatted())") + (wallet.minutesLeft(p).map { String(localized: " · ~\($0) min") } ?? ""))
                             .foregroundStyle(wallet.expired(p) ? .red : Theme.ink)
                     }
                     .font(.subheadline).padding(.vertical, 10)
@@ -206,17 +206,17 @@ struct ActivityRow: View {
 @MainActor
 enum TxStatus {
     static func short(_ tx: WalletModel.ActivityItem, _ wallet: WalletModel) -> String {
-        if tx.expired { return "Expired" }
-        guard let n = wallet.confirmations(tx) else { return "Pending · in the mempool" }
-        if n < 10 { return "Confirming · \(n) of 10" }
+        if tx.expired { return String(localized: "Expired") }
+        guard let n = wallet.confirmations(tx) else { return String(localized: "Pending · in the mempool") }
+        if n < 10 { return String(localized: "Confirming · \(n) of 10") }
         return tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? "Confirmed"
     }
 
     static func long(_ tx: WalletModel.ActivityItem, _ wallet: WalletModel) -> String {
-        if tx.expired { return "Expired, never mined" }
-        guard let n = wallet.confirmations(tx) else { return "Pending, in the mempool" }
-        if n < 10 { return "Confirming, \(n) of 10 confirmations" }
-        return "Confirmed · \(n.formatted()) confirmations"
+        if tx.expired { return String(localized: "Expired, never mined") }
+        guard let n = wallet.confirmations(tx) else { return String(localized: "Pending, in the mempool") }
+        if n < 10 { return String(localized: "Confirming, \(n) of 10 confirmations") }
+        return String(localized: "Confirmed · \(n.formatted()) confirmations")
     }
 }
 
@@ -247,21 +247,21 @@ struct TxDetailView: View {
                 VStack(spacing: 0) {
                     if tx.sent {
                         if recipients.isEmpty {
-                            row("To", "Shielded recipient")
+                            row("To", String(localized: "Shielded recipient"))
                         }
                         ForEach(Array(recipients.enumerated()), id: \.offset) { i, r in
                             AddressRow(label: recipients.count > 1 ? "To (\(i + 1))" : "To", address: r)
                         }
                         if let fee = tx.fee { row("Network fee", Zatoshi(fee).zecString) }
                     } else {
-                        row("From", "Shielded sender")
+                        row("From", String(localized: "Shielded sender"))
                     }
                     row("Status", TxStatus.long(tx, wallet))
                     if let t = tx.blockTime {
                         row("Date", Date(timeIntervalSince1970: t).formatted(date: .long, time: .shortened))
                     }
                     if tx.memos.isEmpty {
-                        row("Message", "None")
+                        row("Message", String(localized: "None"))
                     } else {
                         ForEach(Array(tx.memos.enumerated()), id: \.offset) { i, m in
                             row(tx.memos.count > 1 ? "Message (\(i + 1))" : "Message", m)
@@ -307,7 +307,7 @@ struct TxDetailView: View {
         .task { recipients = await wallet.recipients(of: tx) }
     }
 
-    private func row(_ k: String, _ v: String, mono: Bool = false) -> some View {
+    private func row(_ k: LocalizedStringKey, _ v: String, mono: Bool = false) -> some View {
         VStack(spacing: 0) {
             HStack(alignment: .top, spacing: 16) {
                 Text(k).font(.subheadline).foregroundStyle(Theme.muted)
@@ -339,8 +339,8 @@ struct AllActivityView: View {
         var out: [(String, [WalletModel.ActivityItem])] = []
         for tx in items {
             let day = tx.blockTime.map { Date(timeIntervalSince1970: $0) }.map { d in
-                Calendar.current.isDateInToday(d) ? "Today" : Calendar.current.isDateInYesterday(d) ? "Yesterday" : d.formatted(date: .complete, time: .omitted)
-            } ?? "Pending"
+                Calendar.current.isDateInToday(d) ? String(localized: "Today") : Calendar.current.isDateInYesterday(d) ? String(localized: "Yesterday") : d.formatted(date: .complete, time: .omitted)
+            } ?? String(localized: "Pending")
             if out.last?.0 == day { out[out.count - 1].1.append(tx) } else { out.append((day, [tx])) }
         }
         return out
@@ -375,7 +375,7 @@ struct AllActivityView: View {
                 }
                 ForEach(days, id: \.0) { day, items in
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(day.uppercased()).font(.caption.weight(.semibold)).foregroundStyle(Theme.muted).padding(.leading, 4)
+                        Text(day.localizedUppercase).font(.caption.weight(.semibold)).foregroundStyle(Theme.muted).padding(.leading, 4)
                         VStack(spacing: 10) {
                             ForEach(items) { tx in
                                 Button { selected = tx } label: { ActivityRow(tx: tx, showMemo: true) }.buttonStyle(.plain)
@@ -402,7 +402,7 @@ struct AllActivityView: View {
 /// A recipient address, short (with the contact's name when known); tap to see it whole and copy it.
 struct AddressRow: View {
     @EnvironmentObject var book: ContactBook
-    let label: String
+    let label: LocalizedStringKey
     let address: String
     @State private var open = false
     @State private var copied = false

@@ -10,6 +10,7 @@ struct SettingsView: View {
     @AppStorage("appearance") private var appearance = 0
     @AppStorage("currency") private var currency = "usd"
     @AppStorage(WalletModel.autoBroadcastKey) private var autoBroadcast = true
+    @State private var broadcastInfo = false
 
     var body: some View {
         ScrollView {
@@ -24,6 +25,16 @@ struct SettingsView: View {
                         chip("Light", icon: "sun.max.fill", tag: 1)
                         chip("Dark", icon: "moon.fill", tag: 2)
                     }
+                }
+                section("Language") {
+                    Button {
+                        if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                    } label: {
+                        SettingsRow(icon: "globe", title: "Language",
+                                    value: Locale.current.localizedString(forLanguageCode: Locale.current.language.languageCode?.identifier ?? "en")?.capitalized,
+                                    chevron: "arrow.up.right")
+                    }
+                    .buttonStyle(.plain)
                 }
                 section("Wallet") {
                     NavigationLink { AllActivityView() } label: {
@@ -52,7 +63,7 @@ struct SettingsView: View {
                     Divider()
                     NavigationLink { SyncDetailView() } label: {
                         SettingsRow(icon: "arrow.triangle.2.circlepath", title: "Synced",
-                                    value: wallet.syncError != nil ? "Offline" : wallet.synced ? "Up to date" : "\(Int(wallet.syncProgress * 100))%",
+                                    value: wallet.syncError != nil ? String(localized: "Offline") : wallet.synced ? String(localized: "Up to date") : "\(Int(wallet.syncProgress * 100))%",
                                     chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
@@ -62,10 +73,27 @@ struct SettingsView: View {
                             Image(systemName: "antenna.radiowaves.left.and.right")
                                 .font(.system(size: 15, weight: .semibold)).foregroundStyle(.black)
                                 .frame(width: 30, height: 30).background(Theme.zcash).clipShape(RoundedRectangle(cornerRadius: 8))
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Broadcast right after signing").font(.subheadline.weight(.semibold))
-                                Text(autoBroadcast ? "On: payments leave as soon as the Flipper signs." : "Off: signed payments wait in Activity until you broadcast them.")
-                                    .font(.caption).foregroundStyle(Theme.muted)
+                            HStack(spacing: 6) {
+                                Text("Automatic broadcast").font(.subheadline.weight(.semibold))
+                                Button { broadcastInfo = true } label: {
+                                    Image(systemName: "info.circle").foregroundStyle(Theme.muted)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("About automatic broadcast")
+                                .popover(isPresented: $broadcastInfo) {
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Text("Automatic broadcast").font(.headline)
+                                        Text("Your hardware wallet signs payments without ever going online. Broadcasting is the next step: this app sends the signed transaction to the Zcash network.")
+                                        Text("On: it leaves as soon as your device has signed it.")
+                                        Text("Off: every signed payment waits in Activity. You broadcast it or discard it when you decide. Without network, it always waits.")
+                                        Text("A signed payment expires after about 40 blocks (around 50 minutes). Until it is broadcast, nothing has left your wallet.")
+                                            .foregroundStyle(Theme.muted)
+                                    }
+                                    .font(.subheadline)
+                                    .padding(18)
+                                    .frame(width: 310)
+                                    .presentationCompactAdaptation(.popover)
+                                }
                             }
                         }
                     }
@@ -117,18 +145,18 @@ struct SettingsView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
     }
 
-    private func header(_ title: String) -> some View {
-        Text(title.uppercased()).font(.caption.weight(.semibold)).foregroundStyle(Theme.muted).padding(.leading, 4)
+    private func header(_ title: LocalizedStringKey) -> some View {
+        Text(title).textCase(.uppercase).font(.caption.weight(.semibold)).foregroundStyle(Theme.muted).padding(.leading, 4)
     }
 
-    private func section<Content: View>(_ title: String, @ViewBuilder content: @escaping () -> Content) -> some View {
+    private func section<Content: View>(_ title: LocalizedStringKey, @ViewBuilder content: @escaping () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             header(title)
             SettingsCard(content: content)
         }
     }
 
-    private func chip(_ title: String, icon: String, tag: Int) -> some View {
+    private func chip(_ title: LocalizedStringKey, icon: String, tag: Int) -> some View {
         Button { appearance = tag } label: {
             VStack(spacing: 6) {
                 Image(systemName: icon).font(.title3)
@@ -159,7 +187,7 @@ struct SettingsCard<Content: View>: View {
 /// An icon tile, a title, and on the right a value or a badge and a chevron.
 struct SettingsRow: View {
     let icon: String
-    let title: String
+    let title: LocalizedStringKey
     var value: String? = nil
     var badge: String? = nil
     var chevron: String? = nil
@@ -207,7 +235,7 @@ struct SyncDetailView: View {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(wallet.syncError != nil ? "Can't reach the server" : wallet.synced ? "Up to date" : "Syncing")
                                 .font(.headline)
-                            Text(wallet.syncError ?? "Your phone reads the chain to find this wallet's payments. Nothing about you is sent.")
+                            Text(wallet.syncError ?? String(localized: "Your phone reads the chain to find this wallet's payments. Nothing about you is sent."))
                                 .font(.footnote).foregroundStyle(wallet.syncError == nil ? Theme.muted : .orange)
                         }
                     }
@@ -324,14 +352,14 @@ struct ServerView: View {
 
 /// What changed, version by version.
 struct ReleaseNotesView: View {
-    static let notes: [(version: String, items: [String])] = [
+    static var notes: [(version: String, items: [String])] = [
         ("0.1.0", [
-            "Pair with ZFlip on a Flipper Zero over Bluetooth; it signs every payment.",
-            "Shielded balance, hidden until your Flipper is connected; tap it for its value in your currency.",
-            "Receive follows the address on your Flipper; ▶ there makes a new one.",
-            "Send with clear checks on the amount and the network fee, a QR scanner and an address book.",
-            "Activity with confirmations; each transaction opens on your explorer.",
-            "Choice of server and explorer; light, dark or system appearance.",
+            String(localized: "Pair with ZFlip on a Flipper Zero over Bluetooth; it signs every payment."),
+            String(localized: "Shielded balance, hidden until your Flipper is connected; tap it for its value in your currency."),
+            String(localized: "Receive follows the address on your Flipper; ▶ there makes a new one."),
+            String(localized: "Send with clear checks on the amount and the network fee, a QR scanner and an address book."),
+            String(localized: "Activity with confirmations; each transaction opens on your explorer."),
+            String(localized: "Choice of server and explorer; light, dark or system appearance."),
         ]),
     ]
 

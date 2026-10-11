@@ -59,29 +59,29 @@ struct PairView: View {
 
     private var headline: String {
         switch step {
-        case .intro: return "Your Flipper keeps the keys"
-        case .scan: return "Looking for your Flipper…"
-        case .connecting: return "Connecting…"
-        case .approve: return "Press OK on your Flipper"
-        case .birthday: return "When was this wallet made?"
-        case .creating: return "Setting up your wallet…"
+        case .intro: return String(localized: "Your Flipper keeps the keys")
+        case .scan: return String(localized: "Looking for your Flipper…")
+        case .connecting: return String(localized: "Connecting…")
+        case .approve: return String(localized: "Press OK on your Flipper")
+        case .birthday: return String(localized: "When was this wallet made?")
+        case .creating: return String(localized: "Setting up your wallet…")
         }
     }
 
     private var detail: String {
         switch step {
         case .intro:
-            return "This iPhone shows your balance and prepares payments. Your Flipper checks and signs them. Open ZFlip on the Flipper and unlock it."
+            return String(localized: "This iPhone shows your balance and prepares payments. Your Flipper checks and signs them. Open ZFlip on the Flipper and unlock it.")
         case .scan:
-            return "Keep ZFlip open and unlocked on the Flipper, close to this iPhone."
+            return String(localized: "Keep ZFlip open and unlocked on the Flipper, close to this iPhone.")
         case .connecting:
-            return "If iOS asks for a code, type the 6 digits shown on the Flipper."
+            return String(localized: "If iOS asks for a code, type the 6 digits shown on the Flipper.")
         case .approve:
-            return "It asks to share this wallet's viewing key: this iPhone will see your balance, never spend."
+            return String(localized: "It asks to share this wallet's viewing key: this iPhone will see your balance, never spend.")
         case .birthday:
-            return "This wallet was restored from its words. Since when should we look for its funds?"
+            return String(localized: "This wallet was restored from its words. Since when should we look for its funds?")
         case .creating:
-            return "Getting ready to sync with the Zcash network."
+            return String(localized: "Getting ready to sync with the Zcash network.")
         }
     }
 

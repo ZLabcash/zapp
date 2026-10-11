@@ -6,18 +6,19 @@ import Foundation
 final class PriceService: ObservableObject {
     struct Currency: Identifiable, Hashable {
         let code: String
-        let name: String
         var id: String { code }
+        /// In the user's language, from the system ("US dollar", "dollar des États-Unis"…).
+        var name: String { Locale.current.localizedString(forCurrencyCode: code.uppercased()) ?? code.uppercased() }
     }
 
     static let currencies = [
-        Currency(code: "usd", name: "US dollar"),
-        Currency(code: "eur", name: "Euro"),
-        Currency(code: "gbp", name: "British pound"),
-        Currency(code: "chf", name: "Swiss franc"),
-        Currency(code: "cad", name: "Canadian dollar"),
-        Currency(code: "aud", name: "Australian dollar"),
-        Currency(code: "jpy", name: "Japanese yen"),
+        Currency(code: "usd"),
+        Currency(code: "eur"),
+        Currency(code: "gbp"),
+        Currency(code: "chf"),
+        Currency(code: "cad"),
+        Currency(code: "aud"),
+        Currency(code: "jpy"),
     ]
 
     /// Price of 1 ZEC, by lowercase currency code.

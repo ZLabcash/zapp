@@ -123,9 +123,9 @@ final class WalletModel: ObservableObject {
 
     /// Hands a signed transaction to the network. Returns an error to show, or nil once sent.
     func broadcast(_ pending: PendingBroadcast) async -> String? {
-        guard let synchronizer else { return "The wallet isn't open yet." }
-        if expired(pending) { return "It expired: the network won't take it any more. Discard it and send again." }
-        guard online else { return "No network. Try again when you're back online." }
+        guard let synchronizer else { return String(localized: "The wallet isn't open yet.") }
+        if expired(pending) { return String(localized: "It expired: the network won't take it any more. Discard it and send again.") }
+        guard online else { return String(localized: "No network. Try again when you're back online.") }
         do {
             let error = try await submit(proofs: pending.proofs, sigs: pending.sigs, synchronizer: synchronizer)
             // Created means stored by the SDK, which keeps retrying it: it no longer waits here.
@@ -742,9 +742,9 @@ final class WalletModel: ObservableObject {
         if case ZcashError.rustCreateToAddress(let detail) = error {
             print("[zapp] propose failed: \(detail)")
             if detail.localizedCaseInsensitiveContains("insufficient") {
-                return "Not enough spendable ZEC. Sending \(Zatoshi(zatoshi).zecString) also costs a network fee of at least \(minimumFee.zecString), and received funds become spendable after 10 confirmations."
+                return String(localized: "Not enough spendable ZEC. Sending \(Zatoshi(zatoshi).zecString) also costs a network fee of at least \(minimumFee.zecString), and received funds become spendable after 10 confirmations.")
             }
-            return "Could not prepare the transaction: \(detail)"
+            return String(localized: "Could not prepare the transaction: \(detail)")
         }
         return error.localizedDescription
     }
