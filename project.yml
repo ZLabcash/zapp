@@ -24,7 +24,8 @@ targets:
     info:
       path: ZFlip/Info.plist
       properties:
-        UIBackgroundModes: [bluetooth-central]
+        UIBackgroundModes: [bluetooth-central, fetch, processing]
+        BGTaskSchedulerPermittedIdentifiers: [cash.zscan.zapp.refresh, cash.zscan.zapp.sync]
     dependencies:
       - package: ZcashLightClientKit
       - framework: Frameworks/ZFlipBridge.xcframework

@@ -600,6 +600,21 @@ final class WalletModel: ObservableObject {
         }
     }
 
+    /// Syncs while the app is in the background (see BackgroundSync): opens the wallet if
+    /// it isn't yet, then waits until it's up to date. False if time ran out first.
+    func syncInBackground() async -> Bool {
+        guard !wallets.isEmpty else { return true }
+        if synchronizer == nil { await resume() }
+        guard let synchronizer else { return false }
+        if case .stopped = synchronizer.latestState.syncStatus { try? await synchronizer.start(retry: true) }
+        // "Up to date" may be from before the wake-up: give the next sync pass a moment.
+        try? await Task.sleep(nanoseconds: 3_000_000_000)
+        while !synced && !Task.isCancelled {
+            try? await Task.sleep(nanoseconds: 1_000_000_000)
+        }
+        return synced
+    }
+
     /// Connects to the paired Flipper and opens a session (the user presses OK on
     /// the Flipper). Waits as long as it takes for ZFlip to appear.
     /// "Connect to Flipper": connects and opens a session (OK on the Flipper).

@@ -11,13 +11,16 @@ struct ZFlipApp: App {
     @AppStorage(AppLanguage.key) private var language = ""
     /// The opening animation over Home (the welcome screen plays its own).
     @State private var splash = Demo.scene == nil
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         // English until the user picks a language (welcome screen or Settings).
         AppLanguage.apply(AppLanguage.current.isEmpty ? "en" : AppLanguage.current)
         let link = FlipperLink()
         _link = StateObject(wrappedValue: link)
-        _wallet = StateObject(wrappedValue: WalletModel(link: link))
+        let wallet = WalletModel(link: link)
+        _wallet = StateObject(wrappedValue: wallet)
+        BackgroundSync.register(wallet)
     }
 
     var body: some Scene {
@@ -51,6 +54,10 @@ struct ZFlipApp: App {
             // No wallet: the welcome screen animates itself, and adding a wallet later
             // goes straight to Home.
             .onAppear { if wallet.pairing == nil { splash = false } }
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .background { BackgroundSync.didEnterBackground(wallet) }
+                if phase == .active { BackgroundSync.end() }
+            }
         }
     }
 }
