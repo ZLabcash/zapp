@@ -20,3 +20,5 @@ Set your own team in `project.yml` (`DEVELOPMENT_TEAM`) to run it on a device.
 ## License
 
 MIT or Apache-2.0, at your option.
+
+Flag images in `ZFlip/Assets.xcassets/Flags` come from [flag-icons](https://github.com/lipis/flag-icons) (MIT, © Panayiotis Lipiridis).

@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import Network
 import ZcashLightClientKit
 
 /// The watch-only Zcash wallet backed by the Flipper's viewing key.
@@ -37,6 +38,8 @@ final class WalletModel: ObservableObject {
         case preparing
         case confirmOnFlipper
         case broadcasting
+        /// Signed by the Flipper with no network: kept in Activity until broadcast or discarded.
+        case signedOffline
         case sent(String)
         case failed(String)
     }
@@ -67,7 +70,100 @@ final class WalletModel: ObservableObject {
         let expired: Bool
         let blockTime: TimeInterval?
         let url: URL?
+        /// As explorers show it (byte-reversed hex).
+        var txid: String { id.reversed().map { String(format: "%02x", $0) }.joined() }
+        /// The decrypted text messages of this transaction.
+        var memos: [String] = []
     }
+
+    /// A transaction the Flipper signed while there was no network. It stays here, out of the
+    /// SDK's database (which would resubmit it on its own), until the user broadcasts or
+    /// discards it.
+    struct PendingBroadcast: Codable, Identifiable, Equatable {
+        var id = UUID()
+        var created: Date
+        var payments: [Payment]
+        /// Past this height the network refuses it (it was built to expire 40 blocks on).
+        var expiryHeight: Int
+        var proofs: Data
+        var sigs: Data
+        var total: Int64 { payments.reduce(0) { $0 + $1.zatoshi } }
+    }
+
+    @Published private(set) var pendingBroadcasts: [PendingBroadcast] = []
+    /// Settings: broadcast as soon as the Flipper signs (on), or keep every signed payment
+    /// for the user to broadcast or discard (off).
+    static let autoBroadcastKey = "zapp.autoBroadcast"
+    /// The phone has a route to the internet (NWPathMonitor).
+    @Published private(set) var online = true
+    private let pathMonitor = NWPathMonitor()
+
+    func expired(_ p: PendingBroadcast) -> Bool { tipHeight > 0 && tipHeight >= p.expiryHeight }
+
+    /// Roughly how long until it expires, from the last chain height seen (75 s a block).
+    func minutesLeft(_ p: PendingBroadcast) -> Int? {
+        guard tipHeight > 0 else { return nil }
+        return max(0, (p.expiryHeight - tipHeight) * 75 / 60)
+    }
+
+    private static func pendingFile(_ network: NetworkType) throws -> URL {
+        try dataDirectory(network).deletingLastPathComponent()
+            .appendingPathComponent("zapp-pending-\(network == .testnet ? "test" : "main").json")
+    }
+
+    private func savePending() {
+        guard Demo.scene == nil, let url = try? Self.pendingFile(networkType) else { return }
+        try? JSONEncoder().encode(pendingBroadcasts).write(to: url, options: [.atomic, .completeFileProtection])
+    }
+
+    private func loadPending() {
+        guard let url = try? Self.pendingFile(networkType), let data = try? Data(contentsOf: url) else { return }
+        pendingBroadcasts = (try? JSONDecoder().decode([PendingBroadcast].self, from: data)) ?? []
+    }
+
+    /// Hands a signed transaction to the network. Returns an error to show, or nil once sent.
+    func broadcast(_ pending: PendingBroadcast) async -> String? {
+        guard let synchronizer else { return String(localized: "The wallet isn't open yet.") }
+        if expired(pending) { return String(localized: "It expired: the network won't take it any more. Discard it and send again.") }
+        guard online else { return String(localized: "No network. Try again when you're back online.") }
+        do {
+            let error = try await submit(proofs: pending.proofs, sigs: pending.sigs, synchronizer: synchronizer)
+            // Created means stored by the SDK, which keeps retrying it: it no longer waits here.
+            pendingBroadcasts.removeAll { $0.id == pending.id }
+            savePending()
+            refreshTransactions(force: true)
+            return error
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
+    func discard(_ pending: PendingBroadcast) {
+        pendingBroadcasts.removeAll { $0.id == pending.id }
+        savePending()
+    }
+
+    /// Stores and submits a signed, proven transaction; returns the network's error if any.
+    private func submit(proofs: Pczt, sigs: Pczt, synchronizer: SDKSynchronizer) async throws -> String? {
+        let results = try await synchronizer.createTransactionFromPCZT(pcztWithProofs: proofs, pcztWithSigs: sigs)
+        var error: String?
+        for try await result in results {
+            switch result {
+            case .success(let txId):
+                sendStep = sendStep == .idle ? .idle : .sent(txId.reversed().map { String(format: "%02x", $0) }.joined())
+            case .grpcFailure(_, let e):
+                error = "Couldn't reach the network (\(e.localizedDescription)). The wallet will retry on its own."
+            case .submitFailure(_, _, let description):
+                error = description
+            case .notAttempted:
+                error = "The transaction was not submitted."
+            }
+        }
+        return error
+    }
+
+    /// The SDK's transactions by id, to ask it for recipients and memos.
+    private var overviews: [Data: ZcashTransaction.Overview] = [:]
 
     /// This wallet's transactions, newest first.
     @Published private(set) var activity: [ActivityItem] = []
@@ -138,6 +234,12 @@ final class WalletModel: ObservableObject {
            let saved = try? JSONDecoder().decode(Pairing.self, from: data) {
             pairing = saved
         }
+        loadPending()
+        pathMonitor.pathUpdateHandler = { [weak self] path in
+            let up = path.status == .satisfied
+            Task { @MainActor in self?.online = up }
+        }
+        pathMonitor.start(queue: DispatchQueue(label: "zapp.network"))
     }
 
     var networkType: NetworkType {
@@ -242,16 +344,20 @@ final class WalletModel: ObservableObject {
         scannedHeight = 3_513_402
         let locked = scene == "home-locked" || scene == "settings-idle"
         flipperState = locked ? .idle : scene == "settings-connecting" ? .approve : .ready
-        let after = scene.hasPrefix("after")
+        let after = scene.hasPrefix("after") || scene == "detail"
         balance = Zatoshi(after ? 14_990_000 : 20_000_000)
         pending = .zero
         change = .zero
         let url = Self.explorerURL(txid: Demo.txid)
         let received = ActivityItem(id: Data([1]), sent: false, zatoshi: 20_000_000, minedHeight: 3_512_960, expired: false,
-                                    blockTime: 1_791_640_800, url: url)
+                                    blockTime: 1_791_640_800, url: url, memos: ["For the Flipper wallet test"])
         let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_000_000, fee: 10_000, minedHeight: 3_513_400, expired: false,
-                                blockTime: nil, url: url)
+                                blockTime: nil, url: url, memos: ["lunch, thanks!"])
         activity = after ? [sent, received] : [received]
+        if scene == "pending" {
+            pendingBroadcasts = [PendingBroadcast(created: Date(), payments: [Payment(address: Demo.friend, zatoshi: 5_000_000, memo: "lunch, thanks!")],
+                                                  expiryHeight: 3_513_430, proofs: Data(), sigs: Data())]
+        }
         switch scene {
         case "send-confirm": sendStep = .confirmOnFlipper
         case "send-broadcast": sendStep = .broadcasting
@@ -452,14 +558,26 @@ final class WalletModel: ObservableObject {
         lastTransactionsRefresh = Date()
         Task {
             let all = await synchronizer.transactions
-            self.activity = all
-                .sorted { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }
-                .map {
-                    let fee = $0.isSentTransaction ? $0.fee?.amount : nil
-                    return ActivityItem(id: $0.rawID, sent: $0.isSentTransaction, zatoshi: abs($0.value.amount) - (fee ?? 0),
-                                        fee: fee, minedHeight: $0.minedHeight, expired: $0.isExpiredUmined == true,
-                                        blockTime: $0.blockTime, url: Self.zscanURL($0))
-                }
+            var items: [ActivityItem] = []
+            for tx in all.sorted(by: { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }) {
+                let fee = tx.isSentTransaction ? tx.fee?.amount : nil
+                let memos = ((try? await synchronizer.getMemos(for: tx)) ?? []).compactMap { $0.toString() }.filter { !$0.isEmpty }
+                items.append(ActivityItem(id: tx.rawID, sent: tx.isSentTransaction, zatoshi: abs(tx.value.amount) - (fee ?? 0),
+                                          fee: fee, minedHeight: tx.minedHeight, expired: tx.isExpiredUmined == true,
+                                          blockTime: tx.blockTime, url: Self.zscanURL(tx), memos: memos))
+            }
+            self.overviews = Dictionary(all.map { ($0.rawID, $0) }, uniquingKeysWith: { a, _ in a })
+            self.activity = items
+        }
+    }
+
+    /// Who a payment went to (not this wallet's own change).
+    func recipients(of item: ActivityItem) async -> [String] {
+        if Demo.scene != nil { return item.sent ? [Demo.friend] : [] }
+        guard let synchronizer, let tx = overviews[item.id] else { return [] }
+        return await synchronizer.getRecipients(for: tx).compactMap {
+            if case .address(let r) = $0 { return r.stringEncoded }
+            return nil
         }
     }
 
@@ -518,18 +636,66 @@ final class WalletModel: ObservableObject {
     }
 
     /// Builds the transaction, has the Flipper check and sign it, proves and broadcasts.
+    /// One payment: an address and an amount.
+    struct Payment: Equatable, Codable {
+        var address: String
+        var zatoshi: Int64
+        /// Its own encrypted message (shielded recipients only).
+        var memo: String = ""
+    }
+
+    /// Most recipients in one transaction. Each adds ~1 KB to what the Flipper must hold in
+    /// its RAM to check the transaction; 5 is what has been checked to fit so far.
+    static let maxRecipients = 5
+
+    /// The proposal for paying `payments` in one transaction: a plain transfer for one, a
+    /// ZIP 321 payment request for several (each recipient gets the memo, if shielded).
+    private func propose(_ payments: [Payment], synchronizer: SDKSynchronizer, account: AccountUUID) async throws -> Proposal {
+        if payments.count == 1, let p = payments.first {
+            return try await synchronizer.proposeTransfer(
+                accountUUID: account,
+                recipient: try Recipient(p.address, network: networkType),
+                amount: Zatoshi(p.zatoshi),
+                memo: p.memo.isEmpty ? nil : try Memo(string: p.memo)
+            )
+        }
+        return try await synchronizer.proposefulfillingPaymentURI(Self.paymentURI(payments), accountUUID: account)
+    }
+
+    /// ZIP 321: zcash:?address=…&amount=…&memo=…&address.1=…&amount.1=…
+    static func paymentURI(_ payments: [Payment]) -> String {
+        var params: [String] = []
+        for (i, p) in payments.enumerated() {
+            let suffix = i == 0 ? "" : ".\(i)"
+            params.append("address\(suffix)=\(p.address)")
+            params.append("amount\(suffix)=\(decimalZEC(p.zatoshi))")
+            if !p.memo.isEmpty, !p.address.hasPrefix("t") {
+                let memo64 = Data(p.memo.utf8).base64EncodedString()
+                    .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+                params.append("memo\(suffix)=\(memo64)")
+            }
+        }
+        return "zcash:?" + params.joined(separator: "&")
+    }
+
+    /// 12345 zatoshis → "0.00012345" (no trailing zeros, no exponent).
+    static func decimalZEC(_ z: Int64) -> String {
+        var frac = String(format: "%08lld", z % 100_000_000)
+        while frac.hasSuffix("0") { frac.removeLast() }
+        return "\(z / 100_000_000)" + (frac.isEmpty ? "" : ".\(frac)")
+    }
+
     func send(to address: String, zatoshi: Int64, memo: String) async {
+        await send([Payment(address: address, zatoshi: zatoshi, memo: memo)])
+    }
+
+    /// Builds the transaction, has the Flipper check and sign it (one signature, however many
+    /// recipients), proves and broadcasts.
+    func send(_ payments: [Payment]) async {
         guard let synchronizer, let accountUUID, let pairing else { return }
         sendStep = .preparing
         do {
-            let recipient = try Recipient(address, network: networkType)
-            let memo = memo.isEmpty ? nil : try Memo(string: memo)
-            let proposal = try await synchronizer.proposeTransfer(
-                accountUUID: accountUUID,
-                recipient: recipient,
-                amount: Zatoshi(zatoshi),
-                memo: memo
-            )
+            let proposal = try await propose(payments, synchronizer: synchronizer, account: accountUUID)
             let pczt = try await synchronizer.createPCZTFromProposal(accountUUID: accountUUID, proposal: proposal)
             let request = try Bridge.signRequest(pczt: pczt, ufvk: pairing.ufvk)
 
@@ -547,22 +713,23 @@ final class WalletModel: ObservableObject {
                 throw FlipperError.protocolError("Unexpected reply from the Flipper")
             }
             let signed = try Bridge.applySignatures(pczt: pczt, signatures: reply.payload)
-            sendStep = .broadcasting
-            let results = try await synchronizer.createTransactionFromPCZT(pcztWithProofs: try await proven, pcztWithSigs: signed)
-            for try await result in results {
-                switch result {
-                case .success(let txId):
-                    sendStep = .sent(txId.reversed().map { String(format: "%02x", $0) }.joined())
-                case .grpcFailure(_, let error):
-                    sendStep = .failed(error.localizedDescription)
-                case .submitFailure(_, _, let description):
-                    sendStep = .failed(description)
-                case .notAttempted:
-                    sendStep = .failed("The transaction was not submitted")
-                }
+            let proofs = try await proven
+            let autoBroadcast = UserDefaults.standard.object(forKey: Self.autoBroadcastKey) as? Bool ?? true
+            if !online || !autoBroadcast {
+                // Signed, but nowhere to send it (or the user decides when): keep it for later.
+                pendingBroadcasts.append(PendingBroadcast(created: Date(), payments: payments, expiryHeight: tipHeight + 40,
+                                                          proofs: proofs, sigs: signed))
+                savePending()
+                sendStep = .signedOffline
+                return
             }
+            sendStep = .broadcasting
+            if let error = try await submit(proofs: proofs, sigs: signed, synchronizer: synchronizer) {
+                sendStep = .failed(error)
+            }
+            refreshTransactions(force: true)
         } catch {
-            sendStep = .failed(Self.explain(error, zatoshi: zatoshi))
+            sendStep = .failed(Self.explain(error, zatoshi: payments.reduce(0) { $0 + $1.zatoshi }))
         }
     }
 
@@ -575,20 +742,20 @@ final class WalletModel: ObservableObject {
         if case ZcashError.rustCreateToAddress(let detail) = error {
             print("[zapp] propose failed: \(detail)")
             if detail.localizedCaseInsensitiveContains("insufficient") {
-                return "Not enough spendable ZEC. Sending \(Zatoshi(zatoshi).zecString) also costs a network fee of at least \(minimumFee.zecString), and received funds become spendable after 10 confirmations."
+                return String(localized: "Not enough spendable ZEC. Sending \(Zatoshi(zatoshi).zecString) also costs a network fee of at least \(minimumFee.zecString), and received funds become spendable after 10 confirmations.")
             }
-            return "Could not prepare the transaction: \(detail)"
+            return String(localized: "Could not prepare the transaction: \(detail)")
         }
         return error.localizedDescription
     }
 
     func proposalFee(to address: String, zatoshi: Int64) async -> Zatoshi? {
-        guard let synchronizer, let accountUUID, let recipient = try? Recipient(address, network: networkType) else {
-            return nil
-        }
-        let proposal = try? await synchronizer.proposeTransfer(
-            accountUUID: accountUUID, recipient: recipient, amount: Zatoshi(zatoshi), memo: nil
-        )
+        await proposalFee([Payment(address: address, zatoshi: zatoshi)])
+    }
+
+    func proposalFee(_ payments: [Payment]) async -> Zatoshi? {
+        guard let synchronizer, let accountUUID, payments.allSatisfy({ validate(address: $0.address) }) else { return nil }
+        let proposal = try? await propose(payments.map { Payment(address: $0.address, zatoshi: $0.zatoshi) }, synchronizer: synchronizer, account: accountUUID)
         return proposal?.totalFeeRequired()
     }
 }

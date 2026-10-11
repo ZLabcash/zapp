@@ -25,6 +25,10 @@ struct Shield: View {
     var lineWidth: CGFloat? = nil
 
     var body: some View {
+        logoBody.environment(\.layoutDirection, .leftToRight) // a logo never mirrors
+    }
+
+    private var logoBody: some View {
         GeometryReader { geo in
             let unit = min(geo.size.width, geo.size.height) / 32
             let stroke = lineWidth ?? 2 * unit
@@ -90,6 +94,10 @@ struct ForgingShield: View {
     @State private var progress: CGFloat = 0
 
     var body: some View {
+        logoBody.environment(\.layoutDirection, .leftToRight) // a logo never mirrors
+    }
+
+    private var logoBody: some View {
         Shield(progress: progress)
             .onAppear {
                 withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) { progress = 1 }

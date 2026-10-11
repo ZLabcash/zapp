@@ -10,20 +10,24 @@
 		0ECBB93EE2C6578AE20D1C34 /* ZcashLightClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5AC814CBCD201CBB7AA058A9 /* ZcashLightClientKit */; };
 		1F872BD039EBB0E3D9D5CD92 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC314C4271ACEC63AFE8EBA /* Price.swift */; };
 		3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5A8E5DBD32B7EC08817276 /* Bridge.swift */; };
+		39646AAC53DEEB0779877131 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02008A29A44D9F3C78631A8 /* Language.swift */; };
 		4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99EC8939B570D6BFFDC2F442 /* HomeView.swift */; };
 		4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C545E4E2810FF36757DA2B81 /* WalletModel.swift */; };
 		71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */; };
 		7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB6C35499251397CE3CDF1 /* FlipperLink.swift */; };
+		823FD57944C0366496C8574A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 149F553B8197CE32D0ACEE06 /* Localizable.xcstrings */; };
 		8ADBEF852FBE580D1B58D605 /* QRScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9503A91120791D250E5D11 /* QRScanner.swift */; };
 		8BE0BD2FFE20B3D795BA572C /* Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56EA4E93FB6EF49BAEB13A26 /* Demo.swift */; };
 		8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C753E21F2C6F1AA26042ADA7 /* Theme.swift */; };
 		A1D6EDB220AA4C6F6738C198 /* ZFlipBridge.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; };
+		AD42775279272F77CB2DF1CF /* ActivityViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137E5DB0CB713CA14EA77BE3 /* ActivityViews.swift */; };
 		B6A4D3974539859A7E367415 /* ZFlipBridge.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BA9A3CE61E487D0106785182 /* ZFlipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */; };
 		BAC2FDAD8F5A51A5DE5A268C /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178AA570216EF523337E0F8D /* Contacts.swift */; };
 		BBE98040645C31BD6C0BEE6D /* SendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */; };
 		BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036DFA711F270E81CCB08CF9 /* PairView.swift */; };
 		C5C851610452AE4D8B9C9D09 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B0FA9F71B5C174437916D6E /* Assets.xcassets */; };
+		C96DF494078D9BABA4542FED /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B2ADE5512538374EFFD9CE91 /* InfoPlist.xcstrings */; };
 		CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7832494FBCBCB7D24626728F /* FlipperProtocol.swift */; };
 		CD298EAA5C3A84A11926883E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F40E04FBC8069D4E27206D /* SettingsView.swift */; };
 /* End PBXBuildFile section */
@@ -44,6 +48,8 @@
 
 /* Begin PBXFileReference section */
 		036DFA711F270E81CCB08CF9 /* PairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairView.swift; sourceTree = "<group>"; };
+		137E5DB0CB713CA14EA77BE3 /* ActivityViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViews.swift; sourceTree = "<group>"; };
+		149F553B8197CE32D0ACEE06 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		178AA570216EF523337E0F8D /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		1B0FA9F71B5C174437916D6E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2B9503A91120791D250E5D11 /* QRScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScanner.swift; sourceTree = "<group>"; };
@@ -58,9 +64,11 @@
 		99EC8939B570D6BFFDC2F442 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		9E5A8E5DBD32B7EC08817276 /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
 		A3E16D31095C345F2E73A77B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B2ADE5512538374EFFD9CE91 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		C1F40E04FBC8069D4E27206D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C545E4E2810FF36757DA2B81 /* WalletModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletModel.swift; sourceTree = "<group>"; };
 		C753E21F2C6F1AA26042ADA7 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F02008A29A44D9F3C78631A8 /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		FA26C7CF73B3B0FBDC04A28A /* ZFlipBridge.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ZFlipBridge.xcframework; path = Frameworks/ZFlipBridge.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -82,6 +90,8 @@
 			children = (
 				1B0FA9F71B5C174437916D6E /* Assets.xcassets */,
 				A3E16D31095C345F2E73A77B /* Info.plist */,
+				B2ADE5512538374EFFD9CE91 /* InfoPlist.xcstrings */,
+				149F553B8197CE32D0ACEE06 /* Localizable.xcstrings */,
 				DCE4154F94C2729A65354C79 /* App */,
 				DDBFF121D0ECB47B052E97A1 /* Flipper */,
 				3DAD4DB894476E22FF1E93AE /* Views */,
@@ -102,6 +112,7 @@
 		3DAD4DB894476E22FF1E93AE /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				137E5DB0CB713CA14EA77BE3 /* ActivityViews.swift */,
 				5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */,
 				99EC8939B570D6BFFDC2F442 /* HomeView.swift */,
 				036DFA711F270E81CCB08CF9 /* PairView.swift */,
@@ -144,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				56EA4E93FB6EF49BAEB13A26 /* Demo.swift */,
+				F02008A29A44D9F3C78631A8 /* Language.swift */,
 				5A5E721E8446CC9065C1FD69 /* ZFlipApp.swift */,
 			);
 			path = App;
@@ -203,7 +215,19 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
+				ar,
+				de,
 				en,
+				es,
+				fr,
+				it,
+				ja,
+				ko,
+				"pt-BR",
+				ru,
+				th,
+				uk,
+				"zh-Hans",
 			);
 			mainGroup = 2F85206BBED1E6E6FD891666;
 			minimizedProjectReferenceProxies = 1;
@@ -225,6 +249,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C5C851610452AE4D8B9C9D09 /* Assets.xcassets in Resources */,
+				C96DF494078D9BABA4542FED /* InfoPlist.xcstrings in Resources */,
+				823FD57944C0366496C8574A /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +261,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD42775279272F77CB2DF1CF /* ActivityViews.swift in Sources */,
 				3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */,
 				BAC2FDAD8F5A51A5DE5A268C /* Contacts.swift in Sources */,
 				71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */,
@@ -242,6 +269,7 @@
 				7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */,
 				CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */,
 				4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */,
+				39646AAC53DEEB0779877131 /* Language.swift in Sources */,
 				BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */,
 				1F872BD039EBB0E3D9D5CD92 /* Price.swift in Sources */,
 				8ADBEF852FBE580D1B58D605 /* QRScanner.swift in Sources */,
@@ -277,8 +305,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = cash.zscan.zflip;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -370,8 +400,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = cash.zscan.zflip;
 				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;

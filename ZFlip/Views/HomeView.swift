@@ -6,7 +6,7 @@ struct HomeView: View {
     @EnvironmentObject var prices: PriceService
     @State private var showReceive = Demo.on("receive")
     @State private var showSend = Demo.on("send")
-    @State private var showSettings = Demo.on("settings")
+    @State private var showSettings = Demo.on("settings") || AppLanguage.takeReopenSettings()
 
     var body: some View {
         NavigationStack {
@@ -192,9 +192,9 @@ struct ConfirmingPill: View {
     }
 
     private func timeLeft(_ n: Int) -> String {
-        if n == 0 { return "Waiting for its first block · about 13 min" }
+        if n == 0 { return String(localized: "Waiting for its first block · about 13 min") }
         let minutes = max(1, ((Self.needed - n) * 75 + 59) / 60)
-        return "\(n) of \(Self.needed) · spendable in about \(minutes) min"
+        return String(localized: "\(n) of \(Self.needed) · spendable in about \(minutes) min")
     }
 }
 
@@ -236,7 +236,7 @@ struct BalanceCard: View {
                     ZecLogo().frame(width: 34, height: 34)
                 }
                 if wallet.showsAmounts && showFiat {
-                    Text(prices.format(zatoshi: wallet.owned.amount, in: currency).map { "≈ \($0)" } ?? "Price unavailable")
+                    Text(prices.format(zatoshi: wallet.owned.amount, in: currency).map { "≈ \($0)" } ?? String(localized: "Price unavailable"))
                         .font(.title3.weight(.semibold)).monospacedDigit()
                         .foregroundStyle(Theme.muted)
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -246,11 +246,6 @@ struct BalanceCard: View {
             .onTapGesture {
                 guard wallet.showsAmounts else { return }
                 withAnimation(.snappy) { showFiat.toggle() }
-            }
-            if wallet.showsAmounts && wallet.change.amount > 0 {
-                // Our own change: part of the balance above, just not spendable for a few blocks.
-                Label("\(wallet.change.zecString) back from your last payment · spendable in a few minutes", systemImage: "arrow.uturn.backward.circle")
-                    .font(.footnote).foregroundStyle(Theme.muted)
             }
             if wallet.showsAmounts && wallet.pending.amount > 0 {
                 ConfirmingPill()
@@ -330,9 +325,9 @@ struct DevicesCard: View {
     private var note: String? {
         switch wallet.flipperState {
         case .idle, .ready: return nil
-        case .connecting: return "Open ZFlip on the Flipper and unlock it, close to this phone."
-        case .approve: return "Press OK on your Flipper to share the viewing key (it can see, never spend)."
-        case .otherWallet(let flipper): return "\(flipper) holds a different wallet than this phone."
+        case .connecting: return String(localized: "Open ZFlip on the Flipper and unlock it, close to this phone.")
+        case .approve: return String(localized: "Press OK on your Flipper to share the viewing key (it can see, never spend).")
+        case .otherWallet(let flipper): return String(localized: "\(flipper) holds a different wallet than this phone.")
         case .failed(let message): return message
         }
     }
@@ -378,7 +373,7 @@ struct DevicesCard: View {
 /// The Connect button: a capsule with the link's symbol.
 struct ConnectPill: View {
     enum Style { case primary, connected, plain, disabled }
-    let title: String
+    let title: LocalizedStringKey
     let glyph: AnyView
     let style: Style
     let action: () -> Void
@@ -514,6 +509,10 @@ struct KindleIcon: View {
 /// The ZEC coin: the Zcash yellow disc and its Z with the two bars.
 struct ZecLogo: View {
     var body: some View {
+        logoBody.environment(\.layoutDirection, .leftToRight) // a logo never mirrors
+    }
+
+    private var logoBody: some View {
         GeometryReader { geo in
             let s = min(geo.size.width, geo.size.height)
             ZStack {
@@ -537,69 +536,8 @@ struct ZecLogo: View {
     }
 }
 
-/// Recent transactions; each opens on ZScan.
-struct ActivityCard: View {
-    @EnvironmentObject var wallet: WalletModel
-    @Environment(\.openURL) private var openURL
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Activity").font(.headline)
-            if wallet.activity.isEmpty {
-                Text(wallet.synced ? "No transactions yet." : "Transactions appear here as the wallet syncs.")
-                    .font(.footnote).foregroundStyle(Theme.muted)
-            }
-            ForEach(wallet.activity.prefix(20)) { tx in
-                Button {
-                    if let url = tx.url { openURL(url) }
-                } label: {
-                    row(tx)
-                }
-                .buttonStyle(.plain)
-                if tx.id != wallet.activity.prefix(20).last?.id { Divider() }
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-    }
-
-    private func row(_ tx: WalletModel.ActivityItem) -> some View {
-        let sent = tx.sent
-        return HStack(spacing: 12) {
-            Image(systemName: sent ? "arrow.up" : "arrow.down")
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(.black)
-                .frame(width: 34, height: 34)
-                .background(sent ? Color(white: 0.75) : Theme.zcash)
-                .clipShape(Circle())
-            VStack(alignment: .leading, spacing: 2) {
-                Text(sent ? "Sent" : "Received").font(.subheadline.weight(.semibold))
-                Text(status(tx)).font(.caption).foregroundStyle(Theme.muted)
-            }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 2) {
-                Text((sent ? "−" : "+") + (wallet.showsAmounts ? Zatoshi(tx.zatoshi).zecString : "•••• ZEC"))
-                    .font(.subheadline.weight(.semibold).monospacedDigit())
-                Image(systemName: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
-            }
-        }
-        .contentShape(Rectangle())
-    }
-
-    private func status(_ tx: WalletModel.ActivityItem) -> String {
-        if tx.expired { return "Expired" }
-        guard let n = wallet.confirmations(tx) else { return "Pending · in the mempool" }
-        let when = tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? ""
-        let fee = tx.fee.map { " · fee \(Zatoshi($0).zecString)" } ?? ""
-        if n < 10 { return "Confirming · \(n) of 10" + fee }
-        return (when.isEmpty ? "Confirmed" : when) + fee
-    }
-}
-
 struct ActionTile: View {
-    let title: String
+    let title: LocalizedStringKey
     let icon: String
     let action: () -> Void
 
