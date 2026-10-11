@@ -6,7 +6,7 @@ set -e
 # The bridge crate lives in the zflip repo, checked out next to this one.
 cd "$(dirname "$0")/.."
 OUT=$PWD/Frameworks
-ZFLIP=${ZFLIP:-$PWD/../flipper-zero}
+ZFLIP=${ZFLIP:-$PWD/../zfirm}
 cd "$ZFLIP"
 NAME=ZFlipBridge
 rm -rf "$OUT/$NAME.xcframework" target/ios-frameworks

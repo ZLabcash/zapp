@@ -5,12 +5,12 @@
 > prototypes. Use them only with small amounts you can afford to lose and keep your 24 words on
 > paper. No warranty of any kind (see the licenses).
 
-The iPhone app for hardware Zcash signers: a [ZFlip](https://github.com/ZLabcash/zflip)
+The iPhone app for hardware Zcash signers: a [ZFlip](https://github.com/ZLabcash/zfirm)
 Flipper Zero over Bluetooth today, a Kindle soon. Watch-only: it holds the viewing key, syncs,
 builds and proves transactions, and broadcasts them. The device shows each payment and signs.
 
-SwiftUI and ZcashLightClientKit. Build the Rust bridge first, with the zflip repo checked out
-next to this one as `flipper-zero/`:
+SwiftUI and ZcashLightClientKit. Build the Rust bridge first, with the zfirm repo checked out
+next to this one as `zfirm/`:
 
     ./scripts/build-bridge.sh
     xcodegen && open ZFlip.xcodeproj
