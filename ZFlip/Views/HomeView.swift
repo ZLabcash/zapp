@@ -247,11 +247,6 @@ struct BalanceCard: View {
                 guard wallet.showsAmounts else { return }
                 withAnimation(.snappy) { showFiat.toggle() }
             }
-            if wallet.showsAmounts && wallet.change.amount > 0 {
-                // Our own change: part of the balance above, just not spendable for a few blocks.
-                Label("\(wallet.change.zecString) back from your last payment · spendable in a few minutes", systemImage: "arrow.uturn.backward.circle")
-                    .font(.footnote).foregroundStyle(Theme.muted)
-            }
             if wallet.showsAmounts && wallet.pending.amount > 0 {
                 ConfirmingPill()
             }
@@ -534,67 +529,6 @@ struct ZecLogo: View {
             .frame(width: s, height: s)
         }
         .aspectRatio(1, contentMode: .fit)
-    }
-}
-
-/// Recent transactions; each opens on ZScan.
-struct ActivityCard: View {
-    @EnvironmentObject var wallet: WalletModel
-    @Environment(\.openURL) private var openURL
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Activity").font(.headline)
-            if wallet.activity.isEmpty {
-                Text(wallet.synced ? "No transactions yet." : "Transactions appear here as the wallet syncs.")
-                    .font(.footnote).foregroundStyle(Theme.muted)
-            }
-            ForEach(wallet.activity.prefix(20)) { tx in
-                Button {
-                    if let url = tx.url { openURL(url) }
-                } label: {
-                    row(tx)
-                }
-                .buttonStyle(.plain)
-                if tx.id != wallet.activity.prefix(20).last?.id { Divider() }
-            }
-        }
-        .padding(20)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 24))
-    }
-
-    private func row(_ tx: WalletModel.ActivityItem) -> some View {
-        let sent = tx.sent
-        return HStack(spacing: 12) {
-            Image(systemName: sent ? "arrow.up" : "arrow.down")
-                .font(.subheadline.weight(.bold))
-                .foregroundStyle(.black)
-                .frame(width: 34, height: 34)
-                .background(sent ? Color(white: 0.75) : Theme.zcash)
-                .clipShape(Circle())
-            VStack(alignment: .leading, spacing: 2) {
-                Text(sent ? "Sent" : "Received").font(.subheadline.weight(.semibold))
-                Text(status(tx)).font(.caption).foregroundStyle(Theme.muted)
-            }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 2) {
-                Text((sent ? "−" : "+") + (wallet.showsAmounts ? Zatoshi(tx.zatoshi).zecString : "•••• ZEC"))
-                    .font(.subheadline.weight(.semibold).monospacedDigit())
-                Image(systemName: "arrow.up.right.square").font(.caption2).foregroundStyle(Theme.muted)
-            }
-        }
-        .contentShape(Rectangle())
-    }
-
-    private func status(_ tx: WalletModel.ActivityItem) -> String {
-        if tx.expired { return "Expired" }
-        guard let n = wallet.confirmations(tx) else { return "Pending · in the mempool" }
-        let when = tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? ""
-        let fee = tx.fee.map { " · fee \(Zatoshi($0).zecString)" } ?? ""
-        if n < 10 { return "Confirming · \(n) of 10" + fee }
-        return (when.isEmpty ? "Confirmed" : when) + fee
     }
 }
 

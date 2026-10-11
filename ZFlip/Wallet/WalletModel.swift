@@ -67,7 +67,14 @@ final class WalletModel: ObservableObject {
         let expired: Bool
         let blockTime: TimeInterval?
         let url: URL?
+        /// As explorers show it (byte-reversed hex).
+        var txid: String { id.reversed().map { String(format: "%02x", $0) }.joined() }
+        /// The decrypted text messages of this transaction.
+        var memos: [String] = []
     }
+
+    /// The SDK's transactions by id, to ask it for recipients and memos.
+    private var overviews: [Data: ZcashTransaction.Overview] = [:]
 
     /// This wallet's transactions, newest first.
     @Published private(set) var activity: [ActivityItem] = []
@@ -248,9 +255,9 @@ final class WalletModel: ObservableObject {
         change = .zero
         let url = Self.explorerURL(txid: Demo.txid)
         let received = ActivityItem(id: Data([1]), sent: false, zatoshi: 20_000_000, minedHeight: 3_512_960, expired: false,
-                                    blockTime: 1_791_640_800, url: url)
+                                    blockTime: 1_791_640_800, url: url, memos: ["For the Flipper wallet test"])
         let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_000_000, fee: 10_000, minedHeight: 3_513_400, expired: false,
-                                blockTime: nil, url: url)
+                                blockTime: nil, url: url, memos: ["lunch, thanks!"])
         activity = after ? [sent, received] : [received]
         switch scene {
         case "send-confirm": sendStep = .confirmOnFlipper
@@ -452,14 +459,26 @@ final class WalletModel: ObservableObject {
         lastTransactionsRefresh = Date()
         Task {
             let all = await synchronizer.transactions
-            self.activity = all
-                .sorted { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }
-                .map {
-                    let fee = $0.isSentTransaction ? $0.fee?.amount : nil
-                    return ActivityItem(id: $0.rawID, sent: $0.isSentTransaction, zatoshi: abs($0.value.amount) - (fee ?? 0),
-                                        fee: fee, minedHeight: $0.minedHeight, expired: $0.isExpiredUmined == true,
-                                        blockTime: $0.blockTime, url: Self.zscanURL($0))
-                }
+            var items: [ActivityItem] = []
+            for tx in all.sorted(by: { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }) {
+                let fee = tx.isSentTransaction ? tx.fee?.amount : nil
+                let memos = ((try? await synchronizer.getMemos(for: tx)) ?? []).compactMap { $0.toString() }.filter { !$0.isEmpty }
+                items.append(ActivityItem(id: tx.rawID, sent: tx.isSentTransaction, zatoshi: abs(tx.value.amount) - (fee ?? 0),
+                                          fee: fee, minedHeight: tx.minedHeight, expired: tx.isExpiredUmined == true,
+                                          blockTime: tx.blockTime, url: Self.zscanURL(tx), memos: memos))
+            }
+            self.overviews = Dictionary(all.map { ($0.rawID, $0) }, uniquingKeysWith: { a, _ in a })
+            self.activity = items
+        }
+    }
+
+    /// Who a payment went to (not this wallet's own change).
+    func recipients(of item: ActivityItem) async -> [String] {
+        if Demo.scene != nil { return item.sent ? [Demo.friend] : [] }
+        guard let synchronizer, let tx = overviews[item.id] else { return [] }
+        return await synchronizer.getRecipients(for: tx).compactMap {
+            if case .address(let r) = $0 { return r.stringEncoded }
+            return nil
         }
     }
 
@@ -522,6 +541,8 @@ final class WalletModel: ObservableObject {
     struct Payment: Equatable {
         var address: String
         var zatoshi: Int64
+        /// Its own encrypted message (shielded recipients only).
+        var memo: String = ""
     }
 
     /// Most recipients in one transaction. Each adds ~1 KB to what the Flipper must hold in
@@ -530,28 +551,30 @@ final class WalletModel: ObservableObject {
 
     /// The proposal for paying `payments` in one transaction: a plain transfer for one, a
     /// ZIP 321 payment request for several (each recipient gets the memo, if shielded).
-    private func propose(_ payments: [Payment], memo: String, synchronizer: SDKSynchronizer, account: AccountUUID) async throws -> Proposal {
+    private func propose(_ payments: [Payment], synchronizer: SDKSynchronizer, account: AccountUUID) async throws -> Proposal {
         if payments.count == 1, let p = payments.first {
             return try await synchronizer.proposeTransfer(
                 accountUUID: account,
                 recipient: try Recipient(p.address, network: networkType),
                 amount: Zatoshi(p.zatoshi),
-                memo: memo.isEmpty ? nil : try Memo(string: memo)
+                memo: p.memo.isEmpty ? nil : try Memo(string: p.memo)
             )
         }
-        return try await synchronizer.proposefulfillingPaymentURI(Self.paymentURI(payments, memo: memo), accountUUID: account)
+        return try await synchronizer.proposefulfillingPaymentURI(Self.paymentURI(payments), accountUUID: account)
     }
 
     /// ZIP 321: zcash:?address=…&amount=…&memo=…&address.1=…&amount.1=…
-    static func paymentURI(_ payments: [Payment], memo: String) -> String {
-        let memo64 = memo.isEmpty ? nil : Data(memo.utf8).base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+    static func paymentURI(_ payments: [Payment]) -> String {
         var params: [String] = []
         for (i, p) in payments.enumerated() {
             let suffix = i == 0 ? "" : ".\(i)"
             params.append("address\(suffix)=\(p.address)")
             params.append("amount\(suffix)=\(decimalZEC(p.zatoshi))")
-            if let memo64, !p.address.hasPrefix("t") { params.append("memo\(suffix)=\(memo64)") }
+            if !p.memo.isEmpty, !p.address.hasPrefix("t") {
+                let memo64 = Data(p.memo.utf8).base64EncodedString()
+                    .replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+                params.append("memo\(suffix)=\(memo64)")
+            }
         }
         return "zcash:?" + params.joined(separator: "&")
     }
@@ -564,16 +587,16 @@ final class WalletModel: ObservableObject {
     }
 
     func send(to address: String, zatoshi: Int64, memo: String) async {
-        await send([Payment(address: address, zatoshi: zatoshi)], memo: memo)
+        await send([Payment(address: address, zatoshi: zatoshi, memo: memo)])
     }
 
     /// Builds the transaction, has the Flipper check and sign it (one signature, however many
     /// recipients), proves and broadcasts.
-    func send(_ payments: [Payment], memo: String) async {
+    func send(_ payments: [Payment]) async {
         guard let synchronizer, let accountUUID, let pairing else { return }
         sendStep = .preparing
         do {
-            let proposal = try await propose(payments, memo: memo, synchronizer: synchronizer, account: accountUUID)
+            let proposal = try await propose(payments, synchronizer: synchronizer, account: accountUUID)
             let pczt = try await synchronizer.createPCZTFromProposal(accountUUID: accountUUID, proposal: proposal)
             let request = try Bridge.signRequest(pczt: pczt, ufvk: pairing.ufvk)
 
@@ -632,7 +655,7 @@ final class WalletModel: ObservableObject {
 
     func proposalFee(_ payments: [Payment]) async -> Zatoshi? {
         guard let synchronizer, let accountUUID, payments.allSatisfy({ validate(address: $0.address) }) else { return nil }
-        let proposal = try? await propose(payments, memo: "", synchronizer: synchronizer, account: accountUUID)
+        let proposal = try? await propose(payments.map { Payment(address: $0.address, zatoshi: $0.zatoshi) }, synchronizer: synchronizer, account: accountUUID)
         return proposal?.totalFeeRequired()
     }
 }

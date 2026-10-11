@@ -25,6 +25,12 @@ struct SettingsView: View {
                     }
                 }
                 section("Wallet") {
+                    NavigationLink { AllActivityView() } label: {
+                        SettingsRow(icon: "list.bullet.rectangle.portrait.fill", title: "All activity",
+                                    value: wallet.activity.isEmpty ? nil : "\(wallet.activity.count)", chevron: "chevron.right")
+                    }
+                    .buttonStyle(.plain)
+                    Divider()
                     NavigationLink { ContactsView() } label: {
                         SettingsRow(icon: "person.2.fill", title: "Address book",
                                     value: book.contacts.isEmpty ? nil : "\(book.contacts.count)", chevron: "chevron.right")
