@@ -405,6 +405,7 @@ struct AddressRow: View {
     let label: String
     let address: String
     @State private var open = false
+    @State private var copied = false
 
     static func short(_ a: String) -> String { a.count > 24 ? "\(a.prefix(10))…\(a.suffix(8))" : a }
 
@@ -412,7 +413,7 @@ struct AddressRow: View {
         VStack(spacing: 0) {
             Button {
                 withAnimation(.snappy) { open.toggle() }
-                if open { UIPasteboard.general.string = address }
+                copied = false
             } label: {
                 VStack(alignment: .trailing, spacing: 6) {
                     HStack(alignment: .firstTextBaseline, spacing: 16) {
@@ -429,13 +430,25 @@ struct AddressRow: View {
                     if open {
                         Text(address).font(.system(.caption2, design: .monospaced)).textSelection(.enabled)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Label("Copied", systemImage: "checkmark").font(.caption2.weight(.semibold)).foregroundStyle(Theme.scan)
                     }
                 }
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .padding(.vertical, 12)
+            .padding(.top, 12)
+            .padding(.bottom, open ? 6 : 12)
+            if open {
+                HStack {
+                    Spacer()
+                    Button {
+                        UIPasteboard.general.string = address
+                        copied = true
+                    } label: {
+                        Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc").font(.caption.weight(.semibold))
+                    }
+                }
+                .padding(.bottom, 12)
+            }
             Divider()
         }
     }

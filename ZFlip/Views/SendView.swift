@@ -351,7 +351,9 @@ struct SendView: View {
             case .signedOffline:
                 Image(systemName: "clock.badge.checkmark").font(.system(size: 66)).foregroundStyle(Theme.zcash)
                 Text("Signed, not broadcast yet").font(.title2.bold()).multilineTextAlignment(.center)
-                Text("Your Flipper signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it.")
+                Text(wallet.online
+                     ? "Your Flipper signed it. It's waiting in Activity: broadcast it when you decide (within about 50 minutes, before it expires), or discard it."
+                     : "Your Flipper signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it.")
                     .multilineTextAlignment(.center).foregroundStyle(Theme.muted)
                 Button("Done") {
                     wallet.sendStep = .idle

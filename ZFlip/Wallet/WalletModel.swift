@@ -91,6 +91,9 @@ final class WalletModel: ObservableObject {
     }
 
     @Published private(set) var pendingBroadcasts: [PendingBroadcast] = []
+    /// Settings: broadcast as soon as the Flipper signs (on), or keep every signed payment
+    /// for the user to broadcast or discard (off).
+    static let autoBroadcastKey = "zapp.autoBroadcast"
     /// The phone has a route to the internet (NWPathMonitor).
     @Published private(set) var online = true
     private let pathMonitor = NWPathMonitor()
@@ -711,8 +714,9 @@ final class WalletModel: ObservableObject {
             }
             let signed = try Bridge.applySignatures(pczt: pczt, signatures: reply.payload)
             let proofs = try await proven
-            if !online {
-                // Signed, but nowhere to send it: keep it for the user to broadcast later.
+            let autoBroadcast = UserDefaults.standard.object(forKey: Self.autoBroadcastKey) as? Bool ?? true
+            if !online || !autoBroadcast {
+                // Signed, but nowhere to send it (or the user decides when): keep it for later.
                 pendingBroadcasts.append(PendingBroadcast(created: Date(), payments: payments, expiryHeight: tipHeight + 40,
                                                           proofs: proofs, sigs: signed))
                 savePending()

@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var confirmForget = false
     @AppStorage("appearance") private var appearance = 0
     @AppStorage("currency") private var currency = "usd"
+    @AppStorage(WalletModel.autoBroadcastKey) private var autoBroadcast = true
 
     var body: some View {
         ScrollView {
@@ -55,6 +56,20 @@ struct SettingsView: View {
                                     chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
+                    Divider()
+                    Toggle(isOn: $autoBroadcast) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "antenna.radiowaves.left.and.right")
+                                .font(.system(size: 15, weight: .semibold)).foregroundStyle(.black)
+                                .frame(width: 30, height: 30).background(Theme.zcash).clipShape(RoundedRectangle(cornerRadius: 8))
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Broadcast right after signing").font(.subheadline.weight(.semibold))
+                                Text(autoBroadcast ? "On: payments leave as soon as the Flipper signs." : "Off: signed payments wait in Activity until you broadcast them.")
+                                    .font(.caption).foregroundStyle(Theme.muted)
+                            }
+                        }
+                    }
+                    .tint(Theme.zcash)
                     Divider()
                     NavigationLink { ServerView() } label: {
                         SettingsRow(icon: "server.rack", title: "Server", value: WalletModel.server.components(separatedBy: ":").first,
