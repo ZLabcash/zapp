@@ -32,6 +32,20 @@ enum AppLanguage {
         Locale(identifier: code).localizedString(forIdentifier: code)?.capitalized(with: Locale(identifier: code)) ?? code
     }
 
+    /// The language in use: the one picked in Settings, or the phone's if ZApp speaks it, else English.
+    static var effective: String {
+        if !current.isEmpty { return current }
+        for pref in Locale.preferredLanguages {
+            if let code = codes.first(where: { pref == $0 || pref.hasPrefix($0 + "-") || $0.hasPrefix(pref) }) { return code }
+            let base = Locale(identifier: pref).language.languageCode?.identifier ?? pref
+            if let code = codes.first(where: { $0 == base || $0.hasPrefix(base + "-") }) { return code }
+        }
+        return "en"
+    }
+
+    /// Dates, numbers and names follow the app's language (Locale.current only changes on relaunch).
+    static var effectiveLocale: Locale { Locale(identifier: effective) }
+
     static func locale(_ code: String) -> Locale { code.isEmpty ? .autoupdatingCurrent : Locale(identifier: code) }
 
     static func isRightToLeft(_ code: String) -> Bool {

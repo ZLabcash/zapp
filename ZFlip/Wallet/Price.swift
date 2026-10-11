@@ -10,7 +10,7 @@ final class PriceService: ObservableObject {
         /// Its flag in Assets.xcassets/Flags (the euro's is the EU's).
         var flag: String { ["usd": "us", "eur": "eu", "gbp": "gb", "chf": "ch", "jpy": "jp", "cny": "cn", "cad": "ca", "aud": "au", "nzd": "nz", "krw": "kr", "inr": "in", "brl": "br", "mxn": "mx", "ars": "ar", "clp": "cl", "rub": "ru", "uah": "ua", "try": "tr", "pln": "pl", "czk": "cz", "huf": "hu", "sek": "se", "nok": "no", "dkk": "dk", "ils": "il", "aed": "ae", "sar": "sa", "kwd": "kw", "bhd": "bh", "zar": "za", "ngn": "ng", "sgd": "sg", "hkd": "hk", "twd": "tw", "thb": "th", "idr": "id", "myr": "my", "php": "ph", "vnd": "vn", "pkr": "pk", "bdt": "bd", "lkr": "lk", "gel": "ge"][code] ?? "un" }
         /// In the user's language, from the system ("US dollar", "dollar des États-Unis"…).
-        var name: String { Locale.current.localizedString(forCurrencyCode: code.uppercased()) ?? code.uppercased() }
+        var name: String { AppLanguage.effectiveLocale.localizedString(forCurrencyCode: code.uppercased()) ?? code.uppercased() }
     }
 
     static let currencies: [Currency] = [
@@ -72,6 +72,7 @@ final class PriceService: ObservableObject {
         let value = Double(zatoshi) / 1e8 * price
         let f = NumberFormatter()
         f.numberStyle = .currency
+        f.locale = AppLanguage.effectiveLocale
         f.currencyCode = code.uppercased()
         f.maximumFractionDigits = value != 0 && abs(value) < 0.01 ? 4 : 2
         return f.string(from: NSNumber(value: value))

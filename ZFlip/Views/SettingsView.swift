@@ -32,9 +32,8 @@ struct SettingsView: View {
                 }
                 section("Language") {
                     NavigationLink { LanguageView() } label: {
-                        SettingsRow(icon: "globe", title: "Language",
-                                    value: language.isEmpty ? String(localized: "System") : AppLanguage.name(language),
-                                    flag: language.isEmpty ? nil : AppLanguage.flag(language), chevron: "chevron.right")
+                        SettingsRow(icon: "globe", title: "Language", value: AppLanguage.name(AppLanguage.effective),
+                                    flag: AppLanguage.flag(AppLanguage.effective), chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
                 }
@@ -448,18 +447,13 @@ struct LanguageView: View {
     var body: some View {
         ScrollView {
             SettingsCard {
-                Button { choose("") } label: {
-                    ChoiceRow(icon: "iphone", title: String(localized: "System"),
-                              subtitle: Locale.preferredLanguages.first.map { AppLanguage.name(Locale(identifier: $0).language.languageCode?.identifier ?? $0) },
-                              selected: language.isEmpty)
-                }
-                .buttonStyle(.plain)
-                ForEach(AppLanguage.codes, id: \.self) { code in
-                    Divider()
+                ForEach(Array(AppLanguage.codes.enumerated()), id: \.element) { i, code in
+                    if i > 0 { Divider() }
                     Button { choose(code) } label: {
+                        // The subtitle is in the app's language, not the phone's.
                         ChoiceRow(flag: AppLanguage.flag(code), title: AppLanguage.name(code),
-                                  subtitle: Locale.current.localizedString(forIdentifier: code)?.capitalized,
-                                  selected: language == code)
+                                  subtitle: AppLanguage.effectiveLocale.localizedString(forIdentifier: code)?.capitalized(with: AppLanguage.effectiveLocale),
+                                  selected: AppLanguage.effective == code)
                     }
                     .buttonStyle(.plain)
                 }
@@ -473,7 +467,7 @@ struct LanguageView: View {
     }
 
     private func choose(_ code: String) {
-        guard code != language else { return dismiss() }
+        guard code != AppLanguage.effective else { return dismiss() }
         // The whole app is rebuilt in the new language; it reopens on Settings.
         AppLanguage.reopenSettingsAfterRebuild()
         AppLanguage.apply(code)
@@ -496,15 +490,27 @@ struct CurrencyView: View {
                         currency = c.code
                         dismiss() // back to Settings
                     } label: {
-                        ChoiceRow(flag: c.flag, title: c.code.uppercased(), subtitle: c.name,
+                        ChoiceRow(flag: c.flag, title: c.code.uppercased(), subtitle: c.name.prefix(1).uppercased(with: AppLanguage.effectiveLocale) + c.name.dropFirst(),
                                   trailing: prices.format(zatoshi: 100_000_000, in: c.code), selected: currency == c.code)
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(20)
-            Text("Price of 1 ZEC, from CoinGecko (ZScan for the US dollar if it can't be reached).")
-                .font(.caption).foregroundStyle(Theme.muted).padding(.horizontal, 24)
+            // CoinGecko's attribution for its free API.
+            Link(destination: URL(string: "https://www.coingecko.com/en/api")!) {
+                VStack(spacing: 10) {
+                    Text("Powered by").font(.footnote.weight(.semibold)).foregroundStyle(Theme.muted)
+                    HStack(spacing: 12) {
+                        Image("CoinGecko").resizable().scaledToFit().frame(width: 52, height: 52)
+                        Text(verbatim: "coingecko").font(.system(size: 38, weight: .heavy, design: .rounded)).foregroundStyle(Theme.ink)
+                    }
+                    .environment(\.layoutDirection, .leftToRight)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 22)
+            }
+            .buttonStyle(.plain)
         }
         .background(Theme.background.ignoresSafeArea())
         .navigationTitle("Currency")

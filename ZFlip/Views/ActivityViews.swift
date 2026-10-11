@@ -118,7 +118,7 @@ struct PendingView: View {
                     HStack {
                         Text("Signed").foregroundStyle(Theme.muted)
                         Spacer()
-                        Text(p.created.formatted(date: .abbreviated, time: .shortened))
+                        Text(p.created.formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: AppLanguage.effectiveLocale)))
                     }
                     .font(.subheadline).padding(.vertical, 10)
                     Divider()
@@ -209,7 +209,7 @@ enum TxStatus {
         if tx.expired { return String(localized: "Expired") }
         guard let n = wallet.confirmations(tx) else { return String(localized: "Pending · in the mempool") }
         if n < 10 { return String(localized: "Confirming · \(n) of 10") }
-        return tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(date: .abbreviated, time: .shortened) } ?? "Confirmed"
+        return tx.blockTime.map { Date(timeIntervalSince1970: $0).formatted(Date.FormatStyle(date: .abbreviated, time: .shortened, locale: AppLanguage.effectiveLocale)) } ?? "Confirmed"
     }
 
     static func long(_ tx: WalletModel.ActivityItem, _ wallet: WalletModel) -> String {
@@ -258,7 +258,7 @@ struct TxDetailView: View {
                     }
                     row("Status", TxStatus.long(tx, wallet))
                     if let t = tx.blockTime {
-                        row("Date", Date(timeIntervalSince1970: t).formatted(date: .long, time: .shortened))
+                        row("Date", Date(timeIntervalSince1970: t).formatted(Date.FormatStyle(date: .long, time: .shortened, locale: AppLanguage.effectiveLocale)))
                     }
                     if tx.memos.isEmpty {
                         row("Message", String(localized: "None"))
@@ -339,7 +339,7 @@ struct AllActivityView: View {
         var out: [(String, [WalletModel.ActivityItem])] = []
         for tx in items {
             let day = tx.blockTime.map { Date(timeIntervalSince1970: $0) }.map { d in
-                Calendar.current.isDateInToday(d) ? String(localized: "Today") : Calendar.current.isDateInYesterday(d) ? String(localized: "Yesterday") : d.formatted(date: .complete, time: .omitted)
+                Calendar.current.isDateInToday(d) ? String(localized: "Today") : Calendar.current.isDateInYesterday(d) ? String(localized: "Yesterday") : d.formatted(Date.FormatStyle(date: .complete, time: .omitted, locale: AppLanguage.effectiveLocale))
             } ?? String(localized: "Pending")
             if out.last?.0 == day { out[out.count - 1].1.append(tx) } else { out.append((day, [tx])) }
         }
