@@ -193,6 +193,9 @@ final class WalletModel: ObservableObject {
     @Published private(set) var bluetoothDenied = false
     /// The Flipper accepted this connection's HELLO (it will take sign requests).
     var flipperReady: Bool { flipperState == .ready }
+    /// The Flipper wallet whose Flipper is connected with a session open. The link stays up
+    /// while switching wallets (only leaving the app closes it), so switching back is instant.
+    @Published private(set) var linkedWallet: UUID?
     /// Amounts show only while the Flipper is connected: a glance at the phone
     /// alone gives nothing away. (Privacy from onlookers, not security: the viewing
     /// key is on the phone.)
@@ -242,6 +245,7 @@ final class WalletModel: ObservableObject {
                     if case .otherWallet = self.flipperState { break }
                     self.flipperState = .connecting
                 default:
+                    self.linkedWallet = nil
                     if case .otherWallet = self.flipperState { break }
                     if case .failed = self.flipperState { break }
                     self.flipperState = .idle
@@ -291,6 +295,7 @@ final class WalletModel: ObservableObject {
             }
         }
         flipperState = .ready
+        linkedWallet = pairing?.id
         if pairing != nil {
             remember(index: info.addressIndex)
             await repairBirthday(info)
@@ -310,6 +315,7 @@ final class WalletModel: ObservableObject {
             store(known)
             try await activate(known.id, keepingLink: true)
             flipperState = .ready
+            linkedWallet = pairing?.id
             remember(index: info.addressIndex)
             return
         }
@@ -328,6 +334,7 @@ final class WalletModel: ObservableObject {
         )
         try await add(pairing, keepingLink: true)
         flipperState = .ready
+        linkedWallet = self.pairing?.id
     }
 
     // MARK: Wallets
@@ -407,9 +414,16 @@ final class WalletModel: ObservableObject {
     /// `keepingLink`: the Flipper just connected is the new wallet's own, so stay connected.
     func activate(_ id: UUID, keepingLink: Bool = false) async throws {
         guard let wallet = wallets.first(where: { $0.id == id }) else { return }
-        if let current = pairing, current.id != id, current.isFlipper, !keepingLink {
-            link.disconnect()
-            flipperState = .idle
+        // The Bluetooth link stays up across switches. Back on the connected Flipper's
+        // wallet: ready at once. Another Flipper wallet: its own Flipper must connect.
+        if !keepingLink, pairing?.id != id {
+            if wallet.isFlipper, linkedWallet == wallet.id, link.isConnected {
+                flipperState = .ready
+            } else if wallet.isFlipper {
+                let linked = wallets.first { $0.id == linkedWallet }
+                if link.isConnected, linked?.flipperID != wallet.flipperID { link.disconnect() }
+                flipperState = .idle
+            }
         }
         pairing = wallet
         saveWallets()
@@ -651,6 +665,7 @@ final class WalletModel: ObservableObject {
         do {
             try await createWallet(info: info, flipperID: id, restoredFrom: nil)
             flipperState = .ready
+            linkedWallet = pairing?.id
         } catch {
             flipperState = .failed(error.localizedDescription)
         }
@@ -677,6 +692,30 @@ final class WalletModel: ObservableObject {
         guard let ufvk = pairing?.ufvk else { return nil }
         return try? Bridge.address(ufvk: ufvk, index: index)
     }
+
+    /// A wallet's current receiving address (to send to it from another wallet).
+    func receivingAddress(of w: Pairing) -> String? {
+        try? Bridge.address(ufvk: w.ufvk, index: w.addressIndex ?? 0)
+    }
+
+    /// The name of the wallet on this phone that `address` belongs to (any of the addresses
+    /// it has shown), so a payment between your own wallets reads by name.
+    func walletName(for address: String) -> String? {
+        let a = address.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard a.count > 20 else { return nil }
+        if ownAddressesFor != wallets {
+            ownAddresses = [:]
+            for w in wallets {
+                for i in 0...(w.addressIndex ?? 0) {
+                    if let addr = try? Bridge.address(ufvk: w.ufvk, index: i) { ownAddresses[addr] = w.id }
+                }
+            }
+            ownAddressesFor = wallets
+        }
+        return ownAddresses[a].flatMap { id in wallets.first { $0.id == id }?.displayName }
+    }
+    private var ownAddresses: [String: UUID] = [:]
+    private var ownAddressesFor: [Pairing] = []
 
     /// Removes the active wallet.
     func forget() async {

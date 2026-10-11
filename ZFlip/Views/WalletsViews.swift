@@ -126,7 +126,7 @@ struct WalletRow: View {
             }
             Spacer()
             // A Flipper wallet's balance only while its Flipper is connected.
-            let visible = w.isPhone || (active && wallet.flipperReady)
+            let visible = w.isPhone || wallet.linkedWallet == w.id
             Text(visible ? (wallet.balances[w.id] ?? .zero).zecString : "•••• ZEC")
                 .font(.subheadline.monospacedDigit()).foregroundStyle(Theme.muted)
             Image(systemName: active ? "checkmark.circle.fill" : "circle")
