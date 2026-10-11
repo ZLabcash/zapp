@@ -82,7 +82,7 @@ struct SendView: View {
         return nil
     }
 
-    private var valid: Bool { payments != nil && amountNote?.blocking != true }
+    private var valid: Bool { payments != nil && amountNote?.blocking != true && wallet.pendingBroadcasts.isEmpty }
 
     var body: some View {
         Group {
@@ -237,6 +237,15 @@ struct SendView: View {
                 Label(note.text, systemImage: note.blocking ? "exclamationmark.triangle.fill" : "info.circle")
                     .foregroundStyle(note.blocking ? .orange : Theme.muted)
             }
+            if !wallet.pendingBroadcasts.isEmpty {
+                Label("A signed payment is waiting to be broadcast (see Activity). Broadcast or discard it first: a new one could spend the same funds.",
+                      systemImage: "clock.badge.exclamationmark")
+                    .foregroundStyle(.orange)
+            }
+            if !wallet.online {
+                Label("No network: you can still sign with your Flipper and broadcast later.", systemImage: "wifi.slash")
+                    .foregroundStyle(Theme.muted)
+            }
         }
         .font(.footnote)
         .padding(16)
@@ -334,6 +343,16 @@ struct SendView: View {
                         Label("View on the explorer", systemImage: "arrow.up.right.square").font(.subheadline.weight(.semibold))
                     }
                 }
+                Button("Done") {
+                    wallet.sendStep = .idle
+                    dismiss()
+                }
+                .primaryButton()
+            case .signedOffline:
+                Image(systemName: "clock.badge.checkmark").font(.system(size: 66)).foregroundStyle(Theme.zcash)
+                Text("Signed, not broadcast yet").font(.title2.bold()).multilineTextAlignment(.center)
+                Text("Your Flipper signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it.")
+                    .multilineTextAlignment(.center).foregroundStyle(Theme.muted)
                 Button("Done") {
                     wallet.sendStep = .idle
                     dismiss()

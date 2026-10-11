@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import Network
 import ZcashLightClientKit
 
 /// The watch-only Zcash wallet backed by the Flipper's viewing key.
@@ -37,6 +38,8 @@ final class WalletModel: ObservableObject {
         case preparing
         case confirmOnFlipper
         case broadcasting
+        /// Signed by the Flipper with no network: kept in Activity until broadcast or discarded.
+        case signedOffline
         case sent(String)
         case failed(String)
     }
@@ -71,6 +74,89 @@ final class WalletModel: ObservableObject {
         var txid: String { id.reversed().map { String(format: "%02x", $0) }.joined() }
         /// The decrypted text messages of this transaction.
         var memos: [String] = []
+    }
+
+    /// A transaction the Flipper signed while there was no network. It stays here, out of the
+    /// SDK's database (which would resubmit it on its own), until the user broadcasts or
+    /// discards it.
+    struct PendingBroadcast: Codable, Identifiable, Equatable {
+        var id = UUID()
+        var created: Date
+        var payments: [Payment]
+        /// Past this height the network refuses it (it was built to expire 40 blocks on).
+        var expiryHeight: Int
+        var proofs: Data
+        var sigs: Data
+        var total: Int64 { payments.reduce(0) { $0 + $1.zatoshi } }
+    }
+
+    @Published private(set) var pendingBroadcasts: [PendingBroadcast] = []
+    /// The phone has a route to the internet (NWPathMonitor).
+    @Published private(set) var online = true
+    private let pathMonitor = NWPathMonitor()
+
+    func expired(_ p: PendingBroadcast) -> Bool { tipHeight > 0 && tipHeight >= p.expiryHeight }
+
+    /// Roughly how long until it expires, from the last chain height seen (75 s a block).
+    func minutesLeft(_ p: PendingBroadcast) -> Int? {
+        guard tipHeight > 0 else { return nil }
+        return max(0, (p.expiryHeight - tipHeight) * 75 / 60)
+    }
+
+    private static func pendingFile(_ network: NetworkType) throws -> URL {
+        try dataDirectory(network).deletingLastPathComponent()
+            .appendingPathComponent("zapp-pending-\(network == .testnet ? "test" : "main").json")
+    }
+
+    private func savePending() {
+        guard Demo.scene == nil, let url = try? Self.pendingFile(networkType) else { return }
+        try? JSONEncoder().encode(pendingBroadcasts).write(to: url, options: [.atomic, .completeFileProtection])
+    }
+
+    private func loadPending() {
+        guard let url = try? Self.pendingFile(networkType), let data = try? Data(contentsOf: url) else { return }
+        pendingBroadcasts = (try? JSONDecoder().decode([PendingBroadcast].self, from: data)) ?? []
+    }
+
+    /// Hands a signed transaction to the network. Returns an error to show, or nil once sent.
+    func broadcast(_ pending: PendingBroadcast) async -> String? {
+        guard let synchronizer else { return "The wallet isn't open yet." }
+        if expired(pending) { return "It expired: the network won't take it any more. Discard it and send again." }
+        guard online else { return "No network. Try again when you're back online." }
+        do {
+            let error = try await submit(proofs: pending.proofs, sigs: pending.sigs, synchronizer: synchronizer)
+            // Created means stored by the SDK, which keeps retrying it: it no longer waits here.
+            pendingBroadcasts.removeAll { $0.id == pending.id }
+            savePending()
+            refreshTransactions(force: true)
+            return error
+        } catch {
+            return error.localizedDescription
+        }
+    }
+
+    func discard(_ pending: PendingBroadcast) {
+        pendingBroadcasts.removeAll { $0.id == pending.id }
+        savePending()
+    }
+
+    /// Stores and submits a signed, proven transaction; returns the network's error if any.
+    private func submit(proofs: Pczt, sigs: Pczt, synchronizer: SDKSynchronizer) async throws -> String? {
+        let results = try await synchronizer.createTransactionFromPCZT(pcztWithProofs: proofs, pcztWithSigs: sigs)
+        var error: String?
+        for try await result in results {
+            switch result {
+            case .success(let txId):
+                sendStep = sendStep == .idle ? .idle : .sent(txId.reversed().map { String(format: "%02x", $0) }.joined())
+            case .grpcFailure(_, let e):
+                error = "Couldn't reach the network (\(e.localizedDescription)). The wallet will retry on its own."
+            case .submitFailure(_, _, let description):
+                error = description
+            case .notAttempted:
+                error = "The transaction was not submitted."
+            }
+        }
+        return error
     }
 
     /// The SDK's transactions by id, to ask it for recipients and memos.
@@ -145,6 +231,12 @@ final class WalletModel: ObservableObject {
            let saved = try? JSONDecoder().decode(Pairing.self, from: data) {
             pairing = saved
         }
+        loadPending()
+        pathMonitor.pathUpdateHandler = { [weak self] path in
+            let up = path.status == .satisfied
+            Task { @MainActor in self?.online = up }
+        }
+        pathMonitor.start(queue: DispatchQueue(label: "zapp.network"))
     }
 
     var networkType: NetworkType {
@@ -259,6 +351,10 @@ final class WalletModel: ObservableObject {
         let sent = ActivityItem(id: Data([2]), sent: true, zatoshi: 5_000_000, fee: 10_000, minedHeight: 3_513_400, expired: false,
                                 blockTime: nil, url: url, memos: ["lunch, thanks!"])
         activity = after ? [sent, received] : [received]
+        if scene == "pending" {
+            pendingBroadcasts = [PendingBroadcast(created: Date(), payments: [Payment(address: Demo.friend, zatoshi: 5_000_000, memo: "lunch, thanks!")],
+                                                  expiryHeight: 3_513_430, proofs: Data(), sigs: Data())]
+        }
         switch scene {
         case "send-confirm": sendStep = .confirmOnFlipper
         case "send-broadcast": sendStep = .broadcasting
@@ -538,7 +634,7 @@ final class WalletModel: ObservableObject {
 
     /// Builds the transaction, has the Flipper check and sign it, proves and broadcasts.
     /// One payment: an address and an amount.
-    struct Payment: Equatable {
+    struct Payment: Equatable, Codable {
         var address: String
         var zatoshi: Int64
         /// Its own encrypted message (shielded recipients only).
@@ -614,20 +710,20 @@ final class WalletModel: ObservableObject {
                 throw FlipperError.protocolError("Unexpected reply from the Flipper")
             }
             let signed = try Bridge.applySignatures(pczt: pczt, signatures: reply.payload)
-            sendStep = .broadcasting
-            let results = try await synchronizer.createTransactionFromPCZT(pcztWithProofs: try await proven, pcztWithSigs: signed)
-            for try await result in results {
-                switch result {
-                case .success(let txId):
-                    sendStep = .sent(txId.reversed().map { String(format: "%02x", $0) }.joined())
-                case .grpcFailure(_, let error):
-                    sendStep = .failed(error.localizedDescription)
-                case .submitFailure(_, _, let description):
-                    sendStep = .failed(description)
-                case .notAttempted:
-                    sendStep = .failed("The transaction was not submitted")
-                }
+            let proofs = try await proven
+            if !online {
+                // Signed, but nowhere to send it: keep it for the user to broadcast later.
+                pendingBroadcasts.append(PendingBroadcast(created: Date(), payments: payments, expiryHeight: tipHeight + 40,
+                                                          proofs: proofs, sigs: signed))
+                savePending()
+                sendStep = .signedOffline
+                return
             }
+            sendStep = .broadcasting
+            if let error = try await submit(proofs: proofs, sigs: signed, synchronizer: synchronizer) {
+                sendStep = .failed(error)
+            }
+            refreshTransactions(force: true)
         } catch {
             sendStep = .failed(Self.explain(error, zatoshi: payments.reduce(0) { $0 + $1.zatoshi }))
         }

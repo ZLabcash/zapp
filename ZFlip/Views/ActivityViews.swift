@@ -5,6 +5,7 @@ import ZcashLightClientKit
 struct ActivityCard: View {
     @EnvironmentObject var wallet: WalletModel
     @State private var selected: WalletModel.ActivityItem?
+    @State private var pending: WalletModel.PendingBroadcast?
 
     private var recent: (title: String, items: [WalletModel.ActivityItem]) {
         let today = wallet.activity.filter { item in
@@ -26,7 +27,11 @@ struct ActivityCard: View {
                     }
                 }
             }
-            if wallet.activity.isEmpty {
+            ForEach(wallet.pendingBroadcasts) { p in
+                Button { pending = p } label: { PendingRow(p: p) }.buttonStyle(.plain)
+                Divider()
+            }
+            if wallet.activity.isEmpty && wallet.pendingBroadcasts.isEmpty {
                 Text(wallet.synced ? "No transactions yet." : "Transactions appear here as the wallet syncs.")
                     .font(.footnote).foregroundStyle(Theme.muted)
             }
@@ -41,6 +46,121 @@ struct ActivityCard: View {
         .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 24))
         .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]) }
+        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]) }
+    }
+}
+
+/// A signed payment waiting for the user to broadcast it.
+struct PendingRow: View {
+    @EnvironmentObject var wallet: WalletModel
+    let p: WalletModel.PendingBroadcast
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "clock")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.black)
+                .frame(width: 34, height: 34)
+                .background(Color.orange)
+                .clipShape(Circle())
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Signed · not broadcast").font(.subheadline.weight(.semibold))
+                Text(wallet.expired(p) ? "Expired: discard it and send again"
+                     : wallet.minutesLeft(p).map { "Broadcast within about \($0) min" } ?? "Waiting to be broadcast")
+                    .font(.caption).foregroundStyle(wallet.expired(p) ? .red : .orange)
+            }
+            Spacer()
+            Text("−" + (wallet.showsAmounts ? Zatoshi(p.total).zecString : "•••• ZEC"))
+                .font(.subheadline.weight(.semibold).monospacedDigit())
+        }
+        .contentShape(Rectangle())
+    }
+}
+
+/// What the signed payment pays, its deadline, and the two choices: broadcast or discard.
+struct PendingView: View {
+    @EnvironmentObject var wallet: WalletModel
+    @Environment(\.dismiss) private var dismiss
+    let p: WalletModel.PendingBroadcast
+    @State private var working = false
+    @State private var error: String?
+    @State private var confirmDiscard = false
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                Capsule().fill(Theme.muted).frame(width: 40, height: 5).padding(.top, 10)
+                Image(systemName: "clock.badge.checkmark").font(.system(size: 44)).foregroundStyle(Theme.zcash)
+                Text("Signed, waiting to be broadcast").font(.title3.bold())
+                Text("Your Flipper signed this payment. Nothing has left your wallet yet: it happens when you broadcast it.")
+                    .font(.footnote).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
+                VStack(spacing: 0) {
+                    ForEach(Array(p.payments.enumerated()), id: \.offset) { i, pay in
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack {
+                                Text(p.payments.count > 1 ? "To (\(i + 1))" : "To").foregroundStyle(Theme.muted)
+                                Spacer()
+                                Text(Zatoshi(pay.zatoshi).zecString).fontWeight(.semibold).monospacedDigit()
+                            }
+                            Text(pay.address).font(.system(.caption2, design: .monospaced)).foregroundStyle(Theme.muted).lineLimit(2)
+                            if !pay.memo.isEmpty { Text("“\(pay.memo)”").font(.caption) }
+                        }
+                        .font(.subheadline)
+                        .padding(.vertical, 10)
+                        Divider()
+                    }
+                    HStack {
+                        Text("Signed").foregroundStyle(Theme.muted)
+                        Spacer()
+                        Text(p.created.formatted(date: .abbreviated, time: .shortened))
+                    }
+                    .font(.subheadline).padding(.vertical, 10)
+                    Divider()
+                    HStack {
+                        Text("Expires").foregroundStyle(Theme.muted)
+                        Spacer()
+                        Text(wallet.expired(p) ? "Expired" : "Block \(p.expiryHeight.formatted())" + (wallet.minutesLeft(p).map { " · ~\($0) min" } ?? ""))
+                            .foregroundStyle(wallet.expired(p) ? .red : Theme.ink)
+                    }
+                    .font(.subheadline).padding(.vertical, 10)
+                }
+                .padding(.horizontal, 16)
+                .background(Theme.card)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                if let error {
+                    Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange)
+                }
+                Button {
+                    working = true
+                    Task {
+                        error = await wallet.broadcast(p)
+                        working = false
+                        if error == nil { dismiss() }
+                    }
+                } label: {
+                    Label(working ? "Broadcasting…" : "Broadcast now", systemImage: "antenna.radiowaves.left.and.right").primaryButton()
+                }
+                .disabled(working || wallet.expired(p) || !wallet.online)
+                .opacity(working || wallet.expired(p) || !wallet.online ? 0.5 : 1)
+                if !wallet.online {
+                    Text("No network right now.").font(.footnote).foregroundStyle(Theme.muted)
+                }
+                Button(role: .destructive) { confirmDiscard = true } label: {
+                    Text("Discard").font(.subheadline.weight(.semibold)).foregroundStyle(.red)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 24)
+        }
+        .background(Theme.background.ignoresSafeArea())
+        .confirmationDialog("Discard this signed payment?", isPresented: $confirmDiscard, titleVisibility: .visible) {
+            Button("Discard", role: .destructive) {
+                wallet.discard(p)
+                dismiss()
+            }
+        } message: {
+            Text("It was never broadcast: nothing is sent and your balance doesn't change.")
+        }
     }
 }
 
@@ -193,6 +313,7 @@ struct AllActivityView: View {
     @EnvironmentObject var wallet: WalletModel
     @State private var query = ""
     @State private var selected: WalletModel.ActivityItem?
+    @State private var pending: WalletModel.PendingBroadcast?
 
     private var days: [(String, [WalletModel.ActivityItem])] {
         let q = query.trimmingCharacters(in: .whitespaces).lowercased()
@@ -221,6 +342,19 @@ struct AllActivityView: View {
                 .padding(14)
                 .background(Theme.card)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
+                if !wallet.pendingBroadcasts.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("WAITING TO BROADCAST").font(.caption.weight(.semibold)).foregroundStyle(.orange).padding(.leading, 4)
+                        VStack(spacing: 10) {
+                            ForEach(wallet.pendingBroadcasts) { p in
+                                Button { pending = p } label: { PendingRow(p: p) }.buttonStyle(.plain)
+                            }
+                        }
+                        .padding(16)
+                        .background(Theme.card)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    }
+                }
                 if days.isEmpty {
                     Text(query.isEmpty ? "No transactions yet." : "Nothing matches “\(query)”.").font(.footnote).foregroundStyle(Theme.muted)
                 }
@@ -246,5 +380,6 @@ struct AllActivityView: View {
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
         .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]) }
+        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]) }
     }
 }
