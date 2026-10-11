@@ -2,82 +2,6 @@
   "sourceLanguage" : "en",
   "strings" : {
     "" : {},
-    " · ~%lld min" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld د"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld Min."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld min"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld min"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld min"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · 約 %lld 分"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · 약 %lld분"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld min"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld мин"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld นาที"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · ~%lld хв"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : " · 约 %lld 分钟"
-          }
-        }
-      }
-    },
     "%@ holds a different wallet than this phone." : {
       "localizations" : {
         "ar" : {
@@ -689,78 +613,78 @@
         }
       }
     },
-    "A signed payment is waiting to be broadcast (see Activity). Broadcast or discard it first: a new one could spend the same funds." : {
+    "A signed payment is waiting in To broadcast, on Home. Broadcast or cancel it first: a new one could spend the same funds." : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "توجد دفعة موقّعة بانتظار البث (راجع «النشاط»). ابثها أو تجاهلها أولًا: فقد تنفق دفعة جديدة الأموال نفسها."
+            "value" : "دفعة موقّعة تنتظر في «للبث» على الشاشة الرئيسية. ابثها أو ألغها أولًا: قد تنفق دفعة جديدة الأموال نفسها."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine signierte Zahlung wartet auf die Übertragung (siehe Aktivität). Übertrage oder verwirf sie zuerst: Eine neue könnte dasselbe Guthaben ausgeben."
+            "value" : "Eine signierte Zahlung wartet unter „Zu senden“ auf der Startseite. Sende oder storniere sie zuerst: Eine neue könnte dasselbe Guthaben ausgeben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hay un pago firmado pendiente de transmitir (ver Actividad). Transmítelo o descártalo primero: uno nuevo podría gastar los mismos fondos."
+            "value" : "Un pago firmado espera en «Por difundir», en Inicio. Difúndelo o cancélalo primero: uno nuevo podría gastar los mismos fondos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un paiement signé attend d'être diffusé (voir Activité). Diffusez-le ou supprimez-le d'abord : un nouveau pourrait dépenser les mêmes fonds."
+            "value" : "Un paiement signé attend dans « À diffuser », sur l'accueil. Diffusez-le ou annulez-le d'abord : un nouveau pourrait dépenser les mêmes fonds."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un pagamento firmato è in attesa di trasmissione (vedi Attività). Trasmettilo o eliminalo prima: uno nuovo potrebbe spendere gli stessi fondi."
+            "value" : "Un pagamento firmato attende in «Da trasmettere», nella Home. Trasmettilo o annullalo prima: uno nuovo potrebbe spendere gli stessi fondi."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "署名済みの支払いがブロードキャスト待ちです（アクティビティを参照）。先にブロードキャストするか破棄してください：新しい支払いが同じ資金を使う可能性があります。"
+            "value" : "署名済みの支払いがホームの「未送信」で待機中です。先に送信するか取り消してください。新しい支払いが同じ資金を使う可能性があります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "서명된 결제가 브로드캐스트를 기다리고 있습니다(활동 참조). 먼저 브로드캐스트하거나 폐기하십시오. 새 결제가 같은 자금을 사용할 수 있습니다."
+            "value" : "서명된 결제가 홈의 '브로드캐스트 대기'에서 기다리고 있습니다. 먼저 브로드캐스트하거나 취소하세요: 새 결제가 같은 자금을 쓸 수 있습니다."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Há um pagamento assinado aguardando transmissão (veja Atividade). Transmita ou descarte primeiro: um novo poderia gastar os mesmos fundos."
+            "value" : "Um pagamento assinado aguarda em “A transmitir”, no Início. Transmita ou cancele antes: um novo poderia gastar os mesmos fundos."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подписанный платеж ожидает отправки в сеть (см. «Активность»). Сначала отправьте или удалите его: новый платеж может потратить те же средства."
+            "value" : "Подписанный платёж ждёт в разделе «К отправке» на главном экране. Сначала отправьте или отмените его: новый может потратить те же средства."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "มีการชำระเงินที่เซ็นแล้วรอเผยแพร่อยู่ (ดูในกิจกรรม) เผยแพร่หรือละทิ้งก่อน: รายการใหม่อาจใช้เงินก้อนเดียวกัน"
+            "value" : "มีการชำระเงินที่เซ็นแล้วรออยู่ใน “รอกระจาย” ที่หน้าหลัก กระจายหรือยกเลิกก่อน: รายการใหม่อาจใช้เงินก้อนเดียวกัน"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Підписаний платіж чекає на надсилання в мережу (див. «Активність»). Спершу надішліть або видаліть його: новий платіж може витратити ті самі кошти."
+            "value" : "Підписаний платіж чекає в розділі «До надсилання» на головному екрані. Спершу надішліть або скасуйте його: новий може витратити ті самі кошти."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "有一笔已签名的付款等待广播（见“活动”）。请先广播或舍弃它：新付款可能会花费同一笔资金。"
+            "value" : "一笔已签名的付款正在首页的“待广播”中等待。请先广播或取消它：新的付款可能会花费相同的资金。"
           }
         }
       }
@@ -1753,82 +1677,6 @@
         }
       }
     },
-    "Block %@" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الكتلة %@"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Block %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloque %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloc %@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blocco %@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ブロック %@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "블록 %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bloco %@"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Блок %@"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "บล็อก %@"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Блок %@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "区块 %@"
-          }
-        }
-      }
-    },
     "Bluetooth is off. Turn it on to connect." : {
       "localizations" : {
         "ar" : {
@@ -1905,154 +1753,154 @@
         }
       }
     },
-    "Broadcast now" : {
+    "Broadcast" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "البث الآن"
+            "value" : "بث"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jetzt übertragen"
+            "value" : "Senden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transmitir ahora"
+            "value" : "Difundir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diffuser maintenant"
+            "value" : "Diffuser"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trasmetti ora"
+            "value" : "Trasmetti"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "今すぐブロードキャスト"
+            "value" : "送信"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "지금 브로드캐스트"
+            "value" : "브로드캐스트"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transmitir agora"
+            "value" : "Transmitir"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отправить в сеть"
+            "value" : "Отправить"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "เผยแพร่เลย"
+            "value" : "กระจาย"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Надіслати в мережу"
+            "value" : "Надіслати"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "立即广播"
+            "value" : "广播"
           }
         }
       }
     },
-    "Broadcast within about %lld min" : {
+    "Broadcast before" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ابثها خلال %lld د تقريبًا"
+            "value" : "البث قبل"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Innerhalb von etwa %lld Min. übertragen"
+            "value" : "Senden bis"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transmitir en unos %lld min"
+            "value" : "Difundir antes de"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diffuser dans environ %lld min"
+            "value" : "À diffuser avant"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trasmetti entro circa %lld min"
+            "value" : "Trasmetti entro"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "約 %lld 分以内にブロードキャスト"
+            "value" : "送信期限"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "약 %lld분 이내에 브로드캐스트"
+            "value" : "브로드캐스트 기한"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Transmitir em cerca de %lld min"
+            "value" : "Transmitir até"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Отправьте в сеть в течение ~%lld мин"
+            "value" : "Отправить до"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "เผยแพร่ภายในประมาณ %lld นาที"
+            "value" : "กระจายก่อน"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Надішліть у мережу протягом ~%lld хв"
+            "value" : "Надіслати до"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请在约 %lld 分钟内广播"
+            "value" : "广播期限"
           }
         }
       }
@@ -2513,6 +2361,158 @@
         }
       }
     },
+    "Cancel payment" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إلغاء الدفعة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahlung abbrechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar pago"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler le paiement"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annulla pagamento"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "支払いを取り消す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결제 취소"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar pagamento"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отменить платёж"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ยกเลิกการชำระเงิน"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скасувати платіж"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消付款"
+          }
+        }
+      }
+    },
+    "Cancel this payment?" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "إلغاء هذه الدفعة؟"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Zahlung abbrechen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cancelar este pago?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler ce paiement ?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annullare questo pagamento?"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この支払いを取り消しますか？"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 결제를 취소할까요?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancelar este pagamento?"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отменить этот платёж?"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ยกเลิกการชำระเงินนี้ไหม"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Скасувати цей платіж?"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "取消这笔付款？"
+          }
+        }
+      }
+    },
     "Check each payment and the fee on your device's screen, then approve it there. Refuse it there to cancel." : {
       "localizations" : {
         "ar" : {
@@ -2965,6 +2965,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "确认中"
+          }
+        }
+      }
+    },
+    "Confirming %lld/10" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قيد التأكيد %lld/10"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bestätigung %lld/10"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmando %lld/10"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmation %lld/10"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferma %lld/10"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "承認中 %lld/10"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인 중 %lld/10"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirmando %lld/10"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подтверждение %lld/10"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "กำลังยืนยัน %lld/10"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підтвердження %lld/10"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "确认中 %lld/10"
           }
         }
       }
@@ -4489,6 +4565,82 @@
         }
       }
     },
+    "Decide later" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "قرر لاحقًا"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Später entscheiden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decidir más tarde"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Décider plus tard"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decidi più tardi"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "あとで決める"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "나중에 결정"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decidir depois"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Решить позже"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ตัดสินใจภายหลัง"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Вирішити пізніше"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "稍后决定"
+          }
+        }
+      }
+    },
     "Devices" : {
       "localizations" : {
         "ar" : {
@@ -4561,158 +4713,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "设备"
-          }
-        }
-      }
-    },
-    "Discard" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تجاهل"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verwerfen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descartar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elimina"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "破棄"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "폐기"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descartar"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Удалить"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ละทิ้ง"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Видалити"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "舍弃"
-          }
-        }
-      }
-    },
-    "Discard this signed payment?" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "هل تريد تجاهل هذه الدفعة الموقّعة؟"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese signierte Zahlung verwerfen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Descartar este pago firmado?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Supprimer ce paiement signé ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminare questo pagamento firmato?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この署名済みの支払いを破棄しますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 서명된 결제를 폐기하겠습니까?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Descartar este pagamento assinado?"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Удалить этот подписанный платеж?"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ละทิ้งการชำระเงินที่เซ็นแล้วนี้ใช่ไหม"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Видалити цей підписаний платіж?"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "舍弃这笔已签名的付款？"
           }
         }
       }
@@ -5397,158 +5397,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已过期，未被打包"
-          }
-        }
-      }
-    },
-    "Expired: discard it and send again" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "انتهت صلاحيتها: تجاهلها وأرسل مجددًا"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abgelaufen: Verwirf sie und sende erneut"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caducada: descártala y vuelve a enviar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expirée : supprimez-la et renvoyez"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scaduta: eliminala e invia di nuovo"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "期限切れ：破棄して再送信してください"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "만료됨: 폐기하고 다시 보내십시오"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expirada: descarte e envie de novo"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Истек: удалите его и отправьте заново"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "หมดอายุ: ละทิ้งแล้วส่งใหม่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Сплив: видаліть його й надішліть знову"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已过期：请舍弃并重新发送"
-          }
-        }
-      }
-    },
-    "Expires" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تنتهي"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Läuft ab"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caduca"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expire"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scade"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "有効期限"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "만료"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expira"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Истекает"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "หมดอายุ"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Спливає"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "过期时间"
           }
         }
       }
@@ -6845,6 +6693,82 @@
         }
       }
     },
+    "Keep it" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "احتفظ بها"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Behalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conservarlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le garder"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tienilo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "残す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "유지"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Оставить"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เก็บไว้"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Залишити"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "保留"
+          }
+        }
+      }
+    },
     "Kindle" : {
       "localizations" : {
         "ar" : {
@@ -7985,6 +7909,82 @@
         }
       }
     },
+    "Network" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "الشبكة"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Netzwerk"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réseau"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rete"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ネットワーク"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "네트워크"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rede"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сеть"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เครือข่าย"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мережа"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "网络"
+          }
+        }
+      }
+    },
     "Network fee" : {
       "localizations" : {
         "ar" : {
@@ -8361,158 +8361,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "还没有联系人。点按 + 添加，或在“发送”中保存地址。"
-          }
-        }
-      }
-    },
-    "No network right now." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لا توجد شبكة حاليًا."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gerade kein Netzwerk."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin conexión de red ahora mismo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas de réseau pour le moment."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna rete al momento."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "現在ネットワークに接続されていません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "현재 네트워크에 연결되어 있지 않습니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem rede no momento."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Сейчас нет сети."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ขณะนี้ไม่มีเครือข่าย"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Зараз немає мережі."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "当前无网络。"
-          }
-        }
-      }
-    },
-    "No network. Try again when you're back online." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "لا توجد شبكة. حاول مجددًا عند عودة الاتصال."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kein Netzwerk. Versuche es erneut, wenn du wieder online bist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin conexión. Inténtalo de nuevo cuando vuelvas a estar en línea."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas de réseau. Réessayez une fois en ligne."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nessuna rete. Riprova quando sarai di nuovo online."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ネットワークに接続されていません。オンラインに戻ってから再試行してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "네트워크 연결 없음. 다시 온라인 상태가 되면 재시도하십시오."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sem rede. Tente de novo quando estiver online."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нет сети. Повторите, когда снова будете онлайн."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ไม่มีเครือข่าย ลองอีกครั้งเมื่อกลับมาออนไลน์"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Немає мережі. Спробуйте знову, коли будете онлайн."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "无网络。请在恢复联网后重试。"
           }
         }
       }
@@ -9201,6 +9049,82 @@
         }
       }
     },
+    "Offline: saved on this phone" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "غير متصل: محفوظة على هذا الهاتف"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline: auf diesem Telefon gespeichert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin conexión: guardado en este teléfono"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hors ligne : enregistré sur ce téléphone"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline: salvato su questo telefono"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オフライン：この電話に保存済み"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오프라인: 이 휴대폰에 저장됨"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline: salvo neste telefone"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Офлайн: сохранено на этом телефоне"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ออฟไลน์: บันทึกไว้บนโทรศัพท์นี้"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Офлайн: збережено на цьому телефоні"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "离线：已保存在此手机上"
+          }
+        }
+      }
+    },
     "On this phone" : {
       "localizations" : {
         "ar" : {
@@ -9501,6 +9425,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "一笔交易，一次签名。签名设备会依次显示每笔付款，然后显示总额和手续费：批准一次即可全部签名。"
+          }
+        }
+      }
+    },
+    "Online" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "متصل"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Online"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En línea"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En ligne"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Online"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "オンライン"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "온라인"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Online"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "В сети"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ออนไลน์"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Онлайн"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在线"
           }
         }
       }
@@ -13305,6 +13305,82 @@
         }
       }
     },
+    "Sent to %@" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "مرسلة إلى %@"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gesendet an %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviado a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyé à %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inviato a %@"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ へ送金"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@에게 보냄"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviado para %@"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Отправлено: %@"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ส่งถึง %@"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Надіслано: %@"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "发送给 %@"
+          }
+        }
+      }
+    },
     "Server" : {
       "localizations" : {
         "ar" : {
@@ -14289,158 +14365,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已签名 · 未广播"
-          }
-        }
-      }
-    },
-    "Signed, not broadcast yet" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "موقّعة، لم تُبث بعد"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signiert, noch nicht übertragen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Firmada, aún no transmitida"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signée, pas encore diffusée"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Firmata, non ancora trasmessa"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "署名済み、未ブロードキャスト"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "서명됨, 아직 브로드캐스트 안 됨"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Assinada, ainda não transmitida"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Подписано, еще не отправлено в сеть"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "เซ็นแล้ว ยังไม่ได้เผยแพร่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Підписано, ще не надіслано в мережу"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已签名，尚未广播"
-          }
-        }
-      }
-    },
-    "Signed, waiting to be broadcast" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "موقّعة، بانتظار البث"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signiert, wartet auf Übertragung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Firmada, pendiente de transmitir"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signée, en attente de diffusion"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Firmata, in attesa di trasmissione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "署名済み、ブロードキャスト待ち"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "서명됨, 브로드캐스트 대기 중"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Assinada, aguardando transmissão"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Подписано, ожидает отправки в сеть"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "เซ็นแล้ว รอเผยแพร่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Підписано, чекає на надсилання в мережу"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "已签名，等待广播"
           }
         }
       }
@@ -15509,6 +15433,82 @@
         }
       }
     },
+    "The Zcash network can't be reached. It stays saved here: try again when you're back online." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "تعذر الوصول إلى شبكة Zcash. تبقى محفوظة هنا: حاول مجددًا عند عودة الاتصال."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Zcash-Netzwerk ist nicht erreichbar. Die Zahlung bleibt hier gespeichert: Versuche es erneut, sobald du online bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se puede acceder a la red Zcash. Queda guardado aquí: inténtalo de nuevo cuando vuelvas a estar en línea."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le réseau Zcash est injoignable. Le paiement reste enregistré ici : réessayez une fois de retour en ligne."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La rete Zcash non è raggiungibile. Resta salvato qui: riprova quando sei di nuovo online."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zcash ネットワークに接続できません。ここに保存されています。オンラインに戻ったら再試行してください。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zcash 네트워크에 연결할 수 없습니다. 여기에 저장되어 있으니 다시 온라인이 되면 시도하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A rede Zcash está inacessível. Fica salvo aqui: tente de novo quando estiver online."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Сеть Zcash недоступна. Платёж сохранён здесь: попробуйте снова, когда появится сеть."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เชื่อมต่อเครือข่าย Zcash ไม่ได้ บันทึกไว้ที่นี่แล้ว ลองใหม่เมื่อกลับมาออนไลน์"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Мережа Zcash недоступна. Платіж збережено тут: спробуйте знову, коли з’явиться мережа."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "无法连接 Zcash 网络。它会保存在这里：恢复联网后再试。"
+          }
+        }
+      }
+    },
     "The camera isn't available. Allow it for ZApp in Settings." : {
       "localizations" : {
         "ar" : {
@@ -16569,6 +16569,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "收款方（%lld）"
+          }
+        }
+      }
+    },
+    "To broadcast" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "للبث"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por difundir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À diffuser"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Da trasmettere"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "未送信"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "브로드캐스트 대기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A transmitir"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "К отправке"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "รอกระจาย"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "До надсилання"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "待广播"
           }
         }
       }
@@ -17789,82 +17865,6 @@
         }
       }
     },
-    "WAITING TO BROADCAST" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "بانتظار البث"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "WARTET AUF ÜBERTRAGUNG"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "PENDIENTE DE TRANSMITIR"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "EN ATTENTE DE DIFFUSION"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "IN ATTESA DI TRASMISSIONE"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ブロードキャスト待ち"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "브로드캐스트 대기 중"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "AGUARDANDO TRANSMISSÃO"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ОЖИДАЕТ ОТПРАВКИ В СЕТЬ"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "รอเผยแพร่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ЧЕКАЄ НА НАДСИЛАННЯ В МЕРЕЖУ"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "等待广播"
-          }
-        }
-      }
-    },
     "Waiting for its first block · about 13 min" : {
       "localizations" : {
         "ar" : {
@@ -17937,82 +17937,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "等待第一个区块 · 约 13 分钟"
-          }
-        }
-      }
-    },
-    "Waiting to be broadcast" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "بانتظار البث"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wartet auf Übertragung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pendiente de transmitir"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En attente de diffusion"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In attesa di trasmissione"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ブロードキャスト待ち"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "브로드캐스트 대기 중"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aguardando transmissão"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ожидает отправки в сеть"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "รอเผยแพร่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Чекає на надсилання в мережу"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "等待广播"
           }
         }
       }
@@ -18549,82 +18473,6 @@
         }
       }
     },
-    "Your Flipper signed this payment. Nothing has left your wallet yet: it happens when you broadcast it." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "وقّع Flipper هذه الدفعة. لم يخرج شيء من محفظتك بعد: يحدث ذلك عند بثها."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Flipper hat diese Zahlung signiert. Noch hat nichts deine Wallet verlassen: Das passiert erst, wenn du sie überträgst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu Flipper ha firmado este pago. Aún no ha salido nada de tu cartera: ocurre cuando lo transmites."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre Flipper a signé ce paiement. Rien n'a encore quitté votre portefeuille : cela se fait quand vous le diffusez."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo Flipper ha firmato questo pagamento. Nulla ha ancora lasciato il wallet: succede quando lo trasmetti."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper がこの支払いに署名しました。まだウォレットから資金は出ていません：ブロードキャストしたときに送金されます。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper가 이 결제에 서명했습니다. 아직 지갑에서 아무것도 나가지 않았습니다. 브로드캐스트할 때 전송됩니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu Flipper assinou este pagamento. Nada saiu da sua carteira ainda: isso acontece quando você o transmite."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper подписал этот платеж. Средства еще не покинули кошелек: это произойдет, когда вы отправите его в сеть."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper ของคุณเซ็นการชำระเงินนี้แล้ว ยังไม่มีอะไรออกจากกระเป๋าเงิน: จะเกิดขึ้นเมื่อคุณเผยแพร่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper підписав цей платіж. Кошти ще не залишили гаманець: це станеться, коли ви надішлете його в мережу."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "你的 Flipper 已签署这笔付款。资金尚未离开钱包：广播后才会转出。"
-          }
-        }
-      }
-    },
     "Your balance will be hidden and you won't be able to send until you connect again." : {
       "localizations" : {
         "ar" : {
@@ -18697,158 +18545,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "余额将被隐藏，重新连接前无法发送。"
-          }
-        }
-      }
-    },
-    "Your device signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "وقّعها جهازك، لكن لا توجد شبكة على هذا الهاتف. حُفظت في «النشاط»: ابثها عند عودة الاتصال (خلال 50 دقيقة تقريبًا، قبل انتهاء صلاحيتها)، أو تجاهلها."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Gerät hat sie signiert, aber dieses Telefon hat kein Netzwerk. Sie ist unter „Aktivität“ gespeichert: Übertrage sie, wenn du wieder online bist (innerhalb von etwa 50 Minuten, bevor sie abläuft), oder verwirf sie."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu dispositivo lo ha firmado, pero este teléfono no tiene conexión. Está guardado en Actividad: transmítelo cuando vuelvas a estar en línea (en unos 50 minutos, antes de que caduque) o descártalo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre appareil l'a signé, mais ce téléphone n'a pas de réseau. Il est enregistré dans Activité : diffusez-le une fois en ligne (dans les 50 minutes environ, avant son expiration), ou supprimez-le."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il dispositivo l'ha firmato, ma questo telefono non ha rete. È salvato in Attività: trasmettilo quando sei di nuovo online (entro circa 50 minuti, prima che scada) o eliminalo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスで署名されましたが、この iPhone はネットワークに接続されていません。アクティビティに保存されました：オンラインに戻ったら（約 50 分以内、期限切れ前に）ブロードキャストするか、破棄してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기기가 서명했지만 이 iPhone이 네트워크에 연결되어 있지 않습니다. 활동에 저장되었습니다. 다시 온라인 상태가 되면(만료 전, 약 50분 이내) 브로드캐스트하거나 폐기하십시오."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu dispositivo o assinou, mas este celular está sem rede. Ele está salvo em Atividade: transmita quando estiver online (em cerca de 50 minutos, antes de expirar) ou descarte."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Устройство подписало платеж, но у телефона нет сети. Он сохранен в «Активности»: отправьте его в сеть, когда снова будете онлайн (примерно в течение 50 минут, пока он не истек), или удалите."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "อุปกรณ์ของคุณเซ็นแล้ว แต่โทรศัพท์เครื่องนี้ไม่มีเครือข่าย บันทึกไว้ในกิจกรรมแล้ว: เผยแพร่เมื่อกลับมาออนไลน์ (ภายในประมาณ 50 นาที ก่อนหมดอายุ) หรือละทิ้ง"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пристрій підписав платіж, але телефон не має мережі. Його збережено в «Активності»: надішліть його в мережу, коли будете онлайн (приблизно протягом 50 хвилин, доки він не сплив), або видаліть."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设备已签名，但这部手机没有网络。它已保存在“活动”中：恢复联网后请广播（约 50 分钟内，过期前），或将其舍弃。"
-          }
-        }
-      }
-    },
-    "Your device signed it. It's waiting in Activity: broadcast it when you decide (within about 50 minutes, before it expires), or discard it." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "وقّعها جهازك. وهي بانتظارك في «النشاط»: ابثها متى قررت (خلال 50 دقيقة تقريبًا، قبل انتهاء صلاحيتها)، أو تجاهلها."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Gerät hat sie signiert. Sie wartet unter „Aktivität“: Übertrage sie, wann du willst (innerhalb von etwa 50 Minuten, bevor sie abläuft), oder verwirf sie."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu dispositivo lo ha firmado. Espera en Actividad: transmítelo cuando decidas (en unos 50 minutos, antes de que caduque) o descártalo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre appareil l'a signé. Il attend dans Activité : diffusez-le quand vous voulez (dans les 50 minutes environ, avant son expiration), ou supprimez-le."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il dispositivo l'ha firmato. Attende in Attività: trasmettilo quando decidi (entro circa 50 minuti, prima che scada) o eliminalo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "デバイスで署名されました。アクティビティで待機中です：好きなときに（約 50 分以内、期限切れ前に）ブロードキャストするか、破棄してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "기기가 서명했습니다. 활동에서 대기 중입니다. 원할 때(만료 전, 약 50분 이내) 브로드캐스트하거나 폐기하십시오."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu dispositivo o assinou. Ele aguarda em Atividade: transmita quando quiser (em cerca de 50 minutos, antes de expirar) ou descarte."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Устройство подписало платеж. Он ждет в «Активности»: отправьте его в сеть, когда решите (примерно в течение 50 минут, пока он не истек), или удалите."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "อุปกรณ์ของคุณเซ็นแล้ว รออยู่ในกิจกรรม: เผยแพร่เมื่อคุณพร้อม (ภายในประมาณ 50 นาที ก่อนหมดอายุ) หรือละทิ้ง"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пристрій підписав платіж. Він чекає в «Активності»: надішліть його в мережу, коли вирішите (приблизно протягом 50 хвилин, доки він не сплив), або видаліть."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "设备已签名。它正在“活动”中等待：请自行决定何时广播（约 50 分钟内，过期前），或将其舍弃。"
           }
         }
       }

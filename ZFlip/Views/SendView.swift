@@ -82,7 +82,7 @@ struct SendView: View {
         return nil
     }
 
-    private var valid: Bool { payments != nil && amountNote?.blocking != true && wallet.pendingBroadcasts.isEmpty }
+    private var valid: Bool { payments != nil && amountNote?.blocking != true && wallet.pendingHere.isEmpty }
 
     var body: some View {
         Group {
@@ -239,8 +239,8 @@ struct SendView: View {
                 Label(note.text, systemImage: note.blocking ? "exclamationmark.triangle.fill" : "info.circle")
                     .foregroundStyle(note.blocking ? .orange : Theme.muted)
             }
-            if !wallet.pendingBroadcasts.isEmpty {
-                Label("A signed payment is waiting to be broadcast (see Activity). Broadcast or discard it first: a new one could spend the same funds.",
+            if !wallet.pendingHere.isEmpty {
+                Label("A signed payment is waiting in To broadcast, on Home. Broadcast or cancel it first: a new one could spend the same funds.",
                       systemImage: "clock.badge.exclamationmark")
                     .foregroundStyle(.orange)
             }
@@ -351,17 +351,25 @@ struct SendView: View {
                 }
                 .primaryButton()
             case .signedOffline:
-                Image(systemName: "clock.badge.checkmark").font(.system(size: 66)).foregroundStyle(Theme.zcash)
-                Text("Signed, not broadcast yet").font(.title2.bold()).multilineTextAlignment(.center)
-                Text(wallet.online
-                     ? "Your device signed it. It's waiting in Activity: broadcast it when you decide (within about 50 minutes, before it expires), or discard it."
-                     : "Your device signed it, but this phone has no network. It's saved in Activity: broadcast it when you're back online (within about 50 minutes, before it expires), or discard it.")
-                    .multilineTextAlignment(.center).foregroundStyle(Theme.muted)
-                Button("Done") {
-                    wallet.sendStep = .idle
-                    dismiss()
+                // Signed and saved on this phone: decide here, or later from Activity.
+                if let p = wallet.pendingHere.last {
+                    ScrollView {
+                        PendingPanel(p: p, onClose: {
+                            // Broadcast: the Sent screen follows; otherwise back to Home.
+                            if case .signedOffline = wallet.sendStep {
+                                wallet.sendStep = .idle
+                                dismiss()
+                            }
+                        }, showsLater: true)
+                        .padding(.vertical, 8)
+                    }
+                } else {
+                    Button("Done") {
+                        wallet.sendStep = .idle
+                        dismiss()
+                    }
+                    .primaryButton()
                 }
-                .primaryButton()
             case .failed(let message):
                 Image(systemName: "xmark.shield").font(.system(size: 70)).foregroundStyle(.red)
                 Text("Not sent").font(.title.bold())
