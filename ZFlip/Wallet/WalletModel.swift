@@ -341,7 +341,7 @@ final class WalletModel: ObservableObject {
         scannedHeight = 3_513_402
         let locked = scene == "home-locked" || scene == "settings-idle"
         flipperState = locked ? .idle : scene == "settings-connecting" ? .approve : .ready
-        let after = scene.hasPrefix("after")
+        let after = scene.hasPrefix("after") || scene == "detail"
         balance = Zatoshi(after ? 14_990_000 : 20_000_000)
         pending = .zero
         change = .zero

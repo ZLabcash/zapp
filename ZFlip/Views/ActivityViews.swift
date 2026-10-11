@@ -45,8 +45,12 @@ struct ActivityCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 24))
-        .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
-        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
+        .sheet(item: $selected) { TxDetailView(tx: $0) }
+        .sheet(item: $pending) { PendingView(p: $0) }
+        .onAppear {
+            // Filming: open a transaction's sheet straight away.
+            if Demo.on("detail") { selected = wallet.activity.first }
+        }
     }
 }
 
@@ -86,6 +90,7 @@ struct PendingView: View {
     @State private var working = false
     @State private var error: String?
     @State private var confirmDiscard = false
+    @State private var height: CGFloat = 560
 
     var body: some View {
         ScrollView {
@@ -153,8 +158,11 @@ struct PendingView: View {
             .padding(.horizontal, 20)
             .padding(.top, 28)
             .padding(.bottom, 24)
+            .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { height = $0 }
         }
         .background(Theme.background.ignoresSafeArea())
+        .presentationDetents([.height(height), .large])
+        .presentationDragIndicator(.visible)
         .confirmationDialog("Discard this signed payment?", isPresented: $confirmDiscard, titleVisibility: .visible) {
             Button("Discard", role: .destructive) {
                 wallet.discard(p)
@@ -219,6 +227,7 @@ struct TxDetailView: View {
     let tx: WalletModel.ActivityItem
     @State private var recipients: [String] = []
     @State private var copied = false
+    @State private var height: CGFloat = 520
 
     var body: some View {
         ScrollView {
@@ -289,8 +298,12 @@ struct TxDetailView: View {
             .padding(.horizontal, 20)
             .padding(.top, 28)
             .padding(.bottom, 24)
+            .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { height = $0 }
         }
         .background(Theme.background.ignoresSafeArea())
+        // As tall as the content (nothing hidden below), the full screen only if it's longer.
+        .presentationDetents([.height(height), .large])
+        .presentationDragIndicator(.visible)
         .task { recipients = await wallet.recipients(of: tx) }
     }
 
@@ -381,8 +394,8 @@ struct AllActivityView: View {
         .navigationTitle("All activity")
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
-        .sheet(item: $selected) { TxDetailView(tx: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
-        .sheet(item: $pending) { PendingView(p: $0).presentationDetents([.medium, .large]).presentationDragIndicator(.visible) }
+        .sheet(item: $selected) { TxDetailView(tx: $0) }
+        .sheet(item: $pending) { PendingView(p: $0) }
     }
 }
 
@@ -427,3 +440,4 @@ struct AddressRow: View {
         }
     }
 }
+
