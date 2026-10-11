@@ -4,9 +4,9 @@ import ZcashLightClientKit
 struct HomeView: View {
     @EnvironmentObject var wallet: WalletModel
     @EnvironmentObject var prices: PriceService
-    @State private var showReceive = Demo.on("receive")
-    @State private var showSend = Demo.on("send")
-    @State private var showSettings = Demo.on("settings") || AppLanguage.takeReopenSettings()
+    @State private var showReceive = false
+    @State private var showSend = false
+    @State private var showSettings = AppLanguage.takeReopenSettings()
     @State private var showWallets = false
 
     var body: some View {

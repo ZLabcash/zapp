@@ -141,7 +141,7 @@ struct WalletRow: View {
 /// the language menu fade in, all on this one screen.
 struct WelcomeView: View {
     /// Played once per launch: a language change rebuilds the screen without replaying it.
-    @MainActor private static var played = Demo.scene != nil
+    @MainActor private static var played = false
     @State private var progress: CGFloat = Self.played ? 1 : 0
     @State private var wordmark = Self.played
     @State private var rest = Self.played

@@ -13,9 +13,6 @@ struct SettingsView: View {
     @AppStorage(WalletModel.autoBroadcastKey) private var autoBroadcast = true
     @State private var broadcastInfo = false
     @State private var renaming = false
-    // Filming: open the language or currency page straight away.
-    @State private var demoLanguage = Demo.on("settings-lang")
-    @State private var demoCurrency = Demo.on("settings-currency")
 
     var body: some View {
         ScrollView {
@@ -139,8 +136,6 @@ struct SettingsView: View {
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
-        .navigationDestination(isPresented: $demoLanguage) { LanguageView() }
-        .navigationDestination(isPresented: $demoCurrency) { CurrencyView() }
         .sheet(isPresented: $renaming) { if let w = wallet.pairing { RenameWalletSheet(w) } }
         .confirmationDialog("Forget this wallet?", isPresented: $confirmForget, titleVisibility: .visible) {
             Button("Forget", role: .destructive) {

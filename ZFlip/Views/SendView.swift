@@ -17,9 +17,7 @@ struct SendView: View {
         var memo = ""
     }
 
-    @State private var lines: [Line] = Demo.on("send-multi")
-        ? [Line(address: Demo.friend, amount: "0.05", memo: "lunch, thanks!"), Line(address: Demo.friend, amount: "0.02")]
-        : [Demo.on("send-filled") ? Line(address: Demo.friend, amount: "0.05") : Line()]
+    @State private var lines: [Line] = [Line()]
     @State private var sameMemo = false
     @State private var sharedMemo = ""
     @State private var fee: Zatoshi?
@@ -199,10 +197,6 @@ struct SendView: View {
             .padding(20)
         }
         .task(id: lines.map { $0.address + "=" + $0.amount }.joined(separator: ",")) {
-            if Demo.scene != nil {
-                fee = total == nil ? nil : WalletModel.minimumFee
-                return
-            }
             fee = nil
             guard let payments else { return }
             try? await Task.sleep(nanoseconds: 400_000_000)

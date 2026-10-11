@@ -48,8 +48,6 @@ final class FlipperLink: NSObject, ObservableObject {
     private var wantsScan = false
     override init() {
         super.init()
-        // Filming the send screen: the Flipper "has the transaction" and waits for OK.
-        if Demo.scene == "send-confirm" { awaitingFlipper = true }
     }
 
     /// A new manager also makes iOS show its "Turn On Bluetooth" alert when it is off.

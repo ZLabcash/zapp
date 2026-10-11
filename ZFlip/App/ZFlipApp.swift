@@ -10,7 +10,7 @@ struct ZFlipApp: App {
     @AppStorage("appearance") private var appearance = 0
     @AppStorage(AppLanguage.key) private var language = ""
     /// The opening animation over Home (the welcome screen plays its own).
-    @State private var splash = Demo.scene == nil
+    @State private var splash = true
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
