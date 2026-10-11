@@ -72,12 +72,12 @@ struct WalletRow: View {
         HStack(spacing: 14) {
             Group {
                 if w.isPhone {
-                    Image(systemName: "iphone.gen3").font(.title2).foregroundStyle(Theme.zcash)
+                    Image(systemName: "wallet.bifold.fill").font(.title2).foregroundStyle(Theme.zcash)
                 } else {
-                    Image(systemName: "cpu").font(.title2).foregroundStyle(.orange)
+                    FlipperZeroIcon(light: .green, pulsing: false)
                 }
             }
-            .frame(width: 36)
+            .frame(width: 44)
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: w.displayName).font(.subheadline.weight(.semibold))
                 Text(w.isPhone ? "On this phone" : "Flipper Zero").font(.caption).foregroundStyle(Theme.muted)
@@ -95,160 +95,403 @@ struct WalletRow: View {
     }
 }
 
-/// Add a wallet: made here, restored from its words, or held by a device.
+/// First launch: the logo draws itself, the wordmark comes in, then the line, Start and
+/// the language menu fade in, all on this one screen.
+struct WelcomeView: View {
+    /// Played once per launch: a language change rebuilds the screen without replaying it.
+    @MainActor private static var played = Demo.scene != nil
+    @State private var progress: CGFloat = Self.played ? 1 : 0
+    @State private var wordmark = Self.played
+    @State private var rest = Self.played
+    @State private var started = false
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Spacer()
+                LanguageMenu()
+            }
+            .opacity(rest ? 1 : 0)
+            Spacer()
+            VStack(spacing: 14) {
+                Shield(progress: progress).frame(width: 112, height: 112)
+                Text(verbatim: "ZApp").font(.system(size: 44, weight: .heavy, design: .rounded))
+                    .opacity(wordmark ? 1 : 0)
+                    .offset(y: wordmark ? 0 : 8)
+            }
+            Text("Private by default.")
+                .font(.title3.weight(.semibold)).foregroundStyle(Theme.muted)
+                .padding(.top, 10)
+                .opacity(rest ? 1 : 0)
+            Spacer()
+            Button { started = true } label: {
+                Text("Start").primaryButton()
+            }
+            .opacity(rest ? 1 : 0)
+            .offset(y: rest ? 0 : 12)
+            .disabled(!rest)
+        }
+        .padding(20)
+        .background(Theme.background.ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
+        .navigationDestination(isPresented: $started) { GetStartedView() }
+        .task {
+            guard !Self.played else { return }
+            Self.played = true
+            withAnimation(.easeInOut(duration: 1.0)) { progress = 1 }
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            withAnimation(.spring(duration: 0.4)) { wordmark = true }
+            try? await Task.sleep(nanoseconds: 450_000_000)
+            withAnimation(.easeOut(duration: 0.6)) { rest = true }
+        }
+    }
+}
+
+/// The language picker in the welcome screen's corner: flag, then the list.
+struct LanguageMenu: View {
+    @AppStorage(AppLanguage.key) private var language = ""
+
+    var body: some View {
+        Menu {
+            ForEach(AppLanguage.codes, id: \.self) { code in
+                Button {
+                    AppLanguage.apply(code)
+                    language = code
+                } label: {
+                    if code == AppLanguage.effective {
+                        Label(AppLanguage.name(code), systemImage: "checkmark")
+                    } else {
+                        Text(AppLanguage.name(code))
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Flag(name: AppLanguage.flag(AppLanguage.effective), height: 16)
+                Text(AppLanguage.name(AppLanguage.effective)).font(.subheadline.weight(.semibold))
+                Image(systemName: "chevron.down").font(.caption2.weight(.bold))
+            }
+            .foregroundStyle(Theme.ink)
+            .padding(.horizontal, 12).padding(.vertical, 8)
+            .background(Theme.card).clipShape(Capsule())
+        }
+    }
+}
+
+/// After Start: how to get a wallet.
+struct GetStartedView: View {
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            WalletOptions(onDone: {}, showsSoon: false)
+            Spacer()
+        }
+        .padding(20)
+        .background(Theme.background.ignoresSafeArea())
+        .navigationTitle("Your wallet")
+        .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+    }
+}
+
+/// Add a wallet (from the wallet switcher): made here, restored from its words, held by a
+/// device, or shared between several (soon).
 struct AddWalletView: View {
-    /// First run: no wallet yet, so a welcome above the choices.
-    var welcome = false
     var onDone: () -> Void
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
-                if welcome {
-                    Shield().frame(height: 90).padding(.top, 30)
-                    Text("ZApp").font(.system(size: 42, weight: .heavy, design: .rounded))
-                    Text("A private Zcash wallet. Keep the keys on this phone, or on a cold wallet like a Flipper Zero.")
-                        .font(.callout).foregroundStyle(Theme.muted).multilineTextAlignment(.center)
-                        .padding(.horizontal).padding(.bottom, 16)
-                }
-                option("Create a new wallet", "A new recovery phrase, kept on this phone behind Face ID.", "sparkles") {
-                    CreateWalletView(onDone: onDone)
-                }
-                option("Restore a wallet", "From its 12 or 24 words.", "arrow.counterclockwise") {
-                    RestoreWalletView(onDone: onDone)
-                }
-                option("Connect a Flipper Zero", "Keys stay on the Flipper; this phone only sees and prepares.", "dot.radiowaves.left.and.right") {
-                    PairView(onDone: onDone)
-                }
-                soon("Kindle", "An offline wallet on a Kindle, over local Wi-Fi.", "book.closed")
-                soon("Multisig", "Several devices must sign together (FROST).", "person.3")
-            }
-            .padding(20)
+            WalletOptions(onDone: onDone, showsSoon: true).padding(20)
         }
         .background(Theme.background.ignoresSafeArea())
-        .navigationTitle(welcome ? "" : String(localized: "Add a wallet"))
+        .navigationTitle("Add a wallet")
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func option<D: View>(_ title: LocalizedStringKey, _ detail: LocalizedStringKey, _ icon: String, @ViewBuilder destination: @escaping () -> D) -> some View {
-        NavigationLink(destination: destination) {
-            card(title, detail, icon, enabled: true)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func soon(_ title: LocalizedStringKey, _ detail: LocalizedStringKey, _ icon: String) -> some View {
-        card(title, detail, icon, enabled: false)
-    }
-
-    private func card(_ title: LocalizedStringKey, _ detail: LocalizedStringKey, _ icon: String, enabled: Bool) -> some View {
-        HStack(spacing: 14) {
-            Image(systemName: icon).font(.title3.weight(.semibold)).foregroundStyle(.black)
-                .frame(width: 42, height: 42).background(enabled ? Theme.zcash : Color.gray).clipShape(RoundedRectangle(cornerRadius: 12))
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(title).font(.subheadline.weight(.semibold))
-                    if !enabled {
-                        Text("Coming soon").font(.caption2.weight(.bold)).padding(.horizontal, 6).padding(.vertical, 2)
-                            .background(Theme.zcash.opacity(0.2)).foregroundStyle(Theme.zcash).clipShape(Capsule())
-                    }
-                }
-                Text(detail).font(.caption).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer()
-            if enabled { Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(Theme.muted) }
-        }
-        .padding(16)
-        .background(Theme.card)
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .opacity(enabled ? 1 : 0.55)
+        .backArrow()
     }
 }
 
-/// A new phone wallet: name it, write down its 24 words, prove it by typing three of them.
-struct CreateWalletView: View {
-    @EnvironmentObject var wallet: WalletModel
+/// The ways to get a wallet, as cards.
+struct WalletOptions: View {
     var onDone: () -> Void
-    @State private var name = String(localized: "My wallet")
+    var showsSoon: Bool
+
+    var body: some View {
+        VStack(spacing: 12) {
+            NavigationLink { CreateWalletView(onDone: onDone) } label: {
+                OptionCard(title: "Create a new wallet") { symbol("wallet.bifold.fill") }
+            }
+            .buttonStyle(.plain)
+            NavigationLink { RestoreWalletView(onDone: onDone) } label: {
+                OptionCard(title: "Restore a wallet") { symbol("arrow.counterclockwise") }
+            }
+            .buttonStyle(.plain)
+            NavigationLink { ConnectDeviceView(onDone: onDone) } label: {
+                OptionCard(title: "Connect a device") { symbol("dot.radiowaves.left.and.right") }
+            }
+            .buttonStyle(.plain)
+            if showsSoon {
+                OptionCard(title: "Multisig", soon: true) { symbol("person.3.fill") }
+            }
+        }
+    }
+
+    private func symbol(_ name: String) -> some View {
+        Image(systemName: name).font(.title3.weight(.semibold)).foregroundStyle(.black)
+            .frame(width: 44, height: 44).background(Theme.zcash).clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+}
+
+/// One choice: an icon and a title; greyed with a badge when it's coming.
+struct OptionCard<Icon: View>: View {
+    let title: LocalizedStringKey
+    var soon = false
+    @ViewBuilder let icon: () -> Icon
+
+    var body: some View {
+        HStack(spacing: 14) {
+            icon().frame(width: 52)
+            Text(title).font(.body.weight(.semibold))
+            if soon {
+                Text("Coming soon").font(.caption2.weight(.bold)).padding(.horizontal, 6).padding(.vertical, 2)
+                    .background(Theme.zcash.opacity(0.2)).foregroundStyle(Theme.zcash).clipShape(Capsule())
+            }
+            Spacer()
+            if !soon { Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(Theme.muted) }
+        }
+        .padding(.horizontal, 16).padding(.vertical, 14)
+        .frame(minHeight: 72)
+        .background(Theme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .opacity(soon ? 0.55 : 1)
+        .contentShape(Rectangle())
+    }
+}
+
+/// Connect a device: the cold wallets ZApp can watch and send through.
+struct ConnectDeviceView: View {
+    var onDone: () -> Void
+
+    var body: some View {
+        VStack(spacing: 12) {
+            NavigationLink { PairView(onDone: onDone).backArrow() } label: {
+                OptionCard(title: "Flipper Zero") {
+                    FlipperZeroIcon(light: .green, pulsing: false).frame(width: 52)
+                }
+            }
+            .buttonStyle(.plain)
+            OptionCard(title: "Kindle", soon: true) {
+                KindleIcon().frame(width: 30, height: 40)
+            }
+            Spacer()
+        }
+        .padding(20)
+        .background(Theme.background.ignoresSafeArea())
+        .navigationTitle("Connect a device")
+        .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+    }
+}
+
+/// The opening animation, on every launch: the shield draws itself, the Z, then the scan line,
+/// the wordmark comes in, and the app shows underneath.
+struct Splash: View {
+    var finished: () -> Void
+    @State private var progress: CGFloat = 0
+    @State private var wordmark = false
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Shield(progress: progress).frame(width: 112, height: 112)
+            Text(verbatim: "ZApp").font(.system(size: 44, weight: .heavy, design: .rounded))
+                .opacity(wordmark ? 1 : 0)
+                .offset(y: wordmark ? 0 : 8)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Theme.background.ignoresSafeArea())
+        .task {
+            withAnimation(.easeInOut(duration: 1.0)) { progress = 1 }
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            withAnimation(.spring(duration: 0.4)) { wordmark = true }
+            try? await Task.sleep(nanoseconds: 700_000_000)
+            finished()
+        }
+    }
+}
+
+/// Copies a recovery phrase for a password manager: kept on this phone only (not Handoff's
+/// universal clipboard) and cleared after two minutes.
+struct CopyPhraseButton: View {
+    let phrase: String
+    @State private var copied = false
+
+    var body: some View {
+        Button {
+            UIPasteboard.general.setItems([["public.utf8-plain-text": phrase]],
+                                          options: [.localOnly: true, .expirationDate: Date().addingTimeInterval(120)])
+            copied = true
+        } label: {
+            Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
+                .font(.subheadline.weight(.semibold))
+                .padding(.horizontal, 14).padding(.vertical, 8)
+                .background(Theme.card).clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+        .task(id: copied) {
+            guard copied else { return }
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            copied = false
+        }
+    }
+}
+
+/// Recovery words in numbered cells, three columns so all 24 fit on one screen.
+struct WordGrid: View {
+    let words: [String]
+
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3), spacing: 6) {
+            ForEach(Array(words.enumerated()), id: \.offset) { i, w in
+                HStack(spacing: 4) {
+                    Text("\(i + 1)").font(.caption2.monospacedDigit()).foregroundStyle(Theme.muted).frame(width: 18, alignment: .trailing)
+                    Text(verbatim: w).font(.footnote.weight(.semibold).monospaced()).lineLimit(1).minimumScaleFactor(0.7)
+                    Spacer(minLength: 0)
+                }
+                .padding(.vertical, 7).padding(.horizontal, 6)
+                .background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 9))
+            }
+        }
+    }
+}
+
+/// A new phone wallet, step 1: its 24 words, all on screen, to write down.
+/// Then step 2 checks three of them, step 3 names the wallet.
+struct CreateWalletView: View {
+    var onDone: () -> Void
     @State private var phrase = ""
     @State private var revealed = false
     @State private var checking = false
     @State private var asked: [Int] = []
-    @State private var answers = ["", "", ""]
-    @State private var working = false
-    @State private var error: String?
 
     private var words: [String] { phrase.split(separator: " ").map(String.init) }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                if !checking {
-                    TextField("Wallet name", text: $name)
-                        .padding(14).background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 12))
-                    Text("Your recovery phrase").font(.headline)
-                    Text("These 24 words are your money. Write them on paper, in order, and keep them offline. Anyone who sees them can spend your funds; without them, a lost phone means lost funds.")
-                        .font(.footnote).foregroundStyle(Theme.muted)
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                        ForEach(Array(words.enumerated()), id: \.offset) { i, w in
-                            HStack(spacing: 8) {
-                                Text("\(i + 1)").font(.caption.monospacedDigit()).foregroundStyle(Theme.muted).frame(width: 22, alignment: .trailing)
-                                Text(verbatim: w).font(.subheadline.weight(.semibold).monospaced())
-                                Spacer()
-                            }
-                            .padding(.vertical, 8).padding(.horizontal, 10)
-                            .background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 10))
+        VStack(alignment: .leading, spacing: 14) {
+            Text("These 24 words are your money. Write them on paper, in order, and keep them offline. Anyone who sees them can spend your funds; without them, a lost phone means lost funds.")
+                .font(.footnote).foregroundStyle(Theme.muted)
+                .fixedSize(horizontal: false, vertical: true)
+            WordGrid(words: words)
+                .blur(radius: revealed ? 0 : 8)
+                .overlay {
+                    if !revealed {
+                        Button { revealed = true } label: {
+                            Label("Tap to show the words", systemImage: "eye").primaryButton()
                         }
+                        .padding(.horizontal, 40)
                     }
-                    .blur(radius: revealed ? 0 : 8)
-                    .overlay {
-                        if !revealed {
-                            Button { revealed = true } label: {
-                                Label("Tap to show the words", systemImage: "eye").primaryButton()
-                            }
-                            .padding(.horizontal, 40)
-                        }
-                    }
-                    Button {
-                        asked = Array((0..<words.count).shuffled().prefix(3)).sorted()
-                        answers = ["", "", ""]
-                        checking = true
-                    } label: {
-                        Text("I wrote them down").primaryButton()
-                    }
-                    .disabled(!revealed || name.trimmingCharacters(in: .whitespaces).isEmpty)
-                    .opacity(revealed ? 1 : 0.5)
-                } else {
-                    Text("Check your words").font(.headline)
-                    Text("Type these words from your paper.").font(.footnote).foregroundStyle(Theme.muted)
-                    ForEach(Array(asked.enumerated()), id: \.offset) { k, i in
-                        TextField(String(localized: "Word #\(i + 1)"), text: $answers[k])
-                            .textInputAutocapitalization(.never).autocorrectionDisabled()
-                            .padding(14).background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    if let error { Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange) }
-                    Button { Task { await create() } } label: {
-                        Text(working ? "Creating…" : "Create the wallet").primaryButton()
-                    }
-                    .disabled(working)
-                    Button("Show the words again") { checking = false }
-                        .font(.footnote).frame(maxWidth: .infinity)
                 }
+            if revealed { CopyPhraseButton(phrase: phrase) }
+            Spacer(minLength: 0)
+            Button {
+                asked = Array((0..<words.count).shuffled().prefix(3)).sorted()
+                checking = true
+            } label: {
+                Text("I wrote them down").primaryButton()
             }
-            .padding(20)
+            .disabled(!revealed)
+            .opacity(revealed ? 1 : 0.5)
         }
+        .padding(20)
         .background(Theme.background.ignoresSafeArea())
-        .navigationTitle("New wallet")
+        .navigationTitle("Your recovery phrase")
         .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+        .navigationDestination(isPresented: $checking) {
+            CheckWordsView(words: words, asked: asked, phrase: phrase, onDone: onDone)
+        }
         .task { if phrase.isEmpty { phrase = (try? WalletModel.newRecoveryPhrase()) ?? "" } }
+    }
+}
+
+/// Step 2: type three of the words back. The back arrow returns to the words.
+struct CheckWordsView: View {
+    let words: [String]
+    let asked: [Int]
+    let phrase: String
+    var onDone: () -> Void
+    @State private var answers = ["", "", ""]
+    @State private var error: String?
+    @State private var naming = false
+    @FocusState private var focused: Int?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Type these words from your paper.").font(.footnote).foregroundStyle(Theme.muted)
+            ForEach(Array(asked.enumerated()), id: \.offset) { k, i in
+                TextField(String(localized: "Word #\(i + 1)"), text: $answers[k])
+                    .textInputAutocapitalization(.never).autocorrectionDisabled()
+                    .focused($focused, equals: k)
+                    .submitLabel(k < 2 ? .next : .done)
+                    .onSubmit { focused = k < 2 ? k + 1 : nil }
+                    .padding(14).background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 12))
+            }
+            if let error { Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange) }
+            Spacer(minLength: 0)
+            Button {
+                let ok = asked.enumerated().allSatisfy { k, i in
+                    answers[k].trimmingCharacters(in: .whitespaces).lowercased() == words[i]
+                }
+                if ok { error = nil; naming = true } else {
+                    error = String(localized: "A word doesn't match. Check your paper, or go back to the words.")
+                }
+            } label: {
+                Text("Continue").primaryButton()
+            }
+        }
+        .padding(20)
+        .background(Theme.background.ignoresSafeArea())
+        .navigationTitle("Check your words")
+        .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+        .onAppear { focused = 0 }
+        .navigationDestination(isPresented: $naming) {
+            NameWalletView(phrase: phrase, onDone: onDone)
+        }
+    }
+}
+
+/// Step 3: name the new wallet, then it's made.
+struct NameWalletView: View {
+    @EnvironmentObject var wallet: WalletModel
+    let phrase: String
+    var onDone: () -> Void
+    @State private var name = String(localized: "My wallet")
+    @State private var working = false
+    @State private var error: String?
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Give it a name to find it among your wallets.").font(.footnote).foregroundStyle(Theme.muted)
+            TextField("Wallet name", text: $name)
+                .focused($focused)
+                .padding(14).background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 12))
+            if let error { Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange) }
+            Spacer(minLength: 0)
+            Button { Task { await create() } } label: {
+                Text(working ? "Creating…" : "Create the wallet").primaryButton()
+            }
+            .disabled(working || name.trimmingCharacters(in: .whitespaces).isEmpty)
+        }
+        .padding(20)
+        .background(Theme.background.ignoresSafeArea())
+        .navigationTitle("Name your wallet")
+        .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
+        .onAppear { focused = true }
     }
 
     private func create() async {
-        let ok = asked.enumerated().allSatisfy { k, i in answers[k].trimmingCharacters(in: .whitespaces).lowercased() == words[i] }
-        guard ok else {
-            error = String(localized: "A word doesn't match. Check your paper, or show the words again.")
-            return
-        }
         working = true
         defer { working = false }
         do {
@@ -306,6 +549,7 @@ struct RestoreWalletView: View {
         .background(Theme.background.ignoresSafeArea())
         .navigationTitle("Restore a wallet")
         .navigationBarTitleDisplayMode(.inline)
+        .backArrow()
     }
 
     private func restore() async {
@@ -332,17 +576,8 @@ struct RecoveryPhraseView: View {
                 Text("Never share these words. Anyone who has them can spend this wallet's funds.")
                     .font(.footnote).foregroundStyle(.orange)
                 if let error { Text(error).font(.footnote).foregroundStyle(Theme.muted) }
-                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 8) {
-                    ForEach(Array(words.enumerated()), id: \.offset) { i, w in
-                        HStack(spacing: 8) {
-                            Text("\(i + 1)").font(.caption.monospacedDigit()).foregroundStyle(Theme.muted).frame(width: 22, alignment: .trailing)
-                            Text(verbatim: w).font(.subheadline.weight(.semibold).monospaced())
-                            Spacer()
-                        }
-                        .padding(.vertical, 8).padding(.horizontal, 10)
-                        .background(Theme.card).clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }
+                WordGrid(words: words)
+                if !words.isEmpty { CopyPhraseButton(phrase: words.joined(separator: " ")) }
             }
             .padding(20)
         }

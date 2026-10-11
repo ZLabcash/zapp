@@ -271,12 +271,15 @@ final class WalletModel: ObservableObject {
     // MARK: Pairing
 
     /// Asks the connected Flipper for its viewing key (the user approves on the Flipper).
-    func requestInfo() async throws -> FlipperProtocol.Info {
+    /// The Flipper's INFO. `adding`: it's being added as a wallet (Add a wallet → Connect a
+    /// device), so whatever wallet it holds is welcome; otherwise it must hold the active one.
+    func requestInfo(adding: Bool = false) async throws -> FlipperProtocol.Info {
         let reply = try await link.request(.hello)
         guard reply.kind == FlipperProtocol.Kind.info.rawValue else {
             throw FlipperError.protocolError("Unexpected reply from the Flipper")
         }
         let info = try FlipperProtocol.Info(reply.payload)
+        if adding { return info }
         if let pairing, info.ufvk != pairing.ufvk {
             // A wallet this phone already has: switch to it.
             if let known = wallets.first(where: { $0.ufvk == info.ufvk }) {
@@ -300,9 +303,15 @@ final class WalletModel: ObservableObject {
     func createWallet(info: FlipperProtocol.Info, flipperID: UUID, restoredFrom: Date?) async throws {
         let synchronizer = try await database()
         let birthday = Self.birthday(for: info, restoredFrom: restoredFrom, synchronizer: synchronizer)
-        // The same Flipper wallet again: replace it (e.g. a corrected birthday).
-        if let old = wallets.first(where: { $0.isFlipper && $0.ufvk == info.ufvk }) {
-            await remove(old.id, keepingDatabase: true)
+        // A Flipper wallet this phone already has: switch to it, keeping its history.
+        if var known = wallets.first(where: { $0.isFlipper && $0.ufvk == info.ufvk }) {
+            known.flipperID = flipperID
+            known.flipperName = info.deviceName
+            store(known)
+            try await activate(known.id, keepingLink: true)
+            flipperState = .ready
+            remember(index: info.addressIndex)
+            return
         }
         let pairing = Pairing(
             walletID: UUID(),
@@ -317,7 +326,7 @@ final class WalletModel: ObservableObject {
             birthday: birthday,
             addressIndex: info.addressIndex
         )
-        try await add(pairing)
+        try await add(pairing, keepingLink: true)
         flipperState = .ready
     }
 
@@ -387,17 +396,18 @@ final class WalletModel: ObservableObject {
     }
 
     /// Adds a wallet and makes it the active one.
-    func add(_ wallet: Pairing) async throws {
+    func add(_ wallet: Pairing, keepingLink: Bool = false) async throws {
         let synchronizer = try await database()
         _ = try await account(for: wallet, in: synchronizer)
         store(wallet)
-        try await activate(wallet.id)
+        try await activate(wallet.id, keepingLink: keepingLink)
     }
 
     /// Switches the app to another wallet: balance, activity, addresses, signing device.
-    func activate(_ id: UUID) async throws {
+    /// `keepingLink`: the Flipper just connected is the new wallet's own, so stay connected.
+    func activate(_ id: UUID, keepingLink: Bool = false) async throws {
         guard let wallet = wallets.first(where: { $0.id == id }) else { return }
-        if let current = pairing, current.id != id, current.isFlipper {
+        if let current = pairing, current.id != id, current.isFlipper, !keepingLink {
             link.disconnect()
             flipperState = .idle
         }

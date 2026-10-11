@@ -77,83 +77,6 @@
         }
       }
     },
-    "%@  %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@  %2$@"
-          }
-        }
-      }
-    },
     "%@ holds a different wallet than this phone." : {
       "localizations" : {
         "ar" : {
@@ -689,158 +612,6 @@
         }
       }
     },
-    "A new recovery phrase, kept on this phone behind Face ID." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "عبارة استرداد جديدة، محفوظة على هذا الهاتف خلف Face ID."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine neue Wiederherstellungsphrase, auf diesem Telefon hinter Face ID verwahrt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una nueva frase de recuperación, guardada en este teléfono tras Face ID."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Une nouvelle phrase de récupération, gardée sur ce téléphone derrière Face ID."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una nuova frase di recupero, custodita su questo telefono dietro Face ID."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいリカバリーフレーズ。この電話に Face ID で保護して保管します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 복구 구문, Face ID로 보호되어 이 휴대폰에 보관됩니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma nova frase de recuperação, guardada neste telefone atrás do Face ID."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Новая фраза восстановления, хранится на этом телефоне под защитой Face ID."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "วลีกู้คืนใหม่ เก็บไว้บนโทรศัพท์นี้ ป้องกันด้วย Face ID"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Нова фраза відновлення, зберігається на цьому телефоні під захистом Face ID."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新的助记词，保存在此手机上，由 Face ID 保护。"
-          }
-        }
-      }
-    },
-    "A private Zcash wallet. Keep the keys on this phone, or on a cold wallet like a Flipper Zero." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "محفظة Zcash خاصة. احفظ المفاتيح على هذا الهاتف، أو على محفظة باردة مثل Flipper Zero."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine private Zcash-Wallet. Bewahre die Schlüssel auf diesem Telefon oder auf einer Cold Wallet wie einem Flipper Zero auf."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una billetera Zcash privada. Guarda las claves en este teléfono o en una cold wallet como un Flipper Zero."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un wallet Zcash privé. Gardez les clés sur ce téléphone, ou sur un cold wallet comme un Flipper Zero."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un wallet Zcash privato. Tieni le chiavi su questo telefono o su un cold wallet come un Flipper Zero."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "プライベートな Zcash ウォレット。鍵はこの電話か、Flipper Zero のようなコールドウォレットに保管します。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "프라이빗 Zcash 지갑. 키를 이 휴대폰이나 Flipper Zero 같은 콜드 월렛에 보관하세요."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma carteira Zcash privada. Guarde as chaves neste telefone ou numa cold wallet como um Flipper Zero."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Приватный кошелёк Zcash. Храните ключи на этом телефоне или на холодном кошельке, например Flipper Zero."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กระเป๋า Zcash แบบส่วนตัว เก็บกุญแจไว้บนโทรศัพท์นี้ หรือบนคอลด์วอลเล็ตอย่าง Flipper Zero"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Приватний гаманець Zcash. Зберігайте ключі на цьому телефоні або на холодному гаманці, як-от Flipper Zero."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "私密的 Zcash 钱包。密钥可保存在此手机上，或保存在 Flipper Zero 等冷钱包中。"
-          }
-        }
-      }
-    },
     "A signed payment expires after about 40 blocks (around 50 minutes). Until it is broadcast, nothing has left your wallet." : {
       "localizations" : {
         "ar" : {
@@ -993,78 +764,78 @@
         }
       }
     },
-    "A word doesn't match. Check your paper, or show the words again." : {
+    "A word doesn't match. Check your paper, or go back to the words." : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "كلمة غير مطابقة. تحقق من ورقتك، أو اعرض الكلمات مرة أخرى."
+            "value" : "كلمة غير مطابقة. تحقق من ورقتك، أو ارجع إلى الكلمات."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Wort stimmt nicht. Prüfe dein Papier oder zeige die Wörter erneut an."
+            "value" : "Ein Wort stimmt nicht. Prüfe dein Papier oder geh zurück zu den Wörtern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una palabra no coincide. Revisa tu papel o vuelve a mostrar las palabras."
+            "value" : "Una palabra no coincide. Revisa tu papel o vuelve a las palabras."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un mot ne correspond pas. Vérifiez votre papier, ou affichez à nouveau les mots."
+            "value" : "Un mot ne correspond pas. Vérifiez votre papier, ou revenez aux mots."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una parola non corrisponde. Controlla il foglio o mostra di nuovo le parole."
+            "value" : "Una parola non corrisponde. Controlla il foglio o torna alle parole."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "一致しない単語があります。紙を確認するか、もう一度単語を表示してください。"
+            "value" : "一致しない単語があります。紙を確認するか、単語の画面に戻ってください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "단어가 일치하지 않습니다. 종이를 확인하거나 단어를 다시 표시하세요."
+            "value" : "단어가 일치하지 않습니다. 종이를 확인하거나 단어 화면으로 돌아가세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma palavra não confere. Verifique seu papel ou mostre as palavras de novo."
+            "value" : "Uma palavra não confere. Verifique seu papel ou volte às palavras."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Слово не совпадает. Проверьте записи или покажите слова снова."
+            "value" : "Слово не совпадает. Проверьте записи или вернитесь к словам."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "มีคำที่ไม่ตรงกัน ตรวจสอบกระดาษของคุณ หรือแสดงคำอีกครั้ง"
+            "value" : "มีคำที่ไม่ตรงกัน ตรวจสอบกระดาษของคุณ หรือย้อนกลับไปดูคำ"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Слово не збігається. Перевірте записи або покажіть слова знову."
+            "value" : "Слово не збігається. Перевірте записи або поверніться до слів."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "有一个词不匹配。请核对纸上的记录，或再次显示这些词。"
+            "value" : "有一个词不匹配。请核对纸上的记录，或返回查看助记词。"
           }
         }
       }
@@ -1749,82 +1520,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "金额"
-          }
-        }
-      }
-    },
-    "An offline wallet on a Kindle, over local Wi-Fi." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "محفظة غير متصلة على Kindle عبر Wi-Fi محلي."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine Offline-Wallet auf einem Kindle, über lokales WLAN."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una billetera sin conexión en un Kindle, por Wi-Fi local."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un wallet hors ligne sur une Kindle, en Wi-Fi local."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un wallet offline su un Kindle, tramite Wi-Fi locale."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kindle 上のオフラインウォレット（ローカル Wi-Fi 経由）。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "로컬 Wi-Fi로 연결되는 Kindle 오프라인 지갑."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma carteira offline num Kindle, via Wi-Fi local."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Офлайн-кошелёк на Kindle через локальный Wi-Fi."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กระเป๋าออฟไลน์บน Kindle ผ่าน Wi-Fi ภายใน"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Офлайн-гаманець на Kindle через локальний Wi-Fi."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kindle 上的离线钱包，通过本地 Wi-Fi 连接。"
           }
         }
       }
@@ -3501,36 +3196,112 @@
         }
       }
     },
-    "Connect a Flipper Zero" : {
+    "Connect a device" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ربط Flipper Zero"
+            "value" : "ربط جهاز"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Flipper Zero verbinden"
+            "value" : "Gerät verbinden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conectar un Flipper Zero"
+            "value" : "Conectar un dispositivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connecter un Flipper Zero"
+            "value" : "Connecter un appareil"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Collega un Flipper Zero"
+            "value" : "Collega un dispositivo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "デバイスを接続"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기 연결"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conectar um dispositivo"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Подключить устройство"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เชื่อมต่ออุปกรณ์"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Підключити пристрій"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "连接设备"
+          }
+        }
+      }
+    },
+    "Connect your Flipper Zero" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "اربط Flipper Zero الخاص بك"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbinde deinen Flipper Zero"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conecta tu Flipper Zero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connectez votre Flipper Zero"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collega il tuo Flipper Zero"
           }
         },
         "ja" : {
@@ -3548,107 +3319,31 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conectar um Flipper Zero"
+            "value" : "Conecte seu Flipper Zero"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Подключить Flipper Zero"
+            "value" : "Подключите Flipper Zero"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "เชื่อมต่อ Flipper Zero"
+            "value" : "เชื่อมต่อ Flipper Zero ของคุณ"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Підключити Flipper Zero"
+            "value" : "Підключіть Flipper Zero"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "连接 Flipper Zero"
-          }
-        }
-      }
-    },
-    "Connect to Flipper" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "الاتصال بـ Flipper"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Flipper verbinden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conectar al Flipper"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecter au Flipper"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connetti al Flipper"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper に接続"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper에 연결"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conectar ao Flipper"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Подключить Flipper"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "เชื่อมต่อกับ Flipper"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Під’єднати Flipper"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "连接 Flipper"
+            "value" : "连接你的 Flipper Zero"
           }
         }
       }
@@ -3725,82 +3420,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已连接"
-          }
-        }
-      }
-    },
-    "Connecting…" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جارٍ الاتصال…"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verbinden …"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conectando…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connexion…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connessione…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "接続中…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "연결 중…"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conectando…"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Подключение…"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กำลังเชื่อมต่อ…"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Під’єднання…"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在连接…"
           }
         }
       }
@@ -6389,154 +6008,78 @@
         }
       }
     },
-    "From its 12 or 24 words." : {
+    "Give it a name to find it among your wallets." : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "من كلماتها الـ 12 أو 24."
+            "value" : "أعطها اسمًا لتجدها بين محافظك."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aus ihren 12 oder 24 Wörtern."
+            "value" : "Gib ihr einen Namen, um sie unter deinen Wallets zu finden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A partir de sus 12 o 24 palabras."
+            "value" : "Ponle un nombre para encontrarla entre tus billeteras."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À partir de ses 12 ou 24 mots."
+            "value" : "Donnez-lui un nom pour le retrouver parmi vos wallets."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dalle sue 12 o 24 parole."
+            "value" : "Dagli un nome per ritrovarlo tra i tuoi wallet."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "12 または 24 語から。"
+            "value" : "ウォレット一覧で見つけやすいよう名前を付けてください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "12개 또는 24개 단어로."
+            "value" : "지갑 목록에서 찾을 수 있도록 이름을 지어 주세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A partir das suas 12 ou 24 palavras."
+            "value" : "Dê um nome para encontrá-la entre suas carteiras."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "По его 12 или 24 словам."
+            "value" : "Дайте ему имя, чтобы найти среди своих кошельков."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "จากคำ 12 หรือ 24 คำ"
+            "value" : "ตั้งชื่อเพื่อให้หาเจอในบรรดากระเป๋าของคุณ"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "За його 12 або 24 словами."
+            "value" : "Дайте йому назву, щоб знайти серед своїх гаманців."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "通过它的 12 或 24 个助记词。"
-          }
-        }
-      }
-    },
-    "Getting ready to sync with the Zcash network." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جارٍ الاستعداد للمزامنة مع شبكة Zcash."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Synchronisierung mit dem Zcash-Netzwerk wird vorbereitet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando la sincronización con la red Zcash."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparation de la synchronisation avec le réseau Zcash."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparazione della sincronizzazione con la rete Zcash."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zcash ネットワークとの同期を準備しています。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zcash 네트워크와 동기화할 준비 중입니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando a sincronização com a rede Zcash."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Подготовка к синхронизации с сетью Zcash."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กำลังเตรียมซิงค์กับเครือข่าย Zcash"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Підготовка до синхронізації з мережею Zcash."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在准备与 Zcash 网络同步。"
+            "value" : "给它起个名字，方便在你的钱包中找到。"
           }
         }
       }
@@ -6693,78 +6236,78 @@
         }
       }
     },
-    "If iOS asks for a code, type the 6 digits shown on the Flipper." : {
+    "If asked, type the code shown on the Flipper." : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "إذا طلب iOS رمزًا، فاكتب الأرقام الستة الظاهرة على Flipper."
+            "value" : "إذا طُلب منك، اكتب الرمز الظاهر على Flipper."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn iOS nach einem Code fragt, gib die 6 Ziffern vom Flipper ein."
+            "value" : "Falls gefragt, gib den Code vom Flipper ein."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si iOS pide un código, escribe los 6 dígitos que muestra el Flipper."
+            "value" : "Si se te pide, escribe el código que muestra el Flipper."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si iOS demande un code, saisissez les 6 chiffres affichés sur le Flipper."
+            "value" : "Si on vous le demande, tapez le code affiché sur le Flipper."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se iOS chiede un codice, inserisci le 6 cifre mostrate sul Flipper."
+            "value" : "Se richiesto, digita il codice mostrato sul Flipper."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iOS がコードを求めた場合は、Flipper に表示された 6 桁の数字を入力してください。"
+            "value" : "求められたら、Flipper に表示されたコードを入力します。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "iOS에서 코드를 요청하면 Flipper에 표시된 6자리 숫자를 입력하십시오."
+            "value" : "요청되면 Flipper에 표시된 코드를 입력하세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se o iOS pedir um código, digite os 6 dígitos mostrados no Flipper."
+            "value" : "Se pedido, digite o código mostrado no Flipper."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Если iOS запросит код, введите 6 цифр с экрана Flipper."
+            "value" : "Если попросят, введите код с экрана Flipper."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "หาก iOS ขอรหัส ให้ป้อนตัวเลข 6 หลักที่แสดงบน Flipper"
+            "value" : "หากถูกถาม ให้พิมพ์รหัสที่แสดงบน Flipper"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Якщо iOS попросить код, введіть 6 цифр з екрана Flipper."
+            "value" : "Якщо попросять, введіть код з екрана Flipper."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "如果 iOS 要求输入代码，请输入 Flipper 上显示的 6 位数字。"
+            "value" : "如有提示，请输入 Flipper 上显示的代码。"
           }
         }
       }
@@ -6841,82 +6384,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已安装"
-          }
-        }
-      }
-    },
-    "It asks to share this wallet's viewing key: this iPhone will see your balance, never spend." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "سيطلب مشاركة مفتاح العرض لهذه المحفظة: سيرى هذا الـ iPhone رصيدك، ولن يتمكن من الإنفاق أبدًا."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Er fragt, ob der Viewing Key dieser Wallet geteilt werden soll: Dieses iPhone sieht dein Guthaben, kann aber nie etwas ausgeben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pide compartir la clave de visualización de esta cartera: este iPhone verá tu saldo, pero nunca podrá gastar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il demande à partager la clé de visualisation de ce portefeuille : cet iPhone verra votre solde, sans jamais dépenser."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chiede di condividere la chiave di visualizzazione di questo wallet: questo iPhone vedrà il saldo, ma non potrà mai spendere."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このウォレットのビューイングキーの共有を求めます：この iPhone は残高を見られますが、送金はできません。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 지갑의 뷰잉 키 공유를 요청합니다. 이 iPhone은 잔액을 볼 수만 있고 절대 지출할 수 없습니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ele pede para compartilhar a chave de visualização desta carteira: este iPhone verá seu saldo, mas nunca poderá gastar."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Он запросит разрешение передать ключ просмотра этого кошелька: iPhone будет видеть баланс, но не сможет тратить."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "จะมีการขอแชร์คีย์สำหรับดูของกระเป๋าเงินนี้: iPhone เครื่องนี้จะเห็นยอดเงิน แต่ใช้จ่ายไม่ได้"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Він попросить дозволу поділитися ключем перегляду цього гаманця: iPhone бачитиме баланс, але ніколи не зможе витрачати."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "它会请求共享此钱包的查看密钥：这台 iPhone 只能查看余额，永远无法花费资金。"
           }
         }
       }
@@ -7149,6 +6616,82 @@
         }
       }
     },
+    "Its funds are looked for from that date." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يُبحث عن أموالها بدءًا من ذلك التاريخ."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ab diesem Datum wird nach dem Guthaben gesucht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sus fondos se buscan desde esa fecha."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ses fonds sont recherchés à partir de cette date."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I fondi vengono cercati da quella data."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "その日付から資金を探します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "그 날짜부터 자금을 찾습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os fundos são procurados a partir dessa data."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Средства ищутся с этой даты."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "จะค้นหาเงินตั้งแต่วันนั้น"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Кошти шукаються з цієї дати."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "将从该日期开始查找资金。"
+          }
+        }
+      }
+    },
     "Its recovery phrase is erased from this phone. Without your written 24 words, its funds are lost." : {
       "localizations" : {
         "ar" : {
@@ -7221,158 +6764,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "它的助记词将从此手机删除。没有你抄下的 24 个词，资金将丢失。"
-          }
-        }
-      }
-    },
-    "Keep ZFlip open and unlocked on the Flipper, close to this iPhone." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "أبقِ ZFlip مفتوحًا وغير مقفل على Flipper، بالقرب من هذا الـ iPhone."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lass ZFlip auf dem Flipper geöffnet und entsperrt, in der Nähe dieses iPhone."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantén ZFlip abierto y desbloqueado en el Flipper, cerca de este iPhone."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gardez ZFlip ouvert et déverrouillé sur le Flipper, près de cet iPhone."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tieni ZFlip aperto e sbloccato sul Flipper, vicino a questo iPhone."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper で ZFlip を開いてロックを解除したまま、この iPhone の近くに置いてください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper에서 ZFlip을 열고 잠금 해제한 상태로 이 iPhone 가까이에 두십시오."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mantenha o ZFlip aberto e desbloqueado no Flipper, perto deste iPhone."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Держите ZFlip открытым и разблокированным на Flipper рядом с этим iPhone."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "เปิด ZFlip ค้างไว้และปลดล็อก Flipper วางไว้ใกล้ iPhone เครื่องนี้"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Тримайте ZFlip відкритим і розблокованим на Flipper поруч із цим iPhone."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "请在 Flipper 上保持 ZFlip 打开并解锁，并靠近这台 iPhone。"
-          }
-        }
-      }
-    },
-    "Keys stay on the Flipper; this phone only sees and prepares." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تبقى المفاتيح على Flipper؛ هذا الهاتف يرى ويُحضّر فقط."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Schlüssel bleiben auf dem Flipper; dieses Telefon sieht und bereitet nur vor."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las claves se quedan en el Flipper; este teléfono solo ve y prepara."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les clés restent sur le Flipper ; ce téléphone ne fait que voir et préparer."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le chiavi restano sul Flipper; questo telefono vede e prepara soltanto."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鍵は Flipper に残り、この電話は閲覧と準備だけを行います。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "키는 Flipper에 남고, 이 휴대폰은 보기와 준비만 합니다."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As chaves ficam no Flipper; este telefone só vê e prepara."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ключи остаются на Flipper; телефон только видит и готовит."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กุญแจอยู่บน Flipper โทรศัพท์นี้แค่ดูและเตรียมธุรกรรม"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ключі залишаються на Flipper; телефон лише бачить і готує."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "密钥留在 Flipper 上；此手机只查看和准备交易。"
           }
         }
       }
@@ -7753,82 +7144,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "浅色"
-          }
-        }
-      }
-    },
-    "Looking for your Flipper…" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "جارٍ البحث عن Flipper…"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper wird gesucht …"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscando tu Flipper…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Recherche de votre Flipper…"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ricerca del tuo Flipper…"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper を探しています…"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper를 찾는 중…"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Procurando seu Flipper…"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Поиск Flipper…"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กำลังค้นหา Flipper…"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Пошук Flipper…"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "正在查找你的 Flipper…"
           }
         }
       }
@@ -8441,6 +7756,82 @@
         }
       }
     },
+    "Name your wallet" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سمِّ محفظتك"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wallet benennen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombra tu billetera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nommez votre wallet"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dai un nome al wallet"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ウォレットに名前を付ける"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지갑 이름 정하기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dê um nome à carteira"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назовите кошелёк"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ตั้งชื่อกระเป๋า"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Назвіть гаманець"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "为钱包命名"
+          }
+        }
+      }
+    },
     "Network fee" : {
       "localizations" : {
         "ar" : {
@@ -8741,82 +8132,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "新建联系人"
-          }
-        }
-      }
-    },
-    "New wallet" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "محفظة جديدة"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neue Wallet"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nueva billetera"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nouveau wallet"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nuovo wallet"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新しいウォレット"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "새 지갑"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nova carteira"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Новый кошелёк"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กระเป๋าใหม่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Новий гаманець"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "新钱包"
           }
         }
       }
@@ -10189,6 +9504,82 @@
         }
       }
     },
+    "Open ZFlip on the Flipper and unlock it." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "افتح ZFlip على Flipper وألغِ قفله."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffne ZFlip auf dem Flipper und entsperre es."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abre ZFlip en el Flipper y desbloquéalo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrez ZFlip sur le Flipper et déverrouillez-le."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apri ZFlip sul Flipper e sbloccalo."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flipper で ZFlip を開いてロックを解除します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flipper에서 ZFlip을 열고 잠금을 해제하세요."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abra o ZFlip no Flipper e desbloqueie."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Откройте ZFlip на Flipper и разблокируйте."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เปิด ZFlip บน Flipper แล้วปลดล็อก"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Відкрийте ZFlip на Flipper і розблокуйте."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "在 Flipper 上打开 ZFlip 并解锁。"
+          }
+        }
+      }
+    },
     "Pair with ZFlip on a Flipper Zero over Bluetooth; it signs every payment." : {
       "localizations" : {
         "ar" : {
@@ -10869,6 +10260,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "价格不可用"
+          }
+        }
+      }
+    },
+    "Private by default." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "خاص افتراضيًا."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standardmäßig privat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privado por defecto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privé par défaut."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privato per impostazione predefinita."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "最初からプライベート。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기본이 프라이빗."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privado por padrão."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приватно по умолчанию."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เป็นส่วนตัวโดยค่าเริ่มต้น"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Приватно за замовчуванням."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "默认私密。"
           }
         }
       }
@@ -12165,82 +11632,6 @@
         }
       }
     },
-    "Restored wallet since" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "محفظة مستعادة منذ"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederhergestellte Wallet seit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cartera restaurada desde"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Portefeuille restauré depuis"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wallet ripristinato dal"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ウォレットの復元起点"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "지갑 복원 시작 시점"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Carteira restaurada desde"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Восстановленный кошелек с"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กู้คืนกระเป๋าเงินตั้งแต่"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Відновлений гаманець з"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "钱包恢复起点"
-          }
-        }
-      }
-    },
     "Restoring…" : {
       "localizations" : {
         "ar" : {
@@ -13153,6 +12544,82 @@
         }
       }
     },
+    "Search again" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ابحث مجددًا"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut suchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar de nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher à nouveau"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca di nuovo"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "もう一度探す"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "다시 찾기"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar de novo"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Искать снова"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ค้นหาอีกครั้ง"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Шукати знову"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "重新搜索"
+          }
+        }
+      }
+    },
     "Search messages, amounts, transaction IDs" : {
       "localizations" : {
         "ar" : {
@@ -13225,6 +12692,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "搜索备注、金额、交易 ID"
+          }
+        }
+      }
+    },
+    "Searching…" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "جارٍ البحث…"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscando…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche…"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ricerca…"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "検索中…"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "찾는 중…"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Procurando…"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Поиск…"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "กำลังค้นหา…"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Пошук…"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "正在搜索…"
           }
         }
       }
@@ -13837,82 +13380,6 @@
         }
       }
     },
-    "Several devices must sign together (FROST)." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "يجب أن توقّع عدة أجهزة معًا (FROST)."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mehrere Geräte müssen gemeinsam signieren (FROST)."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Varios dispositivos deben firmar juntos (FROST)."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plusieurs appareils doivent signer ensemble (FROST)."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Più dispositivi devono firmare insieme (FROST)."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "複数のデバイスが共同で署名します（FROST）。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "여러 기기가 함께 서명해야 합니다(FROST)."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vários dispositivos precisam assinar juntos (FROST)."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Несколько устройств должны подписать вместе (FROST)."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "อุปกรณ์หลายเครื่องต้องเซ็นร่วมกัน (FROST)"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Кілька пристроїв мають підписати разом (FROST)."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "需要多个设备共同签名（FROST）。"
-          }
-        }
-      }
-    },
     "Share" : {
       "localizations" : {
         "ar" : {
@@ -14289,82 +13756,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "屏蔽发送方"
-          }
-        }
-      }
-    },
-    "Show the words again" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "اعرض الكلمات مجددًا"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wörter erneut anzeigen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver las palabras otra vez"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revoir les mots"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra di nuovo le parole"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "もう一度単語を表示"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "단어 다시 보기"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostrar as palavras de novo"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Показать слова снова"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "แสดงคำอีกครั้ง"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Показати слова знову"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "再次显示助记词"
           }
         }
       }
@@ -14973,6 +14364,82 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "可用"
+          }
+        }
+      }
+    },
+    "Start" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ابدأ"
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los geht’s"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inizia"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "はじめる"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar"
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Начать"
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "เริ่ม"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Почати"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "开始"
           }
         }
       }
@@ -16497,82 +15964,6 @@
         }
       }
     },
-    "This iPhone shows your balance and prepares payments. Your Flipper checks and signs them. Open ZFlip on the Flipper and unlock it." : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "يعرض هذا الـ iPhone رصيدك ويجهّز الدفعات. ويتحقق Flipper منها ويوقّعها. افتح ZFlip على Flipper وألغِ قفله."
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dieses iPhone zeigt dein Guthaben und bereitet Zahlungen vor. Dein Flipper prüft und signiert sie. Öffne ZFlip auf dem Flipper und entsperre ihn."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este iPhone muestra tu saldo y prepara los pagos. Tu Flipper los comprueba y los firma. Abre ZFlip en el Flipper y desbloquéalo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cet iPhone affiche votre solde et prépare les paiements. Votre Flipper les vérifie et les signe. Ouvrez ZFlip sur le Flipper et déverrouillez-le."
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo iPhone mostra il saldo e prepara i pagamenti. Il tuo Flipper li controlla e li firma. Apri ZFlip sul Flipper e sbloccalo."
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "この iPhone は残高を表示し、支払いを準備します。Flipper が確認して署名します。Flipper で ZFlip を開いてロックを解除してください。"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 iPhone은 잔액을 표시하고 결제를 준비합니다. Flipper가 결제를 확인하고 서명합니다. Flipper에서 ZFlip을 열고 잠금 해제하십시오."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Este iPhone mostra seu saldo e prepara os pagamentos. Seu Flipper os confere e assina. Abra o ZFlip no Flipper e desbloqueie-o."
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Этот iPhone показывает баланс и готовит платежи. Flipper проверяет и подписывает их. Откройте ZFlip на Flipper и разблокируйте его."
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "iPhone เครื่องนี้แสดงยอดเงินและเตรียมการชำระเงิน Flipper ของคุณตรวจสอบและเซ็น เปิด ZFlip บน Flipper และปลดล็อก"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Цей iPhone показує баланс і готує платежі. Flipper перевіряє та підписує їх. Відкрийте ZFlip на Flipper і розблокуйте його."
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "这台 iPhone 显示余额并准备付款，Flipper 负责核对并签名。请在 Flipper 上打开 ZFlip 并解锁。"
-          }
-        }
-      }
-    },
     "This phone couldn't produce random numbers." : {
       "localizations" : {
         "ar" : {
@@ -16649,6 +16040,82 @@
         }
       }
     },
+    "This phone will see the wallet, never spend." : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "سيرى هذا الهاتف المحفظة، ولن ينفق أبدًا."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Telefon sieht die Wallet, gibt aber nie aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este teléfono verá la billetera, nunca gastará."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce téléphone verra le wallet, sans jamais dépenser."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questo telefono vedrà il wallet, senza mai spendere."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "この電話はウォレットを閲覧するだけで、使うことはできません。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 휴대폰은 지갑을 볼 수만 있고 쓸 수는 없습니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este telefone verá a carteira, nunca gastará."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Телефон будет видеть кошелёк, но не тратить."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "โทรศัพท์นี้จะเห็นกระเป๋า แต่ใช้จ่ายไม่ได้"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Телефон бачитиме гаманець, але не витрачатиме."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "此手机只能查看钱包，永远无法花费。"
+          }
+        }
+      }
+    },
     "This wallet is already on this phone." : {
       "localizations" : {
         "ar" : {
@@ -16721,82 +16188,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "此钱包已在这部手机上。"
-          }
-        }
-      }
-    },
-    "This wallet was restored from its words. Since when should we look for its funds?" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "تمت استعادة هذه المحفظة من كلماتها. منذ متى نبحث عن أموالها؟"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Wallet wurde aus ihren Wörtern wiederhergestellt. Ab wann sollen wir nach ihrem Guthaben suchen?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta cartera se restauró a partir de sus palabras. ¿Desde cuándo buscamos sus fondos?"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce portefeuille a été restauré à partir de ses mots. Depuis quand chercher ses fonds ?"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Questo wallet è stato ripristinato dalle sue parole. Da quando dobbiamo cercare i suoi fondi?"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "このウォレットはリカバリーフレーズから復元されました。いつから資金を探しますか？"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "이 지갑은 복구 단어로 복원되었습니다. 언제부터 자금을 찾을까요?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta carteira foi restaurada a partir das suas palavras. Desde quando devemos procurar seus fundos?"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Этот кошелек восстановлен из слов. С какого момента искать его средства?"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "กระเป๋าเงินนี้กู้คืนจากชุดคำ ควรค้นหาเงินตั้งแต่เมื่อใด"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Цей гаманець відновлено зі слів. З якого моменту шукати його кошти?"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "此钱包是通过助记词恢复的。要从什么时候开始查找它的资金？"
           }
         }
       }
@@ -17409,78 +16800,78 @@
         }
       }
     },
-    "Turn on Bluetooth and allow ZFlip to use it." : {
+    "Turn on Bluetooth and allow ZApp to use it." : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "شغّل البلوتوث واسمح لـ ZFlip باستخدامه."
+            "value" : "شغّل Bluetooth واسمح لـ ZApp باستخدامه."
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schalte Bluetooth ein und erlaube ZFlip den Zugriff."
+            "value" : "Schalte Bluetooth ein und erlaube ZApp den Zugriff."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa el Bluetooth y permite que ZFlip lo use."
+            "value" : "Activa el Bluetooth y permite que ZApp lo use."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activez le Bluetooth et autorisez ZFlip à l'utiliser."
+            "value" : "Activez le Bluetooth et autorisez ZApp à l’utiliser."
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Attiva il Bluetooth e consenti a ZFlip di usarlo."
+            "value" : "Attiva il Bluetooth e consenti a ZApp di usarlo."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bluetooth をオンにして、ZFlip に使用を許可してください。"
+            "value" : "Bluetooth をオンにし、ZApp に使用を許可してください。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bluetooth를 켜고 ZFlip의 사용을 허용하십시오."
+            "value" : "Bluetooth를 켜고 ZApp의 사용을 허용하세요."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ligue o Bluetooth e permita que o ZFlip o use."
+            "value" : "Ative o Bluetooth e permita que o ZApp o use."
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Включите Bluetooth и разрешите ZFlip его использовать."
+            "value" : "Включите Bluetooth и разрешите ZApp его использовать."
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "เปิดบลูทูธและอนุญาตให้ ZFlip ใช้งาน"
+            "value" : "เปิด Bluetooth และอนุญาตให้ ZApp ใช้งาน"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Увімкніть Bluetooth і дозвольте ZFlip його використовувати."
+            "value" : "Увімкніть Bluetooth і дозвольте ZApp його використовувати."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "请打开蓝牙并允许 ZFlip 使用。"
+            "value" : "请打开蓝牙并允许 ZApp 使用。"
           }
         }
       }
@@ -19005,82 +18396,6 @@
         }
       }
     },
-    "Your Flipper keeps the keys" : {
-      "localizations" : {
-        "ar" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "يحتفظ Flipper بالمفاتيح"
-          }
-        },
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dein Flipper verwahrt die Schlüssel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu Flipper guarda las claves"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Votre Flipper garde les clés"
-          }
-        },
-        "it" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Il tuo Flipper custodisce le chiavi"
-          }
-        },
-        "ja" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "鍵は Flipper が保管します"
-          }
-        },
-        "ko" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "키는 Flipper가 보관합니다"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seu Flipper guarda as chaves"
-          }
-        },
-        "ru" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ключи хранит ваш Flipper"
-          }
-        },
-        "th" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flipper ของคุณเก็บคีย์ไว้"
-          }
-        },
-        "uk" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ключі зберігає ваш Flipper"
-          }
-        },
-        "zh-Hans" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "密钥保存在你的 Flipper 中"
-          }
-        }
-      }
-    },
     "Your Flipper signed this payment. Nothing has left your wallet yet: it happens when you broadcast it." : {
       "localizations" : {
         "ar" : {
@@ -19841,78 +19156,78 @@
         }
       }
     },
-    "ZApp" : {
+    "Your wallet" : {
       "localizations" : {
         "ar" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "محفظتك"
           }
         },
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Deine Wallet"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Tu billetera"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Votre wallet"
           }
         },
         "it" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Il tuo wallet"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "あなたのウォレット"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "내 지갑"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Sua carteira"
           }
         },
         "ru" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Ваш кошелёк"
           }
         },
         "th" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "กระเป๋าของคุณ"
           }
         },
         "uk" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "Ваш гаманець"
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ZApp"
+            "value" : "你的钱包"
           }
         }
       }
