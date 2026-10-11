@@ -105,7 +105,22 @@ final class WalletModel: ObservableObject {
         var expiryHeight: Int
         var proofs: Data
         var sigs: Data
+        /// Saved since multi-wallet: whose payment it is, its fee, who signed it, and the
+        /// height it was signed at (for the time left when the phone has no network).
+        var walletID: UUID?
+        var fee: Int64?
+        var signer: String?
+        var signedHeight: Int?
         var total: Int64 { payments.reduce(0) { $0 + $1.zatoshi } }
+        /// About when it expires (75 s a block from signing), for when no new block is seen.
+        var deadline: Date {
+            created.addingTimeInterval(Double(expiryHeight - (signedHeight ?? expiryHeight - 40)) * 75)
+        }
+    }
+
+    /// The active wallet's signed payments waiting for a decision.
+    var pendingHere: [PendingBroadcast] {
+        pendingBroadcasts.filter { $0.walletID == nil || $0.walletID == pairing?.id }
     }
 
     @Published private(set) var pendingBroadcasts: [PendingBroadcast] = []
@@ -116,12 +131,46 @@ final class WalletModel: ObservableObject {
     @Published private(set) var online = true
     private let pathMonitor = NWPathMonitor()
 
-    func expired(_ p: PendingBroadcast) -> Bool { tipHeight > 0 && tipHeight >= p.expiryHeight }
+    func expired(_ p: PendingBroadcast) -> Bool {
+        (tipHeight > 0 && tipHeight >= p.expiryHeight) || Date() > p.deadline.addingTimeInterval(10 * 60)
+    }
 
-    /// Roughly how long until it expires, from the last chain height seen (75 s a block).
+    /// Roughly how long until it expires: from the chain when blocks keep coming, else from
+    /// the clock (offline, the last height seen goes stale).
     func minutesLeft(_ p: PendingBroadcast) -> Int? {
-        guard tipHeight > 0 else { return nil }
-        return max(0, (p.expiryHeight - tipHeight) * 75 / 60)
+        let byClock = Int(p.deadline.timeIntervalSinceNow / 60)
+        guard tipHeight > 0, online else { return max(0, byClock) }
+        return max(0, min((p.expiryHeight - tipHeight) * 75 / 60, byClock + 10))
+    }
+
+    /// Seconds left to broadcast, by the clock, pulled in if the chain is ahead of it.
+    func secondsLeft(_ p: PendingBroadcast) -> Int {
+        let byClock = Int(p.deadline.timeIntervalSinceNow)
+        guard tipHeight > 0, online else { return max(0, byClock) }
+        return max(0, min(byClock, (p.expiryHeight - tipHeight) * 75))
+    }
+
+    /// Share of its broadcast window still left (1 just signed, 0 expired).
+    func windowLeft(_ p: PendingBroadcast) -> Double {
+        let total = p.deadline.timeIntervalSince(p.created)
+        guard total > 0 else { return 0 }
+        return min(1, max(0, Double(secondsLeft(p)) / total))
+    }
+
+    /// Whether the lightwalletd server answers now (an internet route isn't enough:
+    /// a Wi-Fi without internet, a captive portal…).
+    func serverReachable() async -> Bool {
+        guard online, let synchronizer else { return false }
+        return await withTaskGroup(of: Bool.self) { group in
+            group.addTask { (try? await synchronizer.latestHeight()) != nil }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: 6_000_000_000)
+                return false
+            }
+            let first = await group.next() ?? false
+            group.cancelAll()
+            return first
+        }
     }
 
     private static func pendingFile(_ network: NetworkType) throws -> URL {
@@ -143,7 +192,7 @@ final class WalletModel: ObservableObject {
     func broadcast(_ pending: PendingBroadcast) async -> String? {
         guard let synchronizer else { return String(localized: "The wallet isn't open yet.") }
         if expired(pending) { return String(localized: "It expired: the network won't take it any more. Discard it and send again.") }
-        guard online else { return String(localized: "No network. Try again when you're back online.") }
+        guard await serverReachable() else { return String(localized: "The Zcash network can't be reached. It stays saved here: try again when you're back online.") }
         do {
             let error = try await submit(proofs: pending.proofs, sigs: pending.sigs, synchronizer: synchronizer)
             // Created means stored by the SDK, which keeps retrying it: it no longer waits here.
@@ -969,10 +1018,14 @@ final class WalletModel: ObservableObject {
             let signed = try Bridge.applySignatures(pczt: pczt, signatures: reply.payload)
             let proofs = try await proven
             let autoBroadcast = UserDefaults.standard.object(forKey: Self.autoBroadcastKey) as? Bool ?? true
-            if !online || !autoBroadcast {
-                // Signed, but nowhere to send it (or the user decides when): keep it for later.
+            // Signed, but the network can't be reached (or the user decides when): keep it on
+            // this phone, outside the wallet database, until broadcast or discarded.
+            let reachable = autoBroadcast ? await serverReachable() : false
+            if !reachable {
+                let fee = proposal.totalFeeRequired().amount
                 pendingBroadcasts.append(PendingBroadcast(created: Date(), payments: payments, expiryHeight: tipHeight + 40,
-                                                          proofs: proofs, sigs: signed))
+                                                          proofs: proofs, sigs: signed, walletID: pairing.id, fee: fee,
+                                                          signer: pairing.flipperName, signedHeight: tipHeight))
                 savePending()
                 sendStep = .signedOffline
                 return

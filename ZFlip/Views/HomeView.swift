@@ -21,6 +21,7 @@ struct HomeView: View {
                             .disabled(!canSend)
                             .opacity(canSend ? 1 : 0.45)
                     }
+                    if !wallet.pendingHere.isEmpty { BroadcastCard() }
                     ActivityCard()
                 }
                 .padding(.horizontal, 20)
