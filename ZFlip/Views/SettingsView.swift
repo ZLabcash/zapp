@@ -52,8 +52,7 @@ struct SettingsView: View {
                     .buttonStyle(.plain)
                     Divider()
                     NavigationLink { CurrencyView() } label: {
-                        SettingsRow(icon: "dollarsign.circle.fill", title: "Currency", badge: currency.uppercased(),
-                                    flag: PriceService.currencies.first { $0.code == currency }?.flag, chevron: "chevron.right")
+                        SettingsRow(icon: "dollarsign.circle.fill", title: "Currency", badge: currency.uppercased(), chevron: "chevron.right")
                     }
                     .buttonStyle(.plain)
                     Divider()
@@ -444,6 +443,7 @@ private struct ChoiceRow: View {
 /// Settings → Language: the system's, or one of the 13 ZApp speaks, applied at once.
 struct LanguageView: View {
     @AppStorage(AppLanguage.key) private var language = ""
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
@@ -473,6 +473,9 @@ struct LanguageView: View {
     }
 
     private func choose(_ code: String) {
+        guard code != language else { return dismiss() }
+        // The whole app is rebuilt in the new language; it reopens on Settings.
+        AppLanguage.reopenSettingsAfterRebuild()
         AppLanguage.apply(code)
         language = code
     }
@@ -482,13 +485,17 @@ struct LanguageView: View {
 struct CurrencyView: View {
     @EnvironmentObject var prices: PriceService
     @AppStorage("currency") private var currency = "usd"
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
             SettingsCard {
                 ForEach(Array(PriceService.currencies.enumerated()), id: \.element.id) { i, c in
                     if i > 0 { Divider() }
-                    Button { currency = c.code } label: {
+                    Button {
+                        currency = c.code
+                        dismiss() // back to Settings
+                    } label: {
                         ChoiceRow(flag: c.flag, title: c.code.uppercased(), subtitle: c.name,
                                   trailing: prices.format(zatoshi: 100_000_000, in: c.code), selected: currency == c.code)
                     }

@@ -10,6 +10,17 @@ enum AppLanguage {
 
     static var current: String { UserDefaults.standard.string(forKey: key) ?? "" }
 
+    /// Set when the language changes from Settings: the app is rebuilt in the new language and
+    /// should land back on Settings, not Home.
+    nonisolated(unsafe) private static var reopenSettings = false
+
+    static func reopenSettingsAfterRebuild() { reopenSettings = true }
+
+    static func takeReopenSettings() -> Bool {
+        defer { reopenSettings = false }
+        return reopenSettings
+    }
+
     /// The flag shown for a language (Assets.xcassets/Flags, flag-icons, MIT).
     static func flag(_ code: String) -> String {
         ["en": "gb", "fr": "fr", "es": "es", "it": "it", "pt-BR": "br", "de": "de", "ru": "ru", "uk": "ua",

@@ -8,19 +8,55 @@ final class PriceService: ObservableObject {
         let code: String
         var id: String { code }
         /// Its flag in Assets.xcassets/Flags (the euro's is the EU's).
-        var flag: String { ["usd": "us", "eur": "eu", "gbp": "gb", "chf": "ch", "cad": "ca", "aud": "au", "jpy": "jp"][code] ?? "us" }
+        var flag: String { ["usd": "us", "eur": "eu", "gbp": "gb", "chf": "ch", "jpy": "jp", "cny": "cn", "cad": "ca", "aud": "au", "nzd": "nz", "krw": "kr", "inr": "in", "brl": "br", "mxn": "mx", "ars": "ar", "clp": "cl", "rub": "ru", "uah": "ua", "try": "tr", "pln": "pl", "czk": "cz", "huf": "hu", "sek": "se", "nok": "no", "dkk": "dk", "ils": "il", "aed": "ae", "sar": "sa", "kwd": "kw", "bhd": "bh", "zar": "za", "ngn": "ng", "sgd": "sg", "hkd": "hk", "twd": "tw", "thb": "th", "idr": "id", "myr": "my", "php": "ph", "vnd": "vn", "pkr": "pk", "bdt": "bd", "lkr": "lk", "gel": "ge"][code] ?? "un" }
         /// In the user's language, from the system ("US dollar", "dollar des États-Unis"…).
         var name: String { Locale.current.localizedString(forCurrencyCode: code.uppercased()) ?? code.uppercased() }
     }
 
-    static let currencies = [
+    static let currencies: [Currency] = [
         Currency(code: "usd"),
         Currency(code: "eur"),
         Currency(code: "gbp"),
         Currency(code: "chf"),
+        Currency(code: "jpy"),
+        Currency(code: "cny"),
         Currency(code: "cad"),
         Currency(code: "aud"),
-        Currency(code: "jpy"),
+        Currency(code: "nzd"),
+        Currency(code: "krw"),
+        Currency(code: "inr"),
+        Currency(code: "brl"),
+        Currency(code: "mxn"),
+        Currency(code: "ars"),
+        Currency(code: "clp"),
+        Currency(code: "rub"),
+        Currency(code: "uah"),
+        Currency(code: "try"),
+        Currency(code: "pln"),
+        Currency(code: "czk"),
+        Currency(code: "huf"),
+        Currency(code: "sek"),
+        Currency(code: "nok"),
+        Currency(code: "dkk"),
+        Currency(code: "ils"),
+        Currency(code: "aed"),
+        Currency(code: "sar"),
+        Currency(code: "kwd"),
+        Currency(code: "bhd"),
+        Currency(code: "zar"),
+        Currency(code: "ngn"),
+        Currency(code: "sgd"),
+        Currency(code: "hkd"),
+        Currency(code: "twd"),
+        Currency(code: "thb"),
+        Currency(code: "idr"),
+        Currency(code: "myr"),
+        Currency(code: "php"),
+        Currency(code: "vnd"),
+        Currency(code: "pkr"),
+        Currency(code: "bdt"),
+        Currency(code: "lkr"),
+        Currency(code: "gel"),
     ]
 
     /// Price of 1 ZEC, by lowercase currency code.

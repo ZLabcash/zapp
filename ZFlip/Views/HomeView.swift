@@ -6,7 +6,7 @@ struct HomeView: View {
     @EnvironmentObject var prices: PriceService
     @State private var showReceive = Demo.on("receive")
     @State private var showSend = Demo.on("send")
-    @State private var showSettings = Demo.on("settings")
+    @State private var showSettings = Demo.on("settings") || AppLanguage.takeReopenSettings()
 
     var body: some View {
         NavigationStack {
