@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var confirmForget = false
     @AppStorage("appearance") private var appearance = 0
     @AppStorage("currency") private var currency = "usd"
+    @AppStorage(AppLanguage.key) private var language = ""
     @AppStorage(WalletModel.autoBroadcastKey) private var autoBroadcast = true
     @State private var broadcastInfo = false
 
@@ -27,12 +28,17 @@ struct SettingsView: View {
                     }
                 }
                 section("Language") {
-                    Button {
-                        if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                    Menu {
+                        Picker("Language", selection: Binding(get: { language }, set: { AppLanguage.apply($0); language = $0 })) {
+                            Text("System").tag("")
+                            ForEach(AppLanguage.codes, id: \.self) { code in
+                                Text(verbatim: AppLanguage.name(code)).tag(code)
+                            }
+                        }
                     } label: {
                         SettingsRow(icon: "globe", title: "Language",
-                                    value: Locale.current.localizedString(forLanguageCode: Locale.current.language.languageCode?.identifier ?? "en")?.capitalized,
-                                    chevron: "arrow.up.right")
+                                    value: language.isEmpty ? String(localized: "System") : AppLanguage.name(language),
+                                    chevron: "chevron.up.chevron.down")
                     }
                     .buttonStyle(.plain)
                 }

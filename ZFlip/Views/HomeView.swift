@@ -509,6 +509,10 @@ struct KindleIcon: View {
 /// The ZEC coin: the Zcash yellow disc and its Z with the two bars.
 struct ZecLogo: View {
     var body: some View {
+        logoBody.environment(\.layoutDirection, .leftToRight) // a logo never mirrors
+    }
+
+    private var logoBody: some View {
         GeometryReader { geo in
             let s = min(geo.size.width, geo.size.height)
             ZStack {
