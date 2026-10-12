@@ -254,26 +254,64 @@ struct AddWalletView: View {
 
 /// The ways to get a wallet, as cards.
 struct WalletOptions: View {
+    @EnvironmentObject var wallet: WalletModel
     var onDone: () -> Void
     var showsSoon: Bool
+    @State private var busy = false
+    @State private var error: String?
+    @State private var picking = false
+
+    /// The distinct seeds already here (each can grow another account).
+    private var seeds: [[WalletModel.Pairing]] {
+        var order: [[UInt8]] = []
+        var by: [[UInt8]: [WalletModel.Pairing]] = [:]
+        for w in wallet.wallets where w.isPhone {
+            if by[w.seedFingerprint] == nil { order.append(w.seedFingerprint) }
+            by[w.seedFingerprint, default: []].append(w)
+        }
+        return order.map { by[$0]! }
+    }
 
     var body: some View {
         VStack(spacing: 12) {
+            if !seeds.isEmpty {
+                Button {
+                    if seeds.count == 1 { Task { await derive(seeds[0]) } } else { picking = true }
+                } label: {
+                    OptionCard(title: "Add an account", busy: busy) { symbol("plus") }
+                }
+                .buttonStyle(.plain)
+                .disabled(busy)
+            }
             NavigationLink { CreateWalletView(onDone: onDone) } label: {
-                OptionCard(title: "Create a new wallet") { symbol("wallet.bifold.fill") }
+                OptionCard(title: "Create a new wallet", subtitle: "A brand-new wallet, with its own 24-word recovery phrase.") { symbol("wallet.bifold.fill") }
             }
             .buttonStyle(.plain)
             NavigationLink { RestoreWalletView(onDone: onDone) } label: {
-                OptionCard(title: "Restore a wallet") { symbol("arrow.counterclockwise") }
+                OptionCard(title: "Import a recovery phrase", subtitle: "Bring back a wallet from its 24-word recovery phrase.") { symbol("arrow.counterclockwise") }
             }
             .buttonStyle(.plain)
             NavigationLink { ConnectDeviceView(onDone: onDone) } label: {
-                OptionCard(title: "Connect a device") { symbol("dot.radiowaves.left.and.right") }
+                OptionCard(title: "Connect a device", subtitle: "Any compatible hardware signer that keeps its keys.") { symbol("dot.radiowaves.left.and.right") }
             }
             .buttonStyle(.plain)
-            if showsSoon {
-                OptionCard(title: "Multisig", soon: true) { symbol("person.3.fill") }
+            if let error { Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange) }
+        }
+        .confirmationDialog("From which wallet's recovery phrase?", isPresented: $picking, titleVisibility: .visible) {
+            ForEach(seeds, id: \.first!.id) { group in
+                Button(group.first!.displayName) { Task { await derive(group) } }
             }
+        }
+    }
+
+    private func derive(_ group: [WalletModel.Pairing]) async {
+        busy = true
+        defer { busy = false }
+        do {
+            try await wallet.addAccount(from: group[0])
+            onDone()
+        } catch {
+            self.error = (error as? Bridge.Failure)?.message ?? error.localizedDescription
         }
     }
 
@@ -283,22 +321,29 @@ struct WalletOptions: View {
     }
 }
 
-/// One choice: an icon and a title; greyed with a badge when it's coming.
+/// One choice: an icon, a title and a line about it; greyed with a badge when it's coming,
+/// or a spinner while it's working.
 struct OptionCard<Icon: View>: View {
     let title: LocalizedStringKey
+    var subtitle: LocalizedStringKey?
     var soon = false
+    var busy = false
     @ViewBuilder let icon: () -> Icon
 
     var body: some View {
         HStack(spacing: 14) {
             icon().frame(width: 52)
-            Text(title).font(.body.weight(.semibold))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.body.weight(.semibold))
+                if let subtitle { Text(subtitle).font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true) }
+            }
             if soon {
                 Text("Coming soon").font(.caption2.weight(.bold)).padding(.horizontal, 6).padding(.vertical, 2)
                     .background(Theme.zcash.opacity(0.2)).foregroundStyle(Theme.zcash).clipShape(Capsule())
             }
             Spacer()
-            if !soon { Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(Theme.muted) }
+            if busy { ProgressView() }
+            else if !soon { Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(Theme.muted) }
         }
         .padding(.horizontal, 16).padding(.vertical, 14)
         .frame(minHeight: 72)
@@ -521,7 +566,10 @@ struct NameWalletView: View {
             if let error { Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange) }
             Spacer(minLength: 0)
             Button { Task { await create() } } label: {
-                Text(working ? "Creating…" : "Create the wallet").primaryButton()
+                HStack(spacing: 8) {
+                    if working { ProgressView().tint(.black) }
+                    Text(working ? "Creating…" : "Create the wallet")
+                }.primaryButton()
             }
             .disabled(working || name.trimmingCharacters(in: .whitespaces).isEmpty)
         }
@@ -581,7 +629,10 @@ struct RestoreWalletView: View {
                     .font(.caption).foregroundStyle(Theme.muted)
                 if let error { Label(error, systemImage: "exclamationmark.triangle.fill").font(.footnote).foregroundStyle(.orange) }
                 Button { Task { await restore() } } label: {
-                    Text(working ? "Restoring…" : "Restore").primaryButton()
+                    HStack(spacing: 8) {
+                        if working { ProgressView().tint(.black) }
+                        Text(working ? "Restoring…" : "Restore")
+                    }.primaryButton()
                 }
                 .disabled(working || ![12, 15, 18, 21, 24].contains(count))
                 .opacity([12, 15, 18, 21, 24].contains(count) ? 1 : 0.5)
@@ -589,7 +640,7 @@ struct RestoreWalletView: View {
             .padding(20)
         }
         .background(Theme.background.ignoresSafeArea())
-        .navigationTitle("Restore a wallet")
+        .navigationTitle("Import a recovery phrase")
         .navigationBarTitleDisplayMode(.inline)
         .backArrow()
     }

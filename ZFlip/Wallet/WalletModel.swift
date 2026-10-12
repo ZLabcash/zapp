@@ -550,6 +550,36 @@ final class WalletModel: ObservableObject {
         }
     }
 
+    /// Derives the next ZIP-32 account of a phone wallet's seed as a new wallet (the same 24 words,
+    /// account index + 1 — as MetaMask adds accounts from one recovery phrase).
+    func addAccount(from parent: Pairing) async throws {
+        guard parent.isPhone else { throw Bridge.Failure(message: String(localized: "This wallet's words are on its device.")) }
+        let phrase = try SeedVault.read(parent.id, reason: String(localized: "Add an account"))
+        let seed = try Bridge.mnemonicSeed(phrase)
+        let fingerprint = try Bridge.seedFingerprint(seed)
+        // The next free account index across every wallet sharing this seed.
+        let kin = wallets.filter { $0.isPhone && $0.seedFingerprint == fingerprint }
+        let nextAccount = (kin.map { $0.account }.max() ?? 0) + 1
+        let tool = DerivationTool(networkType: networkType)
+        let usk = try tool.deriveUnifiedSpendingKey(seed: seed, accountIndex: Zip32AccountIndex(nextAccount))
+        let ufvk = try tool.deriveUnifiedFullViewingKey(from: usk).stringEncoded
+        if wallets.contains(where: { $0.ufvk == ufvk }) {
+            throw Bridge.Failure(message: String(localized: "This account already exists on this phone."))
+        }
+        let id = UUID()
+        try SeedVault.save(Bridge.normalized(phrase), for: id)
+        // Found from the seed's birthday, so earlier funds on this account are picked up.
+        let name = String(localized: "Account \(Int(nextAccount) + 1)")
+        let wallet = Pairing(walletID: id, kind: .phone, name: name, flipperID: id, flipperName: name, network: parent.network,
+                             ufvk: ufvk, seedFingerprint: fingerprint, account: nextAccount, birthday: parent.birthday, addressIndex: 0)
+        do {
+            try await add(wallet)
+        } catch {
+            SeedVault.delete(id)
+            throw error
+        }
+    }
+
     /// The active phone wallet's words, after Face ID.
     func recoveryPhrase() throws -> String {
         guard let pairing, pairing.isPhone else { throw Bridge.Failure(message: String(localized: "This wallet's words are on its device.")) }
