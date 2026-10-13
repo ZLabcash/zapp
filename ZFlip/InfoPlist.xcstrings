@@ -396,6 +396,82 @@
           }
         }
       }
+    },
+    "NSLocalNetworkUsageDescription" : {
+      "localizations" : {
+        "ar" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "يتصل ZApp بـ KindleWallet عبر Wi-Fi لتوقيع معاملات Zcash."
+          }
+        },
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp verbindet sich über dein WLAN mit deinem KindleWallet, um Zcash-Transaktionen zu signieren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp se comunica con tu KindleWallet por tu Wi-Fi para firmar transacciones de Zcash."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp communique avec votre KindleWallet sur votre Wi-Fi pour signer les transactions Zcash."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp comunica con il tuo KindleWallet tramite il tuo Wi-Fi per firmare le transazioni Zcash."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp は Wi-Fi 経由で KindleWallet と通信し、Zcash の取引に署名します。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp은 Wi-Fi로 KindleWallet과 통신하여 Zcash 거래에 서명합니다."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O ZApp se comunica com seu KindleWallet pelo Wi-Fi para assinar transações Zcash."
+          }
+        },
+        "ru" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp связывается с KindleWallet по вашей сети Wi-Fi, чтобы подписывать транзакции Zcash."
+          }
+        },
+        "th" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp สื่อสารกับ KindleWallet ผ่าน Wi-Fi ของคุณเพื่อลงนามธุรกรรม Zcash"
+          }
+        },
+        "uk" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp зв’язується з KindleWallet через вашу мережу Wi-Fi, щоб підписувати транзакції Zcash."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZApp 通过你的 Wi-Fi 与 KindleWallet 通信，以签署 Zcash 交易。"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

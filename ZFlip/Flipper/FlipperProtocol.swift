@@ -11,11 +11,14 @@ enum FlipperProtocol {
         case hello = 0x01
         case sign = 0x04
         case ping = 0x05
+        /// Kindle only (not zfirm_core): the zkSNARKs held, to list on the Kindle.
+        case nfts = 0x40
         case info = 0x81
         case address = 0x83
         case signed = 0x84
         case pong = 0x85
         case status = 0x86
+        case nftsOK = 0xC0
         case error = 0xE0
     }
 
@@ -152,6 +155,12 @@ enum FlipperError: LocalizedError {
 }
 
 extension UInt32 {
+    var littleEndianData: Data {
+        withUnsafeBytes(of: littleEndian) { Data($0) }
+    }
+}
+
+extension UInt16 {
     var littleEndianData: Data {
         withUnsafeBytes(of: littleEndian) { Data($0) }
     }

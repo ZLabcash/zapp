@@ -142,7 +142,7 @@ struct PairView: View {
         step = .connecting(flipper.name)
         do {
             try await link.connect(flipper.id, timeout: 25)
-            let info = try await wallet.requestInfo(adding: true)
+            let info = try await wallet.requestInfo(adding: true, from: link)
             // A restored seed has no creation date: ask, unless this phone already has the wallet.
             if info.createdAt == 0, !wallet.wallets.contains(where: { $0.ufvk == info.ufvk }) {
                 step = .birthday(info)

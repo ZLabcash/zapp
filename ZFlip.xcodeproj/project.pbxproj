@@ -10,12 +10,17 @@
 		03D4237A790543DC92CFB302 /* WalletsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EB335278375D20CB2EA8306 /* WalletsViews.swift */; };
 		0ECBB93EE2C6578AE20D1C34 /* ZcashLightClientKit in Frameworks */ = {isa = PBXBuildFile; productRef = 5AC814CBCD201CBB7AA058A9 /* ZcashLightClientKit */; };
 		1F872BD039EBB0E3D9D5CD92 /* Price.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FC314C4271ACEC63AFE8EBA /* Price.swift */; };
+		31F8003D754543D44CFBBC5D /* NFTViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19E9C912DF573DC54359DD31 /* NFTViews.swift */; };
 		3941DAAB476A6597C93BC410 /* Bridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E5A8E5DBD32B7EC08817276 /* Bridge.swift */; };
 		39646AAC53DEEB0779877131 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02008A29A44D9F3C78631A8 /* Language.swift */; };
+		49386F6B3924A1F4EE09B2ED /* Snarks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA9CDE08D80208A93DBE1DC /* Snarks.swift */; };
 		4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99EC8939B570D6BFFDC2F442 /* HomeView.swift */; };
 		4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C545E4E2810FF36757DA2B81 /* WalletModel.swift */; };
+		4D211F699040A54DDE089D66 /* KindlePairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 773DCC974CD89F528043F096 /* KindlePairView.swift */; };
 		71FFE2C577D1237694079D63 /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */; };
+		7A267573F8412E220F4A9ECA /* KindleCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927DD7506CC826C70F886712 /* KindleCrypto.swift */; };
 		7C4ADFFF930B8F130ACC09B3 /* FlipperLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DB6C35499251397CE3CDF1 /* FlipperLink.swift */; };
+		7CF5E4DAC6F35BDF3E6BE4BE /* KindleLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE9E6A3201E61FE34739A2E /* KindleLink.swift */; };
 		80AAF021763BCD9A4BA6ACF0 /* BackgroundSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6221CC52358DC3F72F15CBC1 /* BackgroundSync.swift */; };
 		823FD57944C0366496C8574A /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 149F553B8197CE32D0ACEE06 /* Localizable.xcstrings */; };
 		8ADBEF852FBE580D1B58D605 /* QRScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9503A91120791D250E5D11 /* QRScanner.swift */; };
@@ -53,9 +58,11 @@
 		137E5DB0CB713CA14EA77BE3 /* ActivityViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityViews.swift; sourceTree = "<group>"; };
 		149F553B8197CE32D0ACEE06 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		178AA570216EF523337E0F8D /* Contacts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
+		19E9C912DF573DC54359DD31 /* NFTViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTViews.swift; sourceTree = "<group>"; };
 		1B0FA9F71B5C174437916D6E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2B9503A91120791D250E5D11 /* QRScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScanner.swift; sourceTree = "<group>"; };
 		2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendView.swift; sourceTree = "<group>"; };
+		2FA9CDE08D80208A93DBE1DC /* Snarks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snarks.swift; sourceTree = "<group>"; };
 		2FC314C4271ACEC63AFE8EBA /* Price.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Price.swift; sourceTree = "<group>"; };
 		4EB335278375D20CB2EA8306 /* WalletsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsViews.swift; sourceTree = "<group>"; };
 		5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsView.swift; sourceTree = "<group>"; };
@@ -63,9 +70,12 @@
 		6221CC52358DC3F72F15CBC1 /* BackgroundSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundSync.swift; sourceTree = "<group>"; };
 		63DB6C35499251397CE3CDF1 /* FlipperLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperLink.swift; sourceTree = "<group>"; };
 		73075DA85A43091042D06D54 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		773DCC974CD89F528043F096 /* KindlePairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindlePairView.swift; sourceTree = "<group>"; };
 		7832494FBCBCB7D24626728F /* FlipperProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipperProtocol.swift; sourceTree = "<group>"; };
 		7F9431D6101C4121770C2EE2 /* ZFlip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ZFlip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		927DD7506CC826C70F886712 /* KindleCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindleCrypto.swift; sourceTree = "<group>"; };
 		99EC8939B570D6BFFDC2F442 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		9DE9E6A3201E61FE34739A2E /* KindleLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KindleLink.swift; sourceTree = "<group>"; };
 		9E5A8E5DBD32B7EC08817276 /* Bridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bridge.swift; sourceTree = "<group>"; };
 		A3E16D31095C345F2E73A77B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		B2ADE5512538374EFFD9CE91 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
@@ -98,6 +108,7 @@
 				149F553B8197CE32D0ACEE06 /* Localizable.xcstrings */,
 				DCE4154F94C2729A65354C79 /* App */,
 				DDBFF121D0ECB47B052E97A1 /* Flipper */,
+				F7E53F5BB85A0CC331BC5B4F /* Kindle */,
 				3DAD4DB894476E22FF1E93AE /* Views */,
 				C6080D0D85C1B16FE2F7429C /* Wallet */,
 			);
@@ -119,6 +130,8 @@
 				137E5DB0CB713CA14EA77BE3 /* ActivityViews.swift */,
 				5229A9A9E67F86EE61E1FF94 /* ContactsView.swift */,
 				99EC8939B570D6BFFDC2F442 /* HomeView.swift */,
+				773DCC974CD89F528043F096 /* KindlePairView.swift */,
+				19E9C912DF573DC54359DD31 /* NFTViews.swift */,
 				036DFA711F270E81CCB08CF9 /* PairView.swift */,
 				2B9503A91120791D250E5D11 /* QRScanner.swift */,
 				2CB1FE3AA7BB0BFD3D5F09EA /* SendView.swift */,
@@ -145,6 +158,7 @@
 				178AA570216EF523337E0F8D /* Contacts.swift */,
 				73075DA85A43091042D06D54 /* Keychain.swift */,
 				2FC314C4271ACEC63AFE8EBA /* Price.swift */,
+				2FA9CDE08D80208A93DBE1DC /* Snarks.swift */,
 				C545E4E2810FF36757DA2B81 /* WalletModel.swift */,
 			);
 			path = Wallet;
@@ -174,6 +188,15 @@
 				7832494FBCBCB7D24626728F /* FlipperProtocol.swift */,
 			);
 			path = Flipper;
+			sourceTree = "<group>";
+		};
+		F7E53F5BB85A0CC331BC5B4F /* Kindle */ = {
+			isa = PBXGroup;
+			children = (
+				927DD7506CC826C70F886712 /* KindleCrypto.swift */,
+				9DE9E6A3201E61FE34739A2E /* KindleLink.swift */,
+			);
+			path = Kindle;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -276,12 +299,17 @@
 				CA75056F0BB4A9E1B5BEED92 /* FlipperProtocol.swift in Sources */,
 				4BA987D763580F13B6D7FF79 /* HomeView.swift in Sources */,
 				AB9561B156BBA559F9C6A56E /* Keychain.swift in Sources */,
+				7A267573F8412E220F4A9ECA /* KindleCrypto.swift in Sources */,
+				7CF5E4DAC6F35BDF3E6BE4BE /* KindleLink.swift in Sources */,
+				4D211F699040A54DDE089D66 /* KindlePairView.swift in Sources */,
 				39646AAC53DEEB0779877131 /* Language.swift in Sources */,
+				31F8003D754543D44CFBBC5D /* NFTViews.swift in Sources */,
 				BBEC361C7A4B9C1F51A975D6 /* PairView.swift in Sources */,
 				1F872BD039EBB0E3D9D5CD92 /* Price.swift in Sources */,
 				8ADBEF852FBE580D1B58D605 /* QRScanner.swift in Sources */,
 				BBE98040645C31BD6C0BEE6D /* SendView.swift in Sources */,
 				CD298EAA5C3A84A11926883E /* SettingsView.swift in Sources */,
+				49386F6B3924A1F4EE09B2ED /* Snarks.swift in Sources */,
 				8ECBB53AB994C8F0C13DED0C /* Theme.swift in Sources */,
 				4D1E5F160BA3D47B79AA2DD2 /* WalletModel.swift in Sources */,
 				03D4237A790543DC92CFB302 /* WalletsViews.swift in Sources */,
@@ -308,6 +336,7 @@
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "ZApp reads Zcash address QR codes to fill in who you send to.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "ZApp uses Face ID to unlock the keys of the wallets kept on this phone.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "ZApp talks to your KindleWallet on your Wi-Fi to sign Zcash transactions.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -404,6 +433,7 @@
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "ZApp talks to your Flipper Zero over Bluetooth to sign Zcash transactions.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "ZApp reads Zcash address QR codes to fill in who you send to.";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "ZApp uses Face ID to unlock the keys of the wallets kept on this phone.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "ZApp talks to your KindleWallet on your Wi-Fi to sign Zcash transactions.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (

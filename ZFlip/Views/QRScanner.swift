@@ -82,6 +82,7 @@ struct PaymentRequest {
 /// The camera with a viewfinder: the screen dimmed around a clear square with
 /// yellow corners, and a hint. Codes are read inside the square only.
 struct ScannerScreen: View {
+    var title: LocalizedStringKey = "Scan a Zcash QR code"
     let found: (String) -> Void
 
     var body: some View {
@@ -104,7 +105,7 @@ struct ScannerScreen: View {
                     .position(x: square.midX, y: square.midY)
                     .allowsHitTesting(false)
                 VStack(spacing: 6) {
-                    Text("Scan a Zcash QR code").font(.headline)
+                    Text(title).font(.headline)
                     Text("Hold it inside the square").font(.subheadline).opacity(0.8)
                 }
                 .foregroundStyle(.white)

@@ -147,6 +147,8 @@ struct SettingsView: View {
         } message: {
             Text(wallet.pairing?.isPhone == true
                  ? "Its recovery phrase is erased from this phone. Without your written 24 words, its funds are lost."
+                 : wallet.pairing?.isKindle == true
+                 ? "Removes the watch-only wallet from this phone. Your funds stay safe: the keys are on your Kindle."
                  : "Removes the watch-only wallet from this phone. Your funds stay safe: the keys are on your Flipper.")
         }
     }

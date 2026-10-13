@@ -104,7 +104,7 @@ struct RenameWalletSheet: View {
     }
 }
 
-/// One wallet in a list: its kind (phone or Flipper), name, and balance when it may show.
+/// One wallet in a list: its kind (phone, Flipper or Kindle), name, and balance when it may show.
 struct WalletRow: View {
     @EnvironmentObject var wallet: WalletModel
     let w: WalletModel.Pairing
@@ -115,6 +115,8 @@ struct WalletRow: View {
             Group {
                 if w.isPhone {
                     Image(systemName: "wallet.bifold.fill").font(.title2).foregroundStyle(Theme.zcash)
+                } else if w.isKindle {
+                    KindleIcon().frame(width: 30, height: 40)
                 } else {
                     FlipperZeroIcon(light: .green, pulsing: false)
                 }
@@ -122,11 +124,11 @@ struct WalletRow: View {
             .frame(width: 44)
             VStack(alignment: .leading, spacing: 2) {
                 Text(verbatim: w.displayName).font(.subheadline.weight(.semibold))
-                Text(w.isPhone ? "On this phone" : "Flipper Zero").font(.caption).foregroundStyle(Theme.muted)
+                Text(w.isPhone ? "On this phone" : w.isKindle ? "Kindle" : "Flipper Zero").font(.caption).foregroundStyle(Theme.muted)
             }
             Spacer()
-            // A Flipper wallet's balance only while its Flipper is connected.
-            let visible = w.isPhone || wallet.linkedWallet == w.id
+            // A device wallet's balance only while its device is connected.
+            let visible = w.isPhone || wallet.isLinked(w.id)
             Text(visible ? (wallet.balances[w.id] ?? .zero).zecString : "•••• ZEC")
                 .font(.subheadline.monospacedDigit()).foregroundStyle(Theme.muted)
             Image(systemName: active ? "checkmark.circle.fill" : "circle")
@@ -366,9 +368,12 @@ struct ConnectDeviceView: View {
                 }
             }
             .buttonStyle(.plain)
-            OptionCard(title: "Kindle", soon: true) {
-                KindleIcon().frame(width: 30, height: 40)
+            NavigationLink { KindlePairView(onDone: onDone).backArrow() } label: {
+                OptionCard(title: "Kindle") {
+                    KindleIcon().frame(width: 30, height: 40)
+                }
             }
+            .buttonStyle(.plain)
             Spacer()
         }
         .padding(20)

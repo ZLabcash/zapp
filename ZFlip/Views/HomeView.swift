@@ -8,6 +8,7 @@ struct HomeView: View {
     @State private var showSend = false
     @State private var showSettings = AppLanguage.takeReopenSettings()
     @State private var showWallets = false
+    @State private var showNFTs = false
 
     var body: some View {
         NavigationStack {
@@ -20,6 +21,7 @@ struct HomeView: View {
                         ActionTile(title: "Send", icon: "arrow.up") { showSend = true }
                             .disabled(!canSend)
                             .opacity(canSend ? 1 : 0.45)
+                        ActionTile(title: "NFTs", icon: "square.grid.2x2.fill") { showNFTs = true }
                     }
                     if !wallet.pendingHere.isEmpty { BroadcastCard() }
                     ActivityCard()
@@ -39,6 +41,7 @@ struct HomeView: View {
             .sheet(isPresented: $showReceive) { ReceiveView() }
             .sheet(isPresented: $showWallets) { WalletsSheet() }
             .navigationDestination(isPresented: $showSend) { SendView() }
+            .navigationDestination(isPresented: $showNFTs) { NFTCollectionsView() }
             .navigationDestination(isPresented: $showSettings) { SettingsView() }
         }
     }
@@ -274,20 +277,32 @@ struct BalanceCard: View {
     }
 }
 
-/// The signing devices, each with its name over its picture and a Connect button:
-/// the Flipper Zero over Bluetooth, and soon a Kindle over local Wi-Fi.
+/// The active wallet's signing device, with its name over its picture and a Connect button:
+/// a Flipper Zero over Bluetooth, or a Kindle over local Wi-Fi.
 struct DevicesCard: View {
     @EnvironmentObject var wallet: WalletModel
     @Environment(\.openURL) private var openURL
     @State private var pulse = false
     @State private var confirmDisconnect = false
+    /// The camera, for the Kindle's pairing QR code.
+    @State private var scanningKindle = false
+
+    private var isKindle: Bool { wallet.pairing?.isKindle == true }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Flipper Zero").font(.subheadline.weight(.semibold))
-                    FlipperZeroIcon(light: light, pulsing: pulsing && pulse).frame(width: 120)
+                    if isKindle {
+                        HStack(spacing: 8) {
+                            Text("Kindle").font(.subheadline.weight(.semibold))
+                            Circle().fill(light).frame(width: 8, height: 8).scaleEffect(pulsing && pulse ? 1.5 : 1)
+                        }
+                        KindleIcon().frame(width: 38, height: 50)
+                    } else {
+                        Text("Flipper Zero").font(.subheadline.weight(.semibold))
+                        FlipperZeroIcon(light: light, pulsing: pulsing && pulse).frame(width: 120)
+                    }
                 }
                 Spacer()
                 flipperButton
@@ -296,24 +311,37 @@ struct DevicesCard: View {
                 Text(note).font(.footnote).foregroundStyle(Theme.muted).fixedSize(horizontal: false, vertical: true)
             }
             extraActions
-            Divider()
-            HStack(alignment: .bottom) {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Kindle").font(.subheadline.weight(.semibold))
-                    KindleIcon().frame(width: 38, height: 50)
-                }
-                Spacer()
-                ConnectPill(title: "Connect", glyph: AnyView(Image(systemName: "wifi").font(.subheadline.weight(.bold))),
-                            style: .disabled) {}
-                    .disabled(true)
-            }
-            .opacity(0.45)
         }
         .padding(20)
         .background(Theme.card)
         .clipShape(RoundedRectangle(cornerRadius: 24))
         .onAppear {
             withAnimation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true)) { pulse = true }
+        }
+        .sheet(isPresented: $scanningKindle) {
+            NavigationStack {
+                Group {
+                    if QRScanner.available {
+                        ScannerScreen(title: "Scan the QR code on your Kindle") { text in
+                            scanningKindle = false
+                            Task { await wallet.connectKindle(scanned: text) }
+                        }
+                    } else {
+                        Text("The camera isn't available. Allow it for ZApp in Settings.")
+                            .multilineTextAlignment(.center).padding()
+                    }
+                }
+                .navigationTitle("Kindle")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar { Button("Cancel") { scanningKindle = false } }
+            }
+        }
+        // The Kindle asks its user (or answered): the camera has done its part.
+        .onChange(of: wallet.flipperState) { _, state in
+            switch state {
+            case .ready, .approve, .otherWallet: scanningKindle = false
+            default: break
+            }
         }
     }
 
@@ -337,7 +365,10 @@ struct DevicesCard: View {
     /// One line, only when there is something to do or know.
     private var note: String? {
         switch wallet.flipperState {
+        case .idle where isKindle: return String(localized: "Connect, then scan the QR code on your Kindle (Zcash, Phone link) and Allow on it.")
         case .idle, .ready: return nil
+        case .connecting where isKindle: return String(localized: "Connecting to your Kindle…")
+        case .approve where isKindle: return String(localized: "Approve on your Kindle to share the viewing key (it can see, never spend).")
         case .connecting: return String(localized: "Open ZFlip on the Flipper and unlock it, close to this phone.")
         case .approve: return String(localized: "Press OK on your Flipper to share the viewing key (it can see, never spend).")
         case .otherWallet(let flipper): return String(localized: "\(flipper) holds a different wallet than this phone.")
@@ -345,21 +376,33 @@ struct DevicesCard: View {
         }
     }
 
+    /// Bluetooth for the Flipper; for the Kindle, the camera that reads its QR code.
+    private var glyph: AnyView {
+        isKindle ? AnyView(Image(systemName: "qrcode.viewfinder").font(.subheadline.weight(.bold)))
+                 : AnyView(BluetoothGlyph().frame(width: 10, height: 16))
+    }
+
     @ViewBuilder private var flipperButton: some View {
         switch wallet.flipperState {
         case .idle, .failed, .otherWallet:
-            ConnectPill(title: "Connect", glyph: AnyView(BluetoothGlyph().frame(width: 10, height: 16)), style: .primary) {
-                Task { await wallet.connectFlipper() }
+            ConnectPill(title: "Connect", glyph: glyph, style: .primary) {
+                // The Kindle: always its QR code, then Allow on it.
+                if isKindle {
+                    scanningKindle = true
+                } else {
+                    Task { await wallet.connectFlipper() }
+                }
             }
         case .connecting, .approve:
             ConnectPill(title: "Cancel", glyph: AnyView(ProgressView().controlSize(.small)), style: .plain) {
                 wallet.disconnectFlipper()
             }
         case .ready:
-            ConnectPill(title: "Connected", glyph: AnyView(BluetoothGlyph().frame(width: 10, height: 16)), style: .connected) {
+            ConnectPill(title: "Connected", glyph: glyph, style: .connected) {
                 confirmDisconnect = true
             }
-            .confirmationDialog("Disconnect from your Flipper Zero?", isPresented: $confirmDisconnect, titleVisibility: .visible) {
+            .confirmationDialog(isKindle ? "Disconnect from your Kindle?" : "Disconnect from your Flipper Zero?",
+                                isPresented: $confirmDisconnect, titleVisibility: .visible) {
                 Button("Disconnect", role: .destructive) { wallet.disconnectFlipper() }
                 Button("Stay connected", role: .cancel) {}
             } message: {
@@ -377,7 +420,7 @@ struct DevicesCard: View {
         }
         if case .otherWallet = wallet.flipperState {
             Button { Task { await wallet.adoptFlipperWallet() } } label: {
-                Label("Use this Flipper's wallet", systemImage: "arrow.triangle.2.circlepath").primaryButton()
+                Label(isKindle ? "Use this Kindle's wallet" : "Use this Flipper's wallet", systemImage: "arrow.triangle.2.circlepath").primaryButton()
             }
         }
     }
@@ -574,14 +617,15 @@ struct ActionTile: View {
     }
 }
 
-/// The receiving address: for a Flipper wallet the one the Flipper shows, checked against
-/// this iPhone's own derivation from the viewing key; for a phone wallet, a new one on demand.
+/// The receiving address: for a device wallet the one its device shows, checked against
+/// this phone's own derivation from the viewing key; for a phone wallet, a new one on demand.
 struct ReceiveView: View {
     @EnvironmentObject var wallet: WalletModel
     @State private var copied = false
 
     var body: some View {
         let phone = wallet.pairing?.isPhone == true
+        let kindle = wallet.pairing?.isKindle == true
         let index = wallet.receiveIndex
         let address = wallet.address(at: index)
         VStack(spacing: 18) {
@@ -590,8 +634,13 @@ struct ReceiveView: View {
             if !phone {
                 HStack(spacing: 6) {
                     Image(systemName: wallet.flipperReady ? "checkmark.seal.fill" : "clock.arrow.circlepath")
-                    Text(wallet.flipperReady ? "Same address as on your Flipper"
-                                             : "Last address shown on your Flipper")
+                    if kindle {
+                        Text(wallet.flipperReady ? "Same address as on your Kindle"
+                                                 : "Last address shown on your Kindle")
+                    } else {
+                        Text(wallet.flipperReady ? "Same address as on your Flipper"
+                                                 : "Last address shown on your Flipper")
+                    }
                 }
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(wallet.flipperReady ? Theme.scan : Theme.muted)
@@ -627,6 +676,9 @@ struct ReceiveView: View {
                         Label("New address", systemImage: "arrow.triangle.2.circlepath").font(.subheadline.weight(.semibold))
                     }
                     Text("Every address reaches this same wallet, and nobody can link them together.")
+                        .font(.caption).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.horizontal)
+                } else if kindle {
+                    Text("This screen follows the address shown on your Kindle.")
                         .font(.caption).foregroundStyle(Theme.muted).multilineTextAlignment(.center).padding(.horizontal)
                 } else {
                     Text("A new address each time ZFlip opens, or press ▶ in Receive on the Flipper: this screen follows it.")

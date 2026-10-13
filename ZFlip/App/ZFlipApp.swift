@@ -3,6 +3,7 @@ import SwiftUI
 @main
 struct ZFlipApp: App {
     @StateObject private var link: FlipperLink
+    @StateObject private var kindle: KindleLink
     @StateObject private var wallet: WalletModel
     @StateObject private var contacts = ContactBook()
     @StateObject private var prices = PriceService()
@@ -18,7 +19,9 @@ struct ZFlipApp: App {
         AppLanguage.apply(AppLanguage.current.isEmpty ? "en" : AppLanguage.current)
         let link = FlipperLink()
         _link = StateObject(wrappedValue: link)
-        let wallet = WalletModel(link: link)
+        let kindle = KindleLink()
+        _kindle = StateObject(wrappedValue: kindle)
+        let wallet = WalletModel(link: link, kindle: kindle)
         _wallet = StateObject(wrappedValue: wallet)
         BackgroundSync.register(wallet)
     }
@@ -34,6 +37,7 @@ struct ZFlipApp: App {
                     }
                 }
                 .environmentObject(link)
+                .environmentObject(kindle)
                 .environmentObject(wallet)
                 .environmentObject(contacts)
                 .environmentObject(prices)

@@ -6,7 +6,6 @@ import ZcashLightClientKit
 /// amount, and its own optional message, or one message for everyone.
 struct SendView: View {
     @EnvironmentObject var wallet: WalletModel
-    @EnvironmentObject var link: FlipperLink
     @EnvironmentObject var book: ContactBook
     @Environment(\.dismiss) private var dismiss
 
@@ -382,7 +381,7 @@ struct SendView: View {
     private var stepTitle: String {
         switch wallet.sendStep {
         case .preparing: return String(localized: "Preparing the transaction")
-        case .confirmOnFlipper: return link.awaitingFlipper ? "Confirm on your device" : "Your device is checking…"
+        case .confirmOnFlipper: return wallet.awaitingSigner ? "Confirm on your device" : "Your device is checking…"
         case .broadcasting: return String(localized: "Broadcasting")
         default: return ""
         }

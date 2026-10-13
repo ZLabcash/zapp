@@ -8,13 +8,14 @@ import ZcashLightClientKit
 ///
 /// - A Flipper wallet is watch-only here: the phone syncs, builds transactions as PCZTs and
 ///   proves them; the Flipper checks and signs.
+/// - A Kindle wallet is the same, over Wi-Fi to KindleWallet (same frames, `SignerLink`).
 /// - A phone wallet keeps its recovery phrase in the Keychain (Face ID) and signs here.
 @MainActor
 final class WalletModel: ObservableObject {
     /// One wallet (persisted). The name stays `Pairing` from when the app had one Flipper:
     /// a Flipper wallet is still one, a phone wallet has `kind == .phone`.
     struct Pairing: Codable, Equatable, Identifiable {
-        enum Kind: String, Codable { case flipper, phone, multisig }
+        enum Kind: String, Codable { case flipper, phone, multisig, kindle }
 
         /// Wallets saved before multi-wallet support have none: their id is the Flipper's.
         var walletID: UUID?
@@ -29,14 +30,17 @@ final class WalletModel: ObservableObject {
         var birthday: Int
         /// The receiving address index last shown on the Flipper (or here, for a phone wallet).
         var addressIndex: UInt32?
+        /// A Kindle wallet's KindleWallet: where it was last, and its key.
+        var kindle: KindleEndpoint?
 
         var id: UUID { walletID ?? flipperID }
         var isFlipper: Bool { (kind ?? .flipper) == .flipper }
         var isPhone: Bool { kind == .phone }
+        var isKindle: Bool { kind == .kindle }
         var displayName: String { name ?? flipperName }
     }
 
-    /// The link to the paired Flipper, as the Home screen shows it.
+    /// The link to the active wallet's device (Flipper or Kindle), as the Home screen shows it.
     enum FlipperState: Equatable {
         case idle
         case connecting
@@ -245,6 +249,10 @@ final class WalletModel: ObservableObject {
     /// The Flipper wallet whose Flipper is connected with a session open. The link stays up
     /// while switching wallets (only leaving the app closes it), so switching back is instant.
     @Published private(set) var linkedWallet: UUID?
+    /// The same for the Kindle wallet whose Kindle is connected (both links can be up).
+    @Published private(set) var kindleWallet: UUID?
+    /// The active wallet's device waits for its user (a prompt on its screen).
+    @Published private(set) var awaitingSigner = false
     /// Amounts show only while the Flipper is connected: a glance at the phone
     /// alone gives nothing away. (Privacy from onlookers, not security: the viewing
     /// key is on the phone.)
@@ -252,9 +260,12 @@ final class WalletModel: ObservableObject {
     /// This wallet can sign now: a phone wallet always (Face ID), a Flipper wallet when connected.
     var canSign: Bool { pairing?.isPhone == true || flipperReady }
     /// INFO from a Flipper holding another wallet, kept to adopt it on request.
-    private var otherWallet: (info: FlipperProtocol.Info, id: UUID)?
+    private var otherWallet: (info: FlipperProtocol.Info, id: UUID, kindle: KindleEndpoint?)?
 
     let link: FlipperLink
+    let kindle: KindleLink
+    /// The active wallet's device link.
+    var signer: SignerLink { pairing?.isKindle == true ? kindle : link }
     private var synchronizer: SDKSynchronizer?
     private var accountUUID: AccountUUID?
     private var cancellables = Set<AnyCancellable>()
@@ -277,8 +288,9 @@ final class WalletModel: ObservableObject {
         network == .testnet ? 1_842_420 : 1_687_104
     }
 
-    init(link: FlipperLink) {
+    init(link: FlipperLink, kindle: KindleLink) {
         self.link = link
+        self.kindle = kindle
         link.$state
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
@@ -287,10 +299,12 @@ final class WalletModel: ObservableObject {
                 case .connected:
                     break
                 case .connecting:
+                    guard self.pairing?.isKindle != true else { break }
                     if case .otherWallet = self.flipperState { break }
                     self.flipperState = .connecting
                 default:
                     self.linkedWallet = nil
+                    guard self.pairing?.isKindle != true else { break }
                     if case .otherWallet = self.flipperState { break }
                     if case .failed = self.flipperState { break }
                     self.flipperState = .idle
@@ -300,10 +314,48 @@ final class WalletModel: ObservableObject {
         link.$awaitingFlipper
             .receive(on: DispatchQueue.main)
             .sink { [weak self] waiting in
-                if waiting, let self, self.flipperState != .ready { self.flipperState = .approve }
+                guard let self, self.pairing?.isKindle != true else { return }
+                self.awaitingSigner = waiting
+                if waiting, self.flipperState != .ready { self.flipperState = .approve }
             }
             .store(in: &cancellables)
-        link.onAddress = { [weak self] index, text in self?.flipperShows(index, text) }
+        link.onAddress = { [weak self] index, text in
+            guard self?.pairing?.isKindle != true else { return }
+            self?.flipperShows(index, text)
+        }
+        // The Kindle's link moves the same state while a Kindle wallet is active.
+        kindle.$state
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .connected:
+                    break
+                case .connecting:
+                    guard self.pairing?.isKindle == true else { break }
+                    if case .otherWallet = self.flipperState { break }
+                    self.flipperState = .connecting
+                case .idle:
+                    self.kindleWallet = nil
+                    guard self.pairing?.isKindle == true else { break }
+                    if case .otherWallet = self.flipperState { break }
+                    if case .failed = self.flipperState { break }
+                    self.flipperState = .idle
+                }
+            }
+            .store(in: &cancellables)
+        kindle.$awaitingUser
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] waiting in
+                guard let self, self.pairing?.isKindle == true else { return }
+                self.awaitingSigner = waiting
+                if waiting, self.flipperState != .ready { self.flipperState = .approve }
+            }
+            .store(in: &cancellables)
+        kindle.onAddress = { [weak self] index, text in
+            guard self?.pairing?.isKindle == true else { return }
+            self?.flipperShows(index, text)
+        }
         loadWallets()
         loadPending()
         pathMonitor.pathUpdateHandler = { [weak self] path in
@@ -322,8 +374,9 @@ final class WalletModel: ObservableObject {
     /// Asks the connected Flipper for its viewing key (the user approves on the Flipper).
     /// The Flipper's INFO. `adding`: it's being added as a wallet (Add a wallet → Connect a
     /// device), so whatever wallet it holds is welcome; otherwise it must hold the active one.
-    func requestInfo(adding: Bool = false) async throws -> FlipperProtocol.Info {
-        let reply = try await link.request(.hello)
+    /// `device`: the link to ask when adding (the active wallet's otherwise).
+    func requestInfo(adding: Bool = false, from device: SignerLink? = nil) async throws -> FlipperProtocol.Info {
+        let reply = try await (device ?? signer).request(.hello)
         guard reply.kind == FlipperProtocol.Kind.info.rawValue else {
             throw FlipperError.protocolError("Unexpected reply from the Flipper")
         }
@@ -334,13 +387,14 @@ final class WalletModel: ObservableObject {
             if let known = wallets.first(where: { $0.ufvk == info.ufvk }) {
                 try await activate(known.id)
             } else {
-                otherWallet = (info, pairing.flipperID)
+                otherWallet = (info, pairing.flipperID, pairing.kindle)
                 flipperState = .otherWallet(info.deviceName)
-                throw FlipperError.rejected(String(localized: "This Flipper holds another wallet."))
+                throw FlipperError.rejected(pairing.isKindle ? String(localized: "This Kindle holds another wallet.")
+                                                             : String(localized: "This Flipper holds another wallet."))
             }
         }
         flipperState = .ready
-        linkedWallet = pairing?.id
+        markLinked()
         if pairing != nil {
             remember(index: info.addressIndex)
             await repairBirthday(info)
@@ -348,25 +402,26 @@ final class WalletModel: ObservableObject {
         return info
     }
 
-    /// Creates the watch-only wallet for a Flipper. `restoredFrom` is the date to
-    /// scan from when the Flipper's seed was restored rather than created on it.
-    func createWallet(info: FlipperProtocol.Info, flipperID: UUID, restoredFrom: Date?) async throws {
+    /// Creates the watch-only wallet for a Flipper (or, with `kindle`, a Kindle). `restoredFrom`
+    /// is the date to scan from when the device's seed was restored rather than created on it.
+    func createWallet(info: FlipperProtocol.Info, flipperID: UUID, restoredFrom: Date?, kindle: KindleEndpoint? = nil) async throws {
         let synchronizer = try await database()
-        let birthday = Self.birthday(for: info, restoredFrom: restoredFrom, synchronizer: synchronizer)
-        // A Flipper wallet this phone already has: switch to it, keeping its history.
-        if var known = wallets.first(where: { $0.isFlipper && $0.ufvk == info.ufvk }) {
+        let birthday = Self.birthday(for: info, restoredFrom: restoredFrom, synchronizer: synchronizer, onFlipper: kindle == nil)
+        // A wallet of this device this phone already has: switch to it, keeping its history.
+        if var known = wallets.first(where: { (kindle == nil ? $0.isFlipper : $0.isKindle) && $0.ufvk == info.ufvk }) {
             known.flipperID = flipperID
             known.flipperName = info.deviceName
+            if let kindle { known.kindle = kindle }
             store(known)
             try await activate(known.id, keepingLink: true)
             flipperState = .ready
-            linkedWallet = pairing?.id
+            markLinked()
             remember(index: info.addressIndex)
             return
         }
         let pairing = Pairing(
             walletID: UUID(),
-            kind: .flipper,
+            kind: kindle == nil ? .flipper : .kindle,
             name: info.deviceName,
             flipperID: flipperID,
             flipperName: info.deviceName,
@@ -375,11 +430,22 @@ final class WalletModel: ObservableObject {
             seedFingerprint: info.seedFingerprint,
             account: info.account,
             birthday: birthday,
-            addressIndex: info.addressIndex
+            addressIndex: info.addressIndex,
+            kindle: kindle
         )
         try await add(pairing, keepingLink: true)
         flipperState = .ready
-        linkedWallet = self.pairing?.id
+        markLinked()
+    }
+
+    /// The active wallet's device has a session open.
+    private func markLinked() {
+        if pairing?.isKindle == true { kindleWallet = pairing?.id } else { linkedWallet = pairing?.id }
+    }
+
+    /// A wallet whose device is connected with a session open (its balance may show).
+    func isLinked(_ id: UUID) -> Bool {
+        linkedWallet == id || kindleWallet == id
     }
 
     // MARK: Wallets
@@ -468,7 +534,14 @@ final class WalletModel: ObservableObject {
                 let linked = wallets.first { $0.id == linkedWallet }
                 if link.isConnected, linked?.flipperID != wallet.flipperID { link.disconnect() }
                 flipperState = .idle
+            } else if wallet.isKindle, kindleWallet == wallet.id, kindle.isConnected {
+                flipperState = .ready
+            } else if wallet.isKindle {
+                let linked = wallets.first { $0.id == kindleWallet }
+                if kindle.isConnected, linked?.kindle?.key != wallet.kindle?.key { kindle.disconnect() }
+                flipperState = .idle
             }
+            awaitingSigner = false
         }
         pairing = wallet
         saveWallets()
@@ -501,6 +574,7 @@ final class WalletModel: ObservableObject {
             if keepingDatabase { saveWallets(); return }
             await tearDown()
             link.disconnect()
+            kindle.disconnect()
             flipperState = .idle
         }
         saveWallets()
@@ -595,10 +669,11 @@ final class WalletModel: ObservableObject {
 
     /// Where to start scanning: the wallet's creation day (less a day of margin),
     /// never before ZFlip existed for a wallet made on a Flipper, never before NU5.
-    private static func birthday(for info: FlipperProtocol.Info, restoredFrom: Date?, synchronizer: SDKSynchronizer) -> Int {
+    private static func birthday(for info: FlipperProtocol.Info, restoredFrom: Date?, synchronizer: SDKSynchronizer,
+                                 onFlipper: Bool = true) -> Int {
         let since: Date
         if info.createdAt > 0 {
-            since = max(Date(timeIntervalSince1970: TimeInterval(info.createdAt)), zflipEpoch)
+            since = max(Date(timeIntervalSince1970: TimeInterval(info.createdAt)), onFlipper ? zflipEpoch : nu5Date)
         } else {
             since = max(restoredFrom ?? nu5Date, nu5Date)
         }
@@ -632,10 +707,10 @@ final class WalletModel: ObservableObject {
     /// rebuilt from the right one, which this Flipper's INFO gives.
     private func repairBirthday(_ info: FlipperProtocol.Info) async {
         guard let pairing, let synchronizer, info.createdAt > 0 else { return }
-        let expected = Self.birthday(for: info, restoredFrom: nil, synchronizer: synchronizer)
+        let expected = Self.birthday(for: info, restoredFrom: nil, synchronizer: synchronizer, onFlipper: !pairing.isKindle)
         guard pairing.birthday + 1_000 < expected else { return }
         print("[zapp] birthday \(pairing.birthday) -> \(expected): rebuilding the wallet")
-        try? await createWallet(info: info, flipperID: pairing.flipperID, restoredFrom: nil)
+        try? await createWallet(info: info, flipperID: pairing.flipperID, restoredFrom: nil, kindle: pairing.kindle)
     }
 
     /// Opens the saved wallets at launch.
@@ -675,6 +750,8 @@ final class WalletModel: ObservableObject {
     /// the Flipper). Waits as long as it takes for ZFlip to appear.
     /// "Connect to Flipper": connects and opens a session (OK on the Flipper).
     func connectFlipper() async {
+        // A Kindle connects only through its QR code (the Home card opens the camera).
+        if pairing?.isKindle == true { return }
         guard let pairing, pairing.isFlipper, !flipperReady else { return }
         if case .connecting = link.state { return }
         flipperState = .connecting
@@ -696,18 +773,57 @@ final class WalletModel: ObservableObject {
     }
 
     func disconnectFlipper() {
-        link.disconnect()
+        signer.disconnect()
         flipperState = .idle
+    }
+
+    /// "Connect" scanned the Kindle's pairing QR code: connects with its one-time key (the
+    /// Kindle may have forgotten this phone, or moved), checks it holds this wallet, and
+    /// keeps where it now is.
+    func connectKindle(scanned text: String) async {
+        guard let pairing, pairing.isKindle else { return }
+        guard let (found, psk) = KindleEndpoint.parse(text) else {
+            flipperState = .failed(String(localized: "This isn't a KindleWallet pairing code."))
+            return
+        }
+        kindle.disconnect()
+        flipperState = .connecting
+        do {
+            try await kindle.connect(found, psk: psk, timeout: 25)
+            _ = try await requestInfo()
+            if var w = wallets.first(where: { $0.id == pairing.id }) {
+                w.kindle = found
+                store(w)
+            }
+        } catch {
+            if case .otherWallet = flipperState { return }
+            flipperState = .failed(error.localizedDescription)
+        }
+    }
+
+    /// Sends the zkSNARKs held (token numbers) to the active wallet's Kindle, which lists
+    /// them offline (NFTS frame, Kindle only).
+    func showOnKindle(_ tokens: [Int]) async throws {
+        guard pairing?.isKindle == true else { return }
+        guard flipperReady else { throw KindleError.notConnected }
+        let numbers = tokens.filter { (1...10_000).contains($0) }.prefix(Int(UInt16.max))
+        var payload = Data()
+        payload.append(UInt16(numbers.count).littleEndianData)
+        for n in numbers { payload.append(UInt16(n).littleEndianData) }
+        let reply = try await kindle.request(.nfts, payload, timeout: 30)
+        guard reply.kind == FlipperProtocol.Kind.nftsOK.rawValue else {
+            throw FlipperError.protocolError(String(localized: "Unexpected reply from the Kindle"))
+        }
     }
 
     /// Replaces this iPhone's watch-only wallet with the one on the connected Flipper.
     func adoptFlipperWallet() async {
-        guard let (info, id) = otherWallet else { return }
+        guard let (info, id, kindle) = otherWallet else { return }
         otherWallet = nil
         do {
-            try await createWallet(info: info, flipperID: id, restoredFrom: nil)
+            try await createWallet(info: info, flipperID: id, restoredFrom: nil, kindle: kindle)
             flipperState = .ready
-            linkedWallet = pairing?.id
+            markLinked()
         } catch {
             flipperState = .failed(error.localizedDescription)
         }
@@ -832,16 +948,20 @@ final class WalletModel: ObservableObject {
     func refreshTransactions(force: Bool) {
         guard let synchronizer, force || Date().timeIntervalSince(lastTransactionsRefresh) > 3 else { return }
         lastTransactionsRefresh = Date()
+        // This wallet's account, read now: a refresh still running when the user switches
+        // wallets must not put the old wallet's activity back once it finishes.
+        guard let account = accountUUID else { return }
         Task {
             let all = await synchronizer.transactions
             var items: [ActivityItem] = []
-            for tx in all.filter({ $0.accountUUID == self.accountUUID }).sorted(by: { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }) {
+            for tx in all.filter({ $0.accountUUID == account }).sorted(by: { ($0.minedHeight ?? .max, $0.index ?? 0) > ($1.minedHeight ?? .max, $1.index ?? 0) }) {
                 let fee = tx.isSentTransaction ? tx.fee?.amount : nil
                 let memos = ((try? await synchronizer.getMemos(for: tx)) ?? []).compactMap { $0.toString() }.filter { !$0.isEmpty }
                 items.append(ActivityItem(id: tx.rawID, sent: tx.isSentTransaction, zatoshi: abs(tx.value.amount) - (fee ?? 0),
                                           fee: fee, minedHeight: tx.minedHeight, expired: tx.isExpiredUmined == true,
                                           blockTime: tx.blockTime, url: Self.zscanURL(tx), memos: memos))
             }
+            guard self.accountUUID == account else { return }
             self.overviews = Dictionary(all.map { ($0.rawID, $0) }, uniquingKeysWith: { a, _ in a })
             self.activity = items
         }
@@ -995,7 +1115,10 @@ final class WalletModel: ObservableObject {
             let request = try Bridge.signRequest(pczt: pczt, ufvk: pairing.ufvk)
 
             if !flipperReady {
-                if !link.isConnected {
+                if pairing.isKindle {
+                    // Every Kindle session starts with a scan of its QR code and an Allow.
+                    throw KindleError.notConnected
+                } else if !link.isConnected {
                     try await link.connect(pairing.flipperID)
                 }
                 _ = try await requestInfo()
@@ -1003,7 +1126,7 @@ final class WalletModel: ObservableObject {
             // Prove on the phone while the user checks the transaction on the Flipper.
             async let proven = synchronizer.addProofsToPCZT(pczt: pczt)
             sendStep = .confirmOnFlipper
-            let reply = try await link.request(.sign, request, timeout: 600)
+            let reply = try await signer.request(.sign, request, timeout: 600)
             guard reply.kind == FlipperProtocol.Kind.signed.rawValue else {
                 throw FlipperError.protocolError("Unexpected reply from the Flipper")
             }

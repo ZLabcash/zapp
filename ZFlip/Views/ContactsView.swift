@@ -29,6 +29,8 @@ struct ContactsView: View {
                                             if w.isPhone {
                                                 Image(systemName: "wallet.bifold.fill").font(.body).foregroundStyle(.black)
                                                     .frame(width: 36, height: 36).background(Theme.zcash).clipShape(Circle())
+                                            } else if w.isKindle {
+                                                KindleIcon().frame(width: 24, height: 32)
                                             } else {
                                                 FlipperZeroIcon(light: .green, pulsing: false).frame(width: 36)
                                             }
